@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ashion Template">
+    <meta name="keywords" content="Ashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PineApple Sea</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+            <li><span class="icon_search search-switch"></span></li>
+            <li><a href="#"><span class="icon_heart_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+            <li><a href="#"><span class="icon_bag_alt"></span>
+                <div class="tip">2</div>
+            </a></li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="img/logo/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+            <a href="./inicio.html">Iniciar Sesion</a>
+            <a href="./registro.html">Registrarse</a>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="./index.html"><img src="img/logo/logo.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Inicio</a></li>
+                            <li><a href="#">Mujeres</a></li>
+                            <li><a href="#">Hombres</a></li>
+                            <li><a href="./shop.html">Todo</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./product-details.html">Detalles de Productos</a></li>
+                                    <li><a href="./shop-cart.html">Carro de compra</a></li>
+                                    <li><a href="./checkout.html">Pagar</a></li>
+                                    <li><a href="./blog-details.html">Detalles del Blog</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./contact.html">Contacto</a></li>
+                            <!-- Enlace de administrador (inicialmente oculto) -->
+                            <li id="adminLink"><a href="./admin.html">Admin</a></li>
+                            
+                            </ul>
+                            </nav>
+                            </div>
+                            <div class="col-lg-3">
+                            <div class="header__right">
+                            <div class="header__right__auth" id="authSection">
+                            <!-- Los enlaces se agregarán aquí a través de JavaScript -->
+                            </div>
+                            <ul class="header__right__widget">
+                              
+                                
+                                <li><a href="shop-cart.html"><span class="icon_bag_alt"></span>
+                                    <div class="tip">2</div>
+                                </a></li>
+                                
+                            </ul>
+                            
+                          
+                        
+                        
+                        
+                        
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open">
+            <i class="fa fa-bars"></i>
+        </div>
+    </header>
+    
+    <!-- Header Section End -->
+
+    <!-- Categories Section Begin -->
+    <section class="categories">
+        <div class="container-fluid">
+            <div class="row">
+
+
+
+                <div class="col-lg-6 p-0">
+                    <div class="categories__item categories__large__item set-bg" data-setbg="img/categories/category-1.jpg">
+                        <div class="categories__text">
+                            <h1>Moda Femenina</h1>
+                            <p>"¡Sumérgete en el estilo costero perfecto con nuestra tienda de ropa para mujeres playeras! Descubre una colección cautivadora de trajes de baño, pareos, vestidos playeros y accesorios que te harán brillar bajo el sol.</p>
+                            <p id="womensProductCount">Cargando...</p>
+                            <a href="shop.html" id="womensShopLink">Comprar ahora</a> <!-- Cambio: Agregar un ID al enlace -->
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    // Función para obtener la cantidad de productos de la categoría "femenino"
+                    function getWomensProductCount() {
+                        fetch('/countProductsByCategory?category=femenino') // Endpoint para contar productos por categoría
+                            .then(response => response.json())
+                            .then(data => {
+                                const womensProductCountElement = document.getElementById('womensProductCount');
+                                womensProductCountElement.textContent = `${data.count} productos`; // Actualiza el texto con la cantidad de productos
+                            })
+                            .catch(error => console.error('Error al obtener la cantidad de productos: ', error));
+                    }
+                
+                    // Llama a la función para obtener la cantidad de productos cuando se carga la página
+                    document.addEventListener('DOMContentLoaded', getWomensProductCount);
+                
+                    // Cambio: Agregar un listener para el evento 'click' en el enlace de compra
+                    document.getElementById('womensShopLink').addEventListener('click', function(event) {
+                        event.preventDefault(); // Evita el comportamiento predeterminado de seguimiento del enlace
+                        window.location.href = 'shop.html'; // Redirige a shop.html
+                    });
+                </script>
+                
+
+
+
+
+            <div class="col-lg-6">
+                <div class="row">
+                   
+                   
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="img/categories/category-2.jpg">
+                            <div class="categories__text">
+                                <h4>Moda Masculina</h4>
+                                <p id="menProductCount">Cargando...</p>
+                                <a href="shop.html" id="menShopLink">Comprar ahora</a> <!-- Cambio: Agregar un ID al enlace -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        // Función para obtener la cantidad de productos de la categoría "masculino"
+                        function getMenProductCount() {
+                            fetch('/countProductsByCategory?category=masculino') // Endpoint para contar productos por categoría
+                                .then(response => response.json())
+                                .then(data => {
+                                    const menProductCountElement = document.getElementById('menProductCount');
+                                    menProductCountElement.textContent = `${data.count} productos`; // Actualiza el texto con la cantidad de productos
+                                })
+                                .catch(error => console.error('Error al obtener la cantidad de productos: ', error));
+                        }
+                    
+                        // Llama a la función para obtener la cantidad de productos cuando se carga la página
+                        document.addEventListener('DOMContentLoaded', getMenProductCount);
+                    
+                        // Cambio: Agregar un listener para el evento 'click' en el enlace de compra
+                        document.getElementById('menShopLink').addEventListener('click', function(event) {
+                            event.preventDefault(); // Evita el comportamiento predeterminado de seguimiento del enlace
+                            window.location.href = 'masculino.html'; // Redirige a shop.html
+                        });
+                    </script>
+                    
+
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="img/categories/category-3.jpg">
+                            <div class="categories__text">
+                                <h4>Moda Infantil</h4>
+                                <p id="kidProductCount">Cargando...</p>
+                                <a href="shop.html" id="kidShopLink">Comprar Ahora</a> <!-- Cambio: Agregar un ID al enlace -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        // Función para obtener la cantidad de productos de la categoría "infantil"
+                        function getKidProductCount() {
+                            fetch('/countProductsByCategory?category=infantil') // Endpoint para contar productos por categoría
+                                .then(response => response.json())
+                                .then(data => {
+                                    const kidProductCountElement = document.getElementById('kidProductCount');
+                                    kidProductCountElement.textContent = `${data.count} productos`; // Actualiza el texto con la cantidad de productos
+                                })
+                                .catch(error => console.error('Error al obtener la cantidad de productos: ', error));
+                        }
+                    
+                        // Llama a la función para obtener la cantidad de productos cuando se carga la página
+                        document.addEventListener('DOMContentLoaded', getKidProductCount);
+                    
+                        // Cambio: Agregar un listener para el evento 'click' en el enlace de compra
+                        document.getElementById('kidShopLink').addEventListener('click', function(event) {
+                            event.preventDefault(); // Evita el comportamiento predeterminado de seguimiento del enlace
+                            window.location.href = 'shop.html'; // Redirige a shop.html
+                        });
+                    </script>
+                    
+
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="img/categories/category-4.jpg">
+                            <div class="categories__text">
+                                <h4>Cosmeticos</h4>
+                                <p id="cosmeticsProductCount">Cargando...</p>
+                                <a href="shop.html" id="cosmeticsShopLink">Comprar Ahora</a> <!-- Cambio: Agregar un ID al enlace -->
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        // Función para obtener la cantidad de productos de la categoría "Cosméticos"
+                        function getCosmeticsProductCount() {
+                            fetch('/countProductsByCategory?category=cosmetico') // Endpoint para contar productos por categoría
+                                .then(response => response.json())
+                                .then(data => {
+                                    const cosmeticsProductCountElement = document.getElementById('cosmeticsProductCount');
+                                    cosmeticsProductCountElement.textContent = `${data.count} productos`; // Actualiza el texto con la cantidad de productos
+                                })
+                                .catch(error => console.error('Error al obtener la cantidad de productos: ', error));
+                        }
+                    
+                        // Llama a la función para obtener la cantidad de productos cuando se carga la página
+                        document.addEventListener('DOMContentLoaded', getCosmeticsProductCount);
+                    
+                        // Cambio: Agregar un listener para el evento 'click' en el enlace de compra
+                        document.getElementById('cosmeticsShopLink').addEventListener('click', function(event) {
+                            event.preventDefault(); // Evita el comportamiento predeterminado de seguimiento del enlace
+                            window.location.href = 'shop.html'; // Redirige a shop.html
+                        });
+                    </script>
+                    
+                    <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                        <div class="categories__item set-bg" data-setbg="img/categories/category-5.jpg">
+                            <div class="categories__text">
+                                <h4>Accesorios</h4>
+                                <p id="accessoriesProductCount">Cargando...</p>
+                                <a href="shop.html" id="accessoriesShopLink">Comprar Ahora</a> <!-- Cambio: Agregar un ID al enlace -->
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        // Función para obtener la cantidad de productos de la categoría "Accesorios"
+                        function getAccessoriesProductCount() {
+                            fetch('/countProductsByCategory?category=accesorio') // Endpoint para contar productos por categoría
+                                .then(response => response.json())
+                                .then(data => {
+                                    const accessoriesProductCountElement = document.getElementById('accessoriesProductCount');
+                                    accessoriesProductCountElement.textContent = `${data.count} productos`; // Actualiza el texto con la cantidad de productos
+                                })
+                                .catch(error => console.error('Error al obtener la cantidad de productos: ', error));
+                        }
+                    
+                        // Llama a la función para obtener la cantidad de productos cuando se carga la página
+                        document.addEventListener('DOMContentLoaded', getAccessoriesProductCount);
+                    
+                        // Cambio: Agregar un listener para el evento 'click' en el enlace de compra
+                        document.getElementById('accessoriesShopLink').addEventListener('click', function(event) {
+                            event.preventDefault(); // Evita el comportamiento predeterminado de seguimiento del enlace
+                            window.location.href = 'shop.html'; // Redirige a shop.html
+                        });
+                    </script>
+                    
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Categories Section End -->
+
+<!-- Product Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="section-title">
+                    <h4>Nuevos Productos</h4>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*">Todos</li>
+                    <li data-filter=".masculino">Hombres</li>
+                    <li data-filter=".femenino">Mujeres</li>
+                    <li data-filter=".infantil">Niños</li>
+                    <li data-filter=".accesorio">Accesorios</li>
+                    <li data-filter=".cosmetico">Cosméticos</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row property__gallery" id="productos-container-index">
+            <!-- Aquí se llenarán dinámicamente los productos -->
+        </div>
+    </div>
+</section>
+
+
+<!-- Product Section End -->
+
+<!-- Banner Section Begin -->
+<section class="banner set-bg" data-setbg="img/banner/banner-1.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-7 col-lg-8 m-auto">
+                <div class="banner__slider owl-carousel">
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>Colección Marina</span>
+                            <h1>La Moda Que Esperabas</h1>
+                            <a href="#">Comprar ahora</a>
+                        </div>
+                    </div>
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>Ofertas Únicas</span>
+                            <h1>Aprovecha estos descuentos del 14 de febrero</h1>
+                            <a href="#">Comprar ahora</a>
+                        </div>
+                    </div>
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>The Chloe Collection</span>
+                            <h1>The Project Jacket</h1>
+                            <a href="#">Shop now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Banner Section End -->
+
+<!-- Trend Section Begin -->
+<!--
+    
+    <section class="trend spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>Hot Trend</h4>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/ht-1.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Chain bucket bag</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/ht-2.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Pendant earrings</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/ht-3.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Cotton T-Shirt</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>Best seller</h4>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/bs-1.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Cotton T-Shirt</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/bs-2.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Zip-pockets pebbled tote <br />briefcase</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/bs-3.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Round leather bag</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>Feature</h4>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/f-1.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Bow wrap skirt</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/f-2.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Metallic earrings</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="img/trend/f-3.jpg" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>Flap cross-body bag</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="product__price">$ 59.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+-->
+
+<!-- Trend Section End -->
+
+<!-- Discount Section Begin -->
+<section class="discount">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 p-0">
+                <div class="discount__pic">
+                    <img src="img/discount.jpg" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6 p-0">
+                <div class="discount__text">
+                    <div class="discount__text__title">
+                        <span>Descuento</span>
+                        <h2>Febrero 2024</h2>
+                        <h5><span>Precios</span> 50%</h5>
+                    </div>
+                    <div class="discount__countdown" id="countdown-time">
+                        <div class="countdown__item">
+                            <span>22</span>
+                            <p>Días</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>18</span>
+                            <p>Horas</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>46</span>
+                            <p>Min</p>
+                        </div>
+                        <div class="countdown__item">
+                            <span>05</span>
+                            <p>Sec</p>
+                        </div>
+                    </div>
+                    <a href="#">Comprar Ahora</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Discount Section End -->
+
+<!-- Services Section Begin -->
+<section class="services spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-car"></i>
+                    <h6>Envío Gratis</h6>
+                    <p>Ordenes mayores a $99</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-money"></i>
+                    <h6>Te devolvemos el dinero</h6>
+                    <p>Si llegas a tener problemas</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-support"></i>
+                    <h6>Soportye en línea 24/7</h6>
+                    <p>Soporte dedicado</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-headphones"></i>
+                    <h6>Pago seguro</h6>
+                    <p>100% seguro</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Services Section End -->
+
+<!-- Instagram Begin -->
+<div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Instagram End -->
+
+<!-- Footer Section Begin -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-7">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                    </div>
+                    <p>Poseemos distintos metodos de pago</p>
+                    <div class="footer__payment">
+                        <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
+                        <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
+                        <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
+                        <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
+                        <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-5">
+                <div class="footer__widget">
+                    <h6>Acceso rápidos</h6>
+                    <ul>
+                        <li><a href="#">Sobre nosotros</a></li>
+                        <li><a href="#">Tiendas</a></li>
+                        <li><a href="#">Contactos</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <div class="footer__widget">
+                    <h6>Cuenta</h6>
+                    <ul>
+                        <li><a href="#">Mi Cuenta</a></li>
+                        <li><a href="#">Ordenes en proceso/a></li>
+                        <li><a href="#">Pago</a></li>
+                        <li><a href="#">Carrito</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-8">
+                <div class="footer__newslatter">
+                    <h6>Novedades</h6>
+                    <form action="#">
+                        <input type="text" placeholder="Email">
+                        <button type="submit" class="site-btn">Suscribirse</button>
+                    </form>
+                    <div class="footer__social">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-youtube-play"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="#"><i class="fa fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                <div class="footer__copyright__text">
+                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved 
+                </div>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer Section End -->
+
+<!-- Search Begin -->
+<div class="search-model">
+    <div class="h-100 d-flex align-items-center justify-content-center">
+        <div class="search-close-switch">+</div>
+        <form class="search-model-form">
+            <input type="text" id="search-input" placeholder="Search here.....">
+        </form>
+    </div>
+</div>
+<!-- Search End -->
+
+<!-- Js Plugins -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/jquery.countdown.min.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.nicescroll.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+
+</html>
