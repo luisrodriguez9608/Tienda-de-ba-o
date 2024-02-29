@@ -68,21 +68,16 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Inicio</a></li>
-                            <li><a href="#">Mujeres</a></li>
-                            <li><a href="#">Hombres</a></li>
-                            <li><a href="./shop.html">Todo</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./product-details.html">Detalles de Productos</a></li>
-                                    <li><a href="./shop-cart.html">Carro de compra</a></li>
-                                    <li><a href="./checkout.html">Pagar</a></li>
-                                    <li><a href="./blog-details.html">Detalles del Blog</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
+                        
+                            <li><a href="./shop.html">Tienda</a></li>
+                         
+                
                             <li><a href="./contact.html">Contacto</a></li>
                             <!-- Enlace de administrador (inicialmente oculto) -->
                             <li id="adminLink"><a href="./admin.html">Admin</a></li>
+                            <!-- Enlace del dashboard (inicialmente oculto) -->
+<li id="dashboardLink"><a href="./dashboard.html">Dashboard</a></li>
+
                             
                             </ul>
                             </nav>
@@ -93,50 +88,17 @@
                             <!-- Los enlaces se agregarán aquí a través de JavaScript -->
                             </div>
                             <ul class="header__right__widget">
-                                <li><span class="icon_search search-switch"></span></li>
-                                <li><a href="#"><span class="icon_heart_alt"></span>
-                                <div class="tip">2</div>
-                                </a></li>
-                                <li><a href="#"><span class="icon_bag_alt"></span>
-                                <div class="tip">2</div>
-                                </a></li>
+                              
+                                
+                                <li><a href="shop-cart.html"><span class="icon_bag_alt"></span></div></a></li>
+                                
                             </ul>
                             
-                            <script>
-                                function checkSession() {
-                                    fetch('/checkSession')
-                                        .then(response => response.json())
-                                        .then(data => {
-    console.log('Rol del usuario:', data.rol); // Mensaje de depuración
-    const authSection = document.getElementById('authSection');
-    const adminLink = document.getElementById('adminLink');
-
-    if (data.loggedin) {
-    authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
-    if (data.rol === 0) {
-        adminLink.removeAttribute('hidden'); // Mostrar el enlace de administrador si el rol es 0
-    } else {
-        adminLink.setAttribute('hidden', 'true'); // Ocultar el enlace de administrador si el rol no es 0
-    }
-} else {
-    authSection.innerHTML = '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
-    adminLink.setAttribute('hidden', 'true'); // Ocultar el enlace de administrador si no hay sesión activa
-}
-
-})
-
-                                        .catch(error => console.error('Error al verificar la sesión: ', error));
-                                }
-                            
-                                document.addEventListener('DOMContentLoaded', checkSession);
-                            </script>
-                            
+                          
                         
                         
                         
                         
-
-
 
                     </div>
                 </div>
@@ -182,19 +144,14 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="cart__btn update__btn">
-                        <a href="#"><span class="icon_loading"></span> Actualizar carrito</a>
+                       
+                        
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-6">
-                    <div class="discount__content">
-                        <h6>Codigos de descuento</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Enter your coupon code">
-                            <button type="submit" class="site-btn">Apply</button>
-                        </form>
-                    </div>
+                   
                 </div>
                 <div class="col-lg-4 offset-lg-2">
                     <div class="cart__total__procced">
@@ -203,13 +160,36 @@
                             <li>Subtotal <span id="subtotal"></span></li>
                             <li>Total <span id="total"></span></li>
                         </ul>
-                        <div id="paypal-button-container"></div> 
+
+                        <!-- En la vista shop-cart -->
+                        <form id="checkoutForm">
+                            <input type="hidden" name="userID" value="{{ userID }}">
+                            <input type="hidden" name="carritoID" value="{{ carritoID }}">
+                            <button type="button" id="checkoutButton">Realizar Compra</button>
+                        </form>
+                        
+                        <script>
+                            document.getElementById("checkoutButton").addEventListener("click", function() {
+                                // Obtener los valores de userID y carritoID
+                                const userID = document.querySelector('input[name="userID"]').value;
+                                const carritoID = document.querySelector('input[name="carritoID"]').value;
+                        
+                                // Redirigir a la página de checkout con los parámetros en la URL
+                                window.location.href = `checkout.html?userID=${userID}&carritoID=${carritoID}`;
+                            });
+                        </script>
+                        
+
+
+
+
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <script src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
+    
     
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -241,36 +221,7 @@
                     .catch(error => console.error('Error al obtener productos del carrito: ', error));
             }
 
-            // Función para renderizar el botón de PayPal con el total del carrito
-            function renderizarBotonPayPal(total) {
-                paypal.Buttons({
-                    style: {
-                        color: 'blue',
-                        shape: 'pill',
-                        label: 'pay',
-                    },
-                    createOrder: function(data, actions) {
-                        return actions.order.create({
-                            purchase_units: [{
-                                amount: {
-                                    value: total // Aquí se pasa el total del carrito como el valor del amount
-                                }
-                            }]
-                        });
-                    },
-                    onApprove: function(data, actions) {
-                        alert("Pago Realizado");
-                        actions.order.capture().then(function(details) {
-                            console.log(details);
-                            
-                            window.location.href = "index.html";
-                        });
-                    },
-                    onCancel: function(data) {
-                        alert("Pago Cancelado");
-                    }
-                }).render('#paypal-button-container');
-            }
+         
 
             // Llamar a la función para calcular el total del carrito cuando el contenido del DOM esté completamente cargado
             calcularTotalCarrito();
@@ -286,160 +237,235 @@
     <!-- Shop Cart Section End -->
 
   
-    
-    <!-- Instagram Begin -->
-    <div class="instagram">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+<!-- Instagram Begin -->
+<div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                    <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
-                        <div class="instagram__text">
-                            <i class="fa fa-instagram"></i>
-                            <a href="#">@ ashion_shop</a>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Instagram End -->
+</div>
+<!-- Instagram End -->
 
-    <!-- Footer Section Begin -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-7">
-                    <div class="footer__about">
-                        <div class="footer__logo">
-                            <a href="./index.html"><img src="img/logo.png" alt=""></a>
-                        </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                        cilisis.</p>
-                        <div class="footer__payment">
-                            <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
-                            <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
-                            <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
-                            <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
-                            <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
-                        </div>
+<!-- Footer Section Begin -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-7">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
                     </div>
-                </div>
-                <div class="col-lg-2 col-md-3 col-sm-5">
-                    <div class="footer__widget">
-                        <h6>Quick links</h6>
-                        <ul>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Blogs</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">FAQ</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-3 col-sm-4">
-                    <div class="footer__widget">
-                        <h6>Account</h6>
-                        <ul>
-                            <li><a href="#">My Account</a></li>
-                            <li><a href="#">Orders Tracking</a></li>
-                            <li><a href="#">Checkout</a></li>
-                            <li><a href="#">Wishlist</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-8 col-sm-8">
-                    <div class="footer__newslatter">
-                        <h6>NEWSLETTER</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Email">
-                            <button type="submit" class="site-btn">Subscribe</button>
-                        </form>
-                        <div class="footer__social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                            <a href="#"><i class="fa fa-pinterest"></i></a>
-                        </div>
+                    <p>Poseemos distintos metodos de pago</p>
+                    <div class="footer__payment">
+                        <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
+                        <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
+                       
+                        <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
+                       
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    <div class="footer__copyright__text">
-                        <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+            <div class="col-lg-2 col-md-3 col-sm-5">
+                <div class="footer__widget">
+                    <h6>Acceso rápidos</h6>
+                    <ul>
+                        <li><a href="index.html">Sobre nosotros</a></li>
+                        <li><a href="shop.html">Tienda</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                     
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <div class="footer__widget">
+                    <h6>Cuenta</h6>
+<ul id="accountOptions">
+    <!-- Dentro del <ul> de opciones de cuenta -->
+<li><a href="#" id="eliminarCuentaLink">Eliminar mi cuenta</a></li>
+<script>
+    // Agregar un listener de evento 'DOMContentLoaded'
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener referencia al enlace de eliminar cuenta
+      const eliminarCuentaLink = document.getElementById('eliminarCuentaLink');
+  
+      // Agregar un listener de evento 'click' al enlace de eliminar cuenta
+      eliminarCuentaLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+        if (confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) {
+          eliminarCuenta();
+        }
+      });
+  
+      // Función para enviar la solicitud de eliminación de cuenta al servidor
+      function eliminarCuenta() {
+        fetch('/eliminarCuenta', {
+            method: 'DELETE' // Usar el método DELETE para eliminar la cuenta
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            cerrarSesion(); // Llamar a la función para cerrar sesión después de eliminar la cuenta
+          })
+          .catch(error => console.error('Error al eliminar cuenta de usuario:', error));
+      }
+  
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        fetch('/cerrarSesion')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            window.location.href = './inicio.html'; // Redirigir a la página de inicio después de cerrar sesión
+          })
+          .catch(error => console.error('Error al cerrar sesión:', error));
+      }
+    });
+  </script>
+  
+  
+    <li><a href="shop-cart.html">Carrito</a></li>
+    <li id="logoutLink" style="display: none;"><a href="/cerrarSesion">Cerrar sesión</a></li>
+</ul>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-8">
+                <div class="footer__newslatter">
+                    <h6>Novedades</h6>
+                    <form id="suscribirseForm">
+                        <input type="text" name="correo" placeholder="Correo electrónico">
+                        <button type="submit" class="site-btn">Suscribirse</button>
+                      </form>
+<script>document.getElementById('suscribirseForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+  
+    const correo = this.correo.value; // Obtener el valor del campo de correo electrónico
+  
+    // Enviar solicitud POST al servidor para suscribirse
+    fetch('/suscribirse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ correo }) // Enviar el correo electrónico como un objeto JSON
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Respuesta del servidor no válida');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert(data.message); // Mostrar mensaje de éxito
+      // Puedes agregar cualquier otra lógica aquí, como limpiar el formulario
+    })
+    .catch(error => console.error('Error al suscribirse:', error));
+  });
+  </script>                      
+                    <div class="footer__social">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-youtube-play"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                        <a href="#"><i class="fa fa-pinterest"></i></a>
                     </div>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 </div>
             </div>
         </div>
-    </footer>
-    <!-- Footer Section End -->
-
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                <div class="footer__copyright__text">
+                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved 
+                </div>
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </div>
         </div>
     </div>
-    <!-- Search End -->
+</footer>
+<!-- Footer Section End -->
 
-    <!-- Js Plugins -->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/jquery-ui.min.js"></script>
-    <script src="js/mixitup.min.js"></script>
-    <script src="js/jquery.countdown.min.js"></script>
-    <script src="js/jquery.slicknav.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/jquery.nicescroll.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="script.js"></script>
-    <script src="/script.js"></script>
+<!-- Search Begin -->
+<div class="search-model">
+    <div class="h-100 d-flex align-items-center justify-content-center">
+        <div class="search-close-switch">+</div>
+        <form class="search-model-form">
+            <input type="text" id="search-input" placeholder="Search here.....">
+        </form>
+    </div>
+</div>
+<!-- Search End -->
+
+<!-- Js Plugins -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/jquery.countdown.min.js"></script>
+<script src="js/jquery.slicknav.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.nicescroll.min.js"></script>
+<script src="js/main.js"></script>
+<script src="script.js"></script>
 </body>
 
 </html>

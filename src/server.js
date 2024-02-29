@@ -7,16 +7,24 @@ const path = require('path');
 const mysql = require('mysql2');
 const session = require('express-session');
 const phpExpress = require('php-express')();
+const nodemailer = require('nodemailer');
+const axios = require('axios');
+const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 
 
-
-
 // Configuración de la conexión a MySQL
 let db;
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+
+
 
 // Función para reconectar a la base de datos
 function handleDisconnect() {
@@ -52,6 +60,302 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
+/// Endpoint para obtener los detalles de un producto por su ID
+app.get('/productDetails', (req, res) => {
+  const productID = req.query.productID; // Obtener el productID de la solicitud
+  // Realizar una consulta a la base de datos para obtener los detalles del producto
+  db.query('SELECT * FROM productos WHERE productoID = ?', [productID], (err, results) => {
+      if (err) {
+          console.error('Error al obtener detalles del producto:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      if (results.length === 0) {
+          res.status(404).json({ message: 'Producto no encontrado' });
+          return;
+      }
+      // Enviar los detalles del producto como respuesta
+      const productDetails = results[0];
+      res.json({
+          nombre: productDetails.nombre,
+          imagen: productDetails.imagen,
+          precio: productDetails.precio,
+          descripcion: productDetails.descripcion,
+          categoria: productDetails.categoria
+      });
+  });
+});
+
+
+
+
+// Endpoint para eliminar la cuenta de usuario
+app.delete('/eliminarCuenta', (req, res) => {
+  const userID = req.session.userID; // Obtener el ID de usuario de la sesión
+  if (!userID) {
+    res.status(403).json({ message: 'Usuario no autenticado' });
+    return;
+  }
+
+  // Eliminar todos los datos correspondientes al usuario de la tabla usuarios
+  db.query('DELETE FROM usuarios WHERE userID = ?', [userID], (err, results) => {
+    if (err) {
+      console.error('Error al eliminar cuenta de usuario:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+      return;
+    }
+    // Eliminar la sesión del usuario después de eliminar la cuenta
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir la sesión:', err);
+        res.status(500).json({ error: 'Error interno del servidor' });
+        return;
+      }
+      res.clearCookie('connect.sid'); // Limpiar la cookie de sesión
+      res.json({ message: 'Cuenta eliminada exitosamente' });
+    });
+  });
+});
+
+
+
+
+// Ruta para obtener productos por categoría
+app.get('/productos-por-categoria', (req, res) => {
+  const { categoria } = req.query;
+  console.log('Solicitud para obtener productos de la categoría:', categoria);
+  let query = 'SELECT productoID, nombre, imagen, precio FROM productos';
+  let params = [];
+  
+  // Si se especifica una categoría, filtramos por ella
+  if (categoria && categoria !== 'todos') {
+    query += ' WHERE categoria = ?';
+    params.push(categoria);
+  }
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Error al obtener productos por categoría: ', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+      return;
+    }
+    console.log('Productos encontrados:', results);
+    res.json(results);
+  });
+});
+
+
+
+
+
+const getToken = require('./generateToken');
+const generateXML = require('./generateXML');
+const firmarXML = require('./firmarXML');
+const enviarXML = require('./enviarXML'); // Importar el nuevo script
+
+// Endpoint para realizar la facturación
+app.post('/facturacion', async (req, res) => {
+  try {
+      // Obtener el token
+      const accessToken = await getToken();
+
+      // Generar el XML
+      const xmlGenerado = await generateXML();
+
+      // Firmar el XML
+      const xmlFirmado = await firmarXML(xmlGenerado);
+
+      // Enviar el XML
+      const resultadoEnvio = await enviarXML(xmlFirmado, accessToken); // Almacenar el resultado de enviarXML
+
+      console.log('Resultado del envío:', resultadoEnvio); // Imprimir el resultado del envío
+
+      // Envía una respuesta de éxito
+      res.json({ message: 'Facturación realizada exitosamente' });
+  } catch (error) {
+      console.error('Error en el proceso de facturación:', error);
+      res.status(500).json({ error: 'Error en el proceso de facturación' });
+  }
+});
+
+
+// Endpoint para obtener el total de productos
+app.get('/totalProductos', (req, res) => {
+  // Consultar la base de datos para obtener el total de productos
+  db.query('SELECT COUNT(*) AS totalProductos FROM productos', (err, results) => {
+      if (err) {
+          console.error('Error al obtener el total de productos:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      const totalProductos = results[0].totalProductos;
+      res.json({ totalProductos });
+  });
+});
+
+
+
+
+// Endpoint para obtener el total de usuarios registrados
+app.get('/totalUsuarios', (req, res) => {
+    // Consultar la base de datos para obtener el total de usuarios
+    db.query('SELECT COUNT(*) AS totalUsuarios FROM usuarios', (err, results) => {
+        if (err) {
+            console.error('Error al obtener el total de usuarios:', err);
+            res.status(500).json({ error: 'Error interno del servidor' });
+            return;
+        }
+        const totalUsuarios = results[0].totalUsuarios;
+        res.json({ totalUsuarios });
+    });
+});
+
+
+// Endpoint para enviar mensaje de contacto
+app.post('/enviarMensaje', (req, res) => {
+  const { nombre, correo, asunto, mensaje } = req.body;
+
+  // Validar que los datos requeridos no estén vacíos
+  if (!nombre || !correo || !asunto || !mensaje) {
+      return res.status(400).json({ error: 'Todos los campos son requeridos' });
+  }
+
+  // Insertar los datos del mensaje de contacto en la tabla de contactos
+  db.query('INSERT INTO contacto (nombre, correo, asunto, mensaje) VALUES (?, ?, ?, ?)',
+      [nombre, correo, asunto, mensaje], (err, result) => {
+          if (err) {
+              console.error('Error al insertar mensaje de contacto:', err);
+              return res.status(500).json({ error: 'Error interno del servidor' });
+          }
+          res.json({ message: 'Mensaje enviado correctamente' });
+      });
+});
+
+
+app.post('/suscribirse', (req, res) => {
+  const { correo } = req.body; // Obtener el correo electrónico del cuerpo de la solicitud
+  if (!correo) {
+    res.status(400).json({ error: 'Correo electrónico no proporcionado' });
+    return;
+  }
+
+  // Insertar el correo electrónico en la tabla novedades
+  db.query('INSERT INTO novedades (correo) VALUES (?)', [correo], (err, results) => {
+    if (err) {
+      console.error('Error al suscribirse:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+      return;
+    }
+    res.json({ message: '¡Te has suscrito correctamente!' });
+  });
+});
+
+
+
+
+
+// Ruta para manejar la solicitud de checkout
+app.post('/placeOrder', (req, res) => {
+  const { userID, carritoID, nombre, apellido, pais, direccion, provincia, distrito, telefono, correo } = req.body;
+
+  // Insertar datos en la tabla 'facturacion'
+  const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, distrito, telefono, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const values = [userID, carritoID, nombre, apellido, pais, direccion, provincia, distrito, telefono, correo];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error al insertar datos en la base de datos:', err);
+      res.status(500).send('Error interno del servidor');
+    } else {
+      console.log('Datos insertados correctamente en la tabla de facturación');
+     
+    }
+  });
+});
+
+
+
+// Modificar la función enviarMail para incluir console.log de los productos recuperados
+const enviarMail = async (userId, carritoId) => {
+  try {
+    const config = {
+      host: 'smtp.gmail.com',
+      port: 587,
+      auth: {
+        user: 'gabrieljbc2@gmail.com',
+        pass: 'jvjj kdul kdza icsd',
+      }
+    };
+
+    // Obtener los productos del carrito del usuario
+    const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ? AND c.carritoID = ?`;
+
+    db.query(getProductosCarritoQuery, [userId, carritoId], async (err, productosCarrito) => {
+      if (err) {
+        console.error('Error al obtener los productos del carrito:', err);
+        return;
+      }
+
+      console.log('Productos del carrito:', productosCarrito); // Verificar los productos recuperados
+
+      // Construir la lista de productos en el carrito para el correo electrónico
+      const listaProductos = productosCarrito.map(producto => {
+        return `
+          <li>Producto: ${producto.nombre}</li>
+          <li>Precio: $${producto.precio.toFixed(2)}</li>
+          <li>Cantidad: ${producto.cantidad}</li>
+          <li>Subtotal: $${producto.subtotal.toFixed(2)}</li>
+        `;
+      });
+
+      // Calcular el total de la compra
+      const totalCompra = productosCarrito.reduce((total, producto) => total + producto.subtotal, 0);
+
+      console.log('Total del carrito:', totalCompra); // Verificar el total del carrito
+
+      // Mensaje de correo electrónico con los detalles de la compra
+      const mensaje = {
+        from: 'gabrieljbc2@gmail.com',
+        to: 'gabrieljbc2@gmail.com',
+        subject: 'Confirmación de Compra en PineApple Sea',
+        html: `
+          <p>Estimado/a Cliente,</p>
+          <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
+          <p>A continuación, te proporcionamos los detalles de tu compra:</p>
+          <ul>
+            ${listaProductos.join('')}
+          </ul>
+          <p>Total: $${totalCompra.toFixed(2)}</p>
+          <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
+          <p>¡Esperamos que disfrutes de tu producto!</p>
+          <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
+        `
+      };
+
+      // Enviar el correo electrónico
+      const transport = nodemailer.createTransport(config);
+      const info = await transport.sendMail(mensaje);
+      console.log('Correo enviado:', info);
+    });
+
+  } catch (error) {
+    console.error('Error al enviar el correo:', error);
+    throw error;
+  }
+};
+
+// Modificar la ruta para enviar el correo
+app.post('/enviar-correo', (req, res) => {
+  const { userId, carritoId } = req.body;
+  enviarMail(userId, carritoId)
+    .then(() => res.send('Correo enviado'))
+    .catch(error => {
+      console.error('Error al enviar el correo:', error);
+      res.status(500).send('Error al enviar el correo');
+    });
+});
+
 
 
 
@@ -331,18 +635,7 @@ app.delete('/eliminarDelCarrito/:id', (req, res) => {
   });
 });
 
-// Ruta para obtener productos por categoría
-app.get('/productos-por-categoria', (req, res) => {
-  const { categoria } = req.query;
-  db.query('SELECT productoID, nombre, imagen, precio FROM productos WHERE categoria = ?', [categoria], (err, results) => {
-      if (err) {
-          console.error('Error al obtener productos por categoría: ', err);
-          res.status(500).json({ error: 'Error interno del servidor' });
-          return;
-      }
-      res.json(results);
-  });
-});
+
 
 
 // Ruta para admin.html
@@ -357,17 +650,19 @@ app.get('/admin', (req, res) => {
   }
 });
 
-// Ruta para admin.html
-app.get('/admin', (req, res) => {
-  // Verificar si el usuario tiene sesión activa, si tiene rol igual a 2 y si ha iniciado sesión
+// Ruta para asahboard.html
+app.get('/dashboard', (req, res) => {
+  // Verificar si el usuario tiene sesión activa y si el rol es igual a 2
   if (req.session.loggedin && req.session.rol === 2) {
-    // Si cumple con los requisitos, renderiza admin.html
-    res.sendFile(path.join(__dirname, '../src/admin.html'));
+    // Si cumple con los requisitos, renderiza dashboard.html
+    res.sendFile(path.join(__dirname, '../src/dashboard.html'));
   } else {
-    // Si no cumple con los requisitos, redirige a la página de inicio de sesión
-    res.redirect('/inicio.html');
+    // Si no cumple con los requisitos, redirige a otra página (puedes redirigir a una página de acceso denegado)
+    res.redirect('/access-denied.html');
   }
 });
+
+
 
 
 // Ruta para obtener la información de un producto por su ID

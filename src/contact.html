@@ -32,6 +32,10 @@
     </div>
 
     <!-- Offcanvas Menu Begin -->
+  
+    <!-- Offcanvas Menu Begin -->
+    
+    <!-- Offcanvas Menu Begin -->
     <div class="offcanvas-menu-overlay"></div>
     <div class="offcanvas-menu-wrapper">
         <div class="offcanvas__close">+</div>
@@ -45,12 +49,12 @@
             </a></li>
         </ul>
         <div class="offcanvas__logo">
-            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+            <a href="./index.html"><img src="img/logo/logo.png" alt=""></a>
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
-            <a href="#">Login</a>
-            <a href="#">Register</a>
+            <a href="./inicio.html">Iniciar Sesion</a>
+            <a href="./registro.html">Registrarse</a>
         </div>
     </div>
     <!-- Offcanvas Menu End -->
@@ -61,52 +65,47 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                        <a href="./index.html"><img src="img/logo/logo.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li><a href="./index.html">Home</a></li>
-                            <li><a href="#">Women’s</a></li>
-                            <li><a href="#">Men’s</a></li>
-                            <li class="active"><a href="./shop.html">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./product-details.html">Product Details</a></li>
-                                    <li><a href="./shop-cart.html">Shop Cart</a></li>
-                                    <li><a href="./checkout.html">Checkout</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3">
-                    <div class="header__right">
-                        <div class="header__right__auth">
-                            <a href="#">Login</a>
-                            <a href="#">Register</a>
-                        </div>
-                        <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
-                            <li><a href="#"><span class="icon_heart_alt"></span>
-                                <div class="tip">2</div>
-                            </a></li>
-                            <li><a href="#"><span class="icon_bag_alt"></span>
-                                <div class="tip">2</div>
-                            </a></li>
-                        </ul>
+                            <li class="active"><a href="./index.html">Inicio</a></li>
+                        
+                            <li><a href="./shop.html">Tienda</a></li>
+                         
+                
+                            <li><a href="./contact.html">Contacto</a></li>
+                            <!-- Enlace de administrador (inicialmente oculto) -->
+                            <li id="adminLink"><a href="./admin.html">Admin</a></li>
+                            <!-- Enlace del dashboard (inicialmente oculto) -->
+<li id="dashboardLink"><a href="./dashboard.html">Dashboard</a></li>
+
+                            
+                            </ul>
+                            </nav>
+                            </div>
+                            <div class="col-lg-3">
+                            <div class="header__right">
+                            <div class="header__right__auth" id="authSection">
+                            <!-- Los enlaces se agregarán aquí a través de JavaScript -->
+                            </div>
+                            <ul class="header__right__widget">
+                              
+                                
+                                <li><a href="shop-cart.html"><span class="icon_bag_alt"></span></div></a></li>
+                                
+                            </ul>
                     </div>
                 </div>
             </div>
-            <div class="canvas__open">
-                <i class="fa fa-bars"></i>
-            </div>
+        </div>
+        <div class="canvas__open">
+            <i class="fa fa-bars"></i>
         </div>
     </header>
+    
     <!-- Header Section End -->
 
     <!-- Breadcrumb Begin -->
@@ -115,8 +114,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
-                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
-                        <span>Contact</span>
+                        <a href="./index.html"><i class="fa fa-home"></i> Inicio</a>
+                        <span>Contacto</span>
                     </div>
                 </div>
             </div>
@@ -131,38 +130,80 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="contact__content">
                         <div class="contact__address">
-                            <h5>Contact info</h5>
+                            <h5>Información de Contacto</h5>
                             <ul>
                                 <li>
-                                    <h6><i class="fa fa-map-marker"></i> Address</h6>
-                                    <p>160 Pennsylvania Ave NW, Washington, Castle, PA 16101-5161</p>
+                                    <h6><i class="fa fa-map-marker"></i> Direccioón</h6>
+                                    <p>Av. Pastor Díaz, Provincia de Puntarenas, Jacó</p>
                                 </li>
                                 <li>
-                                    <h6><i class="fa fa-phone"></i> Phone</h6>
-                                    <p><span>125-711-811</span><span>125-668-886</span></p>
+                                    <h6><i class="fa fa-phone"></i> Telefono</h6>
+                                    <p><span>8736 7898</span>
                                 </li>
                                 <li>
-                                    <h6><i class="fa fa-headphones"></i> Support</h6>
-                                    <p>Support.photography@gmail.com</p>
+                                    <h6><i class="fa fa-headphones"></i> Soporte</h6>
+                                    <p>pineapplesea@gmail.com</p>
                                 </li>
                             </ul>
                         </div>
                         <div class="contact__form">
-                            <h5>SEND MESSAGE</h5>
-                            <form action="#">
-                                <input type="text" placeholder="Name">
-                                <input type="text" placeholder="Email">
-                                <input type="text" placeholder="Website">
-                                <textarea placeholder="Message"></textarea>
-                                <button type="submit" class="site-btn">Send Message</button>
+                            <h5>Enviar mensaje</h5>
+                            <form id="contactForm">
+                                <input type="text" id="nombre" placeholder="Nombre Completo" required>
+                                <input type="email" id="correo" placeholder="Correo" required>
+                                <input type="text" id="asunto" placeholder="Asunto" required>
+                                <textarea id="mensaje" placeholder="Mensaje" required></textarea>
+                                <button type="submit" class="site-btn">Enviar</button>
                             </form>
                         </div>
+<script>document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const nombre = document.getElementById('nombre').value;
+        const correo = document.getElementById('correo').value;
+        const asunto = document.getElementById('asunto').value;
+        const mensaje = document.getElementById('mensaje').value;
+
+        enviarMensaje(nombre, correo, asunto, mensaje);
+    });
+
+    function enviarMensaje(nombre, correo, asunto, mensaje) {
+        fetch('/enviarMensaje', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                correo: correo,
+                asunto: asunto,
+                mensaje: mensaje
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message); // Muestra un mensaje de éxito o error
+            contactForm.reset(); // Reinicia el formulario después de enviar el mensaje
+        })
+        .catch(error => console.error('Error al enviar mensaje:', error));
+    }
+});
+</script>                        
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="contact__map">
                         <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48158.305462977965!2d-74.13283844036356!3d41.02757295168286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2e440473470d7%3A0xcaf503ca2ee57958!2sSaddle%20River%2C%20NJ%2007458%2C%20USA!5e0!3m2!1sen!2sbd!4v1575917275626!5m2!1sen!2sbd"
+                        
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3933.7509378280647!2d-84.6349501532626!3d9.61670087132338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa1c715b8e3472d%3A0x354554cdd91ea84a!2sAv.%20Pastor%20D%C3%ADaz%2C%20Provincia%20de%20Puntarenas%2C%20Jac%C3%B3!5e0!3m2!1ses-419!2scr!4v1709237823141!5m2!1ses-419!2scr"
                         height="780" style="border:0" allowfullscreen="">
                     </iframe>
                 </div>
@@ -180,7 +221,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -188,7 +229,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -196,7 +237,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -204,7 +245,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -212,7 +253,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -220,7 +261,7 @@
                 <div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
                     <div class="instagram__text">
                         <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
+                        <a href="#">@ pineapple_sea</a>
                     </div>
                 </div>
             </div>
@@ -238,46 +279,123 @@
                     <div class="footer__logo">
                         <a href="./index.html"><img src="img/logo.png" alt=""></a>
                     </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    cilisis.</p>
+                    <p>Poseemos distintos metodos de pago</p>
                     <div class="footer__payment">
                         <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                         <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
+                       
                         <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                       
                     </div>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-5">
                 <div class="footer__widget">
-                    <h6>Quick links</h6>
+                    <h6>Acceso rápidos</h6>
                     <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Blogs</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="index.html">Sobre nosotros</a></li>
+                        <li><a href="shop.html">Tienda</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                     
                     </ul>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-4">
                 <div class="footer__widget">
-                    <h6>Account</h6>
-                    <ul>
-                        <li><a href="#">My Account</a></li>
-                        <li><a href="#">Orders Tracking</a></li>
-                        <li><a href="#">Checkout</a></li>
-                        <li><a href="#">Wishlist</a></li>
-                    </ul>
+                    <h6>Cuenta</h6>
+<ul id="accountOptions">
+    <!-- Dentro del <ul> de opciones de cuenta -->
+<li><a href="#" id="eliminarCuentaLink">Eliminar mi cuenta</a></li>
+<script>
+    // Agregar un listener de evento 'DOMContentLoaded'
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener referencia al enlace de eliminar cuenta
+      const eliminarCuentaLink = document.getElementById('eliminarCuentaLink');
+  
+      // Agregar un listener de evento 'click' al enlace de eliminar cuenta
+      eliminarCuentaLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+        if (confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) {
+          eliminarCuenta();
+        }
+      });
+  
+      // Función para enviar la solicitud de eliminación de cuenta al servidor
+      function eliminarCuenta() {
+        fetch('/eliminarCuenta', {
+            method: 'DELETE' // Usar el método DELETE para eliminar la cuenta
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            cerrarSesion(); // Llamar a la función para cerrar sesión después de eliminar la cuenta
+          })
+          .catch(error => console.error('Error al eliminar cuenta de usuario:', error));
+      }
+  
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        fetch('/cerrarSesion')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            window.location.href = './inicio.html'; // Redirigir a la página de inicio después de cerrar sesión
+          })
+          .catch(error => console.error('Error al cerrar sesión:', error));
+      }
+    });
+  </script>
+  
+  
+    <li><a href="shop-cart.html">Carrito</a></li>
+    <li id="logoutLink" style="display: none;"><a href="/cerrarSesion">Cerrar sesión</a></li>
+</ul>
+
                 </div>
             </div>
             <div class="col-lg-4 col-md-8 col-sm-8">
                 <div class="footer__newslatter">
-                    <h6>NEWSLETTER</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Email">
-                        <button type="submit" class="site-btn">Subscribe</button>
-                    </form>
+                    <h6>Novedades</h6>
+                    <form id="suscribirseForm">
+                        <input type="text" name="correo" placeholder="Correo electrónico">
+                        <button type="submit" class="site-btn">Suscribirse</button>
+                      </form>
+<script>document.getElementById('suscribirseForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+  
+    const correo = this.correo.value; // Obtener el valor del campo de correo electrónico
+  
+    // Enviar solicitud POST al servidor para suscribirse
+    fetch('/suscribirse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ correo }) // Enviar el correo electrónico como un objeto JSON
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Respuesta del servidor no válida');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert(data.message); // Mostrar mensaje de éxito
+      // Puedes agregar cualquier otra lógica aquí, como limpiar el formulario
+    })
+    .catch(error => console.error('Error al suscribirse:', error));
+  });
+  </script>                      
                     <div class="footer__social">
                         <a href="#"><i class="fa fa-facebook"></i></a>
                         <a href="#"><i class="fa fa-twitter"></i></a>
@@ -292,7 +410,7 @@
             <div class="col-lg-12">
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 <div class="footer__copyright__text">
-                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></p>
+                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved 
                 </div>
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             </div>
@@ -323,6 +441,7 @@
 <script src="js/owl.carousel.min.js"></script>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/main.js"></script>
+<script src="script.js"></script>
 </body>
 
 </html>

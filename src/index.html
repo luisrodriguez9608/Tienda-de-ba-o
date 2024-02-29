@@ -69,21 +69,16 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Inicio</a></li>
-                            <li><a href="#">Mujeres</a></li>
-                            <li><a href="#">Hombres</a></li>
-                            <li><a href="./shop.html">Todo</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./product-details.html">Detalles de Productos</a></li>
-                                    <li><a href="./shop-cart.html">Carro de compra</a></li>
-                                    <li><a href="./checkout.html">Pagar</a></li>
-                                    <li><a href="./blog-details.html">Detalles del Blog</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="./blog.html">Blog</a></li>
+                        
+                            <li><a href="./shop.html">Tienda</a></li>
+                         
+                
                             <li><a href="./contact.html">Contacto</a></li>
                             <!-- Enlace de administrador (inicialmente oculto) -->
                             <li id="adminLink"><a href="./admin.html">Admin</a></li>
+                            <!-- Enlace del dashboard (inicialmente oculto) -->
+<li id="dashboardLink"><a href="./dashboard.html">Dashboard</a></li>
+
                             
                             </ul>
                             </nav>
@@ -96,9 +91,7 @@
                             <ul class="header__right__widget">
                               
                                 
-                                <li><a href="shop-cart.html"><span class="icon_bag_alt"></span>
-                                    <div class="tip">2</div>
-                                </a></li>
+                                <li><a href="shop-cart.html"><span class="icon_bag_alt"></span></div></a></li>
                                 
                             </ul>
                             
@@ -107,8 +100,6 @@
                         
                         
                         
-
-
 
                     </div>
                 </div>
@@ -307,7 +298,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> 
 <!-- Categories Section End -->
 
 <!-- Product Section Begin -->
@@ -321,12 +312,12 @@
             </div>
             <div class="col-lg-8 col-md-8">
                 <ul class="filter__controls">
-                    <li class="active" data-filter="*">Todos</li>
-                    <li data-filter=".masculino">Hombres</li>
-                    <li data-filter=".femenino">Mujeres</li>
-                    <li data-filter=".infantil">Niños</li>
-                    <li data-filter=".accesorio">Accesorios</li>
-                    <li data-filter=".cosmetico">Cosméticos</li>
+                    <li class="active" data-filter="todos">Todos</li>
+                    <li data-filter="masculino">Hombres</li>
+                    <li data-filter="femenino">Mujeres</li>
+                    <li data-filter="infantil">Niños</li>
+                    <li data-filter="accesorio">Accesorios</li>
+                    <li data-filter="cosmetico">Cosméticos</li>
                 </ul>
             </div>
         </div>
@@ -335,6 +326,63 @@
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const productosContainer = document.getElementById('productos-container-index');
+    const filterControls = document.querySelectorAll('.filter__controls li');
+
+    filterControls.forEach(control => {
+        control.addEventListener('click', function () {
+            const categoria = this.getAttribute('data-filter');
+            obtenerProductosPorCategoria(categoria);
+        });
+    });
+
+    function obtenerProductosPorCategoria(categoria) {
+        fetch(`/productos-por-categoria?categoria=${categoria}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Respuesta del servidor no válida');
+                }
+                return response.json();
+            })
+            .then(data => {
+                mostrarProductos(data);
+            })
+            .catch(error => {
+                console.error('Error al obtener productos:', error);
+            });
+    }
+
+    function mostrarProductos(productos) {
+        productosContainer.innerHTML = ''; // Limpiar contenido anterior
+        if (productos.length === 0) {
+            productosContainer.innerHTML = '<p>No se encontraron productos.</p>';
+            return;
+        }
+        productos.forEach(producto => {
+            const productoHTML = `
+                <div class="col-lg-4 col-md-6">
+                    <div class="product__item">
+                        <div class="product__item__pic">
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                        </div>
+                        <div class="product__item__text text-center">
+                            <h6><a href="#">${producto.nombre}</a></h6>
+                            <div class="product__price">$${producto.precio}</div>
+                       
+                        </div>
+                    </div>
+                </div> 
+            `;
+            productosContainer.innerHTML += productoHTML;
+        });
+    }
+});
+</script>
+
+
+
 
 
 <!-- Product Section End -->
@@ -349,21 +397,24 @@
                         <div class="banner__text">
                             <span>Colección Marina</span>
                             <h1>La Moda Que Esperabas</h1>
-                            <a href="#">Comprar ahora</a>
+                            <a href="shop.html">Comprar ahora</a>
+
                         </div>
                     </div>
                     <div class="banner__item">
                         <div class="banner__text">
                             <span>Ofertas Únicas</span>
-                            <h1>Aprovecha estos descuentos del 14 de febrero</h1>
-                            <a href="#">Comprar ahora</a>
+                            <h1>Aprovecha estos descuentos del 14 de marzo</h1>
+                            <a href="shop.html">Comprar ahora</a>
+
                         </div>
                     </div>
                     <div class="banner__item">
                         <div class="banner__text">
-                            <span>The Chloe Collection</span>
-                            <h1>The Project Jacket</h1>
-                            <a href="#">Shop now</a>
+                            <span>La colección de Chloe</span>
+                            <h1>El Proyecto Jacket</h1>
+                            <a href="shop.html">Comprar ahora</a>
+
                         </div>
                     </div>
                 </div>
@@ -372,185 +423,6 @@
     </div>
 </section>
 <!-- Banner Section End -->
-
-<!-- Trend Section Begin -->
-<!--
-    
-    <section class="trend spad">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="trend__content">
-                    <div class="section-title">
-                        <h4>Hot Trend</h4>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/ht-1.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Chain bucket bag</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/ht-2.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Pendant earrings</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/ht-3.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Cotton T-Shirt</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="trend__content">
-                    <div class="section-title">
-                        <h4>Best seller</h4>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/bs-1.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Cotton T-Shirt</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/bs-2.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Zip-pockets pebbled tote <br />briefcase</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/bs-3.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Round leather bag</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="trend__content">
-                    <div class="section-title">
-                        <h4>Feature</h4>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/f-1.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Bow wrap skirt</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/f-2.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Metallic earrings</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                    <div class="trend__item">
-                        <div class="trend__item__pic">
-                            <img src="img/trend/f-3.jpg" alt="">
-                        </div>
-                        <div class="trend__item__text">
-                            <h6>Flap cross-body bag</h6>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="product__price">$ 59.0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
--->
-
-<!-- Trend Section End -->
 
 <!-- Discount Section Begin -->
 <section class="discount">
@@ -565,7 +437,7 @@
                 <div class="discount__text">
                     <div class="discount__text__title">
                         <span>Descuento</span>
-                        <h2>Febrero 2024</h2>
+                        <h2>Marzo 2024</h2>
                         <h5><span>Precios</span> 50%</h5>
                     </div>
                     <div class="discount__countdown" id="countdown-time">
@@ -586,7 +458,8 @@
                             <p>Sec</p>
                         </div>
                     </div>
-                    <a href="#">Comprar Ahora</a>
+                    <a href="shop.html">Comprar Ahora</a>
+
                 </div>
             </div>
         </div>
@@ -602,7 +475,7 @@
                 <div class="services__item">
                     <i class="fa fa-car"></i>
                     <h6>Envío Gratis</h6>
-                    <p>Ordenes mayores a $99</p>
+                    <p>Aplica a todo Costa Rica</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -615,7 +488,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="services__item">
                     <i class="fa fa-support"></i>
-                    <h6>Soportye en línea 24/7</h6>
+                    <h6>Soporte en línea 24/7</h6>
                     <p>Soporte dedicado</p>
                 </div>
             </div>
@@ -701,9 +574,9 @@
                     <div class="footer__payment">
                         <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                         <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-3.png" alt=""></a>
+                       
                         <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
-                        <a href="#"><img src="img/payment/payment-5.png" alt=""></a>
+                       
                     </div>
                 </div>
             </div>
@@ -711,31 +584,109 @@
                 <div class="footer__widget">
                     <h6>Acceso rápidos</h6>
                     <ul>
-                        <li><a href="#">Sobre nosotros</a></li>
-                        <li><a href="#">Tiendas</a></li>
-                        <li><a href="#">Contactos</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="index.html">Sobre nosotros</a></li>
+                        <li><a href="shop.html">Tienda</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                     
                     </ul>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-4">
                 <div class="footer__widget">
                     <h6>Cuenta</h6>
-                    <ul>
-                        <li><a href="#">Mi Cuenta</a></li>
-                        <li><a href="#">Ordenes en proceso/a></li>
-                        <li><a href="#">Pago</a></li>
-                        <li><a href="#">Carrito</a></li>
-                    </ul>
+<ul id="accountOptions">
+    <!-- Dentro del <ul> de opciones de cuenta -->
+<li><a href="#" id="eliminarCuentaLink">Eliminar mi cuenta</a></li>
+<script>
+    // Agregar un listener de evento 'DOMContentLoaded'
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener referencia al enlace de eliminar cuenta
+      const eliminarCuentaLink = document.getElementById('eliminarCuentaLink');
+  
+      // Agregar un listener de evento 'click' al enlace de eliminar cuenta
+      eliminarCuentaLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+        if (confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) {
+          eliminarCuenta();
+        }
+      });
+  
+      // Función para enviar la solicitud de eliminación de cuenta al servidor
+      function eliminarCuenta() {
+        fetch('/eliminarCuenta', {
+            method: 'DELETE' // Usar el método DELETE para eliminar la cuenta
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            cerrarSesion(); // Llamar a la función para cerrar sesión después de eliminar la cuenta
+          })
+          .catch(error => console.error('Error al eliminar cuenta de usuario:', error));
+      }
+  
+      // Función para cerrar sesión
+      function cerrarSesion() {
+        fetch('/cerrarSesion')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert(data.message); // Mostrar mensaje de éxito
+            window.location.href = './inicio.html'; // Redirigir a la página de inicio después de cerrar sesión
+          })
+          .catch(error => console.error('Error al cerrar sesión:', error));
+      }
+    });
+  </script>
+  
+  
+    <li><a href="shop-cart.html">Carrito</a></li>
+    <li id="logoutLink" style="display: none;"><a href="/cerrarSesion">Cerrar sesión</a></li>
+</ul>
+
                 </div>
             </div>
             <div class="col-lg-4 col-md-8 col-sm-8">
                 <div class="footer__newslatter">
                     <h6>Novedades</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Email">
+                    <form id="suscribirseForm">
+                        <input type="text" name="correo" placeholder="Correo electrónico">
                         <button type="submit" class="site-btn">Suscribirse</button>
-                    </form>
+                      </form>
+<script>document.getElementById('suscribirseForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+  
+    const correo = this.correo.value; // Obtener el valor del campo de correo electrónico
+  
+    // Enviar solicitud POST al servidor para suscribirse
+    fetch('/suscribirse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ correo }) // Enviar el correo electrónico como un objeto JSON
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Respuesta del servidor no válida');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert(data.message); // Mostrar mensaje de éxito
+      // Puedes agregar cualquier otra lógica aquí, como limpiar el formulario
+    })
+    .catch(error => console.error('Error al suscribirse:', error));
+  });
+  </script>                      
                     <div class="footer__social">
                         <a href="#"><i class="fa fa-facebook"></i></a>
                         <a href="#"><i class="fa fa-twitter"></i></a>
@@ -781,6 +732,7 @@
 <script src="js/owl.carousel.min.js"></script>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/main.js"></script>
+<script src="script.js"></script>
 </body>
 
 </html>
