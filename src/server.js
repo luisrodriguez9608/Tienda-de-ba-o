@@ -1,3 +1,5 @@
+require('dotenv').config
+
 const express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -21,10 +23,10 @@ let db;
 // Función para reconectar a la base de datos
 function handleDisconnect() {
   db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '1x6x-osq5-S719.()',
-    database: 'pineapplesea'
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USERNAME ? process.env.DATABASE_USERNAME  : 'root',
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE
   });
 
   db.connect((err) => {
