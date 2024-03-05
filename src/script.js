@@ -23,7 +23,7 @@ function registrarUsuario() {
         alert(message);
         // Redireccionar al usuario a la página de inicio si el registro fue exitoso
         if (message === 'Usuario registrado correctamente') {
-            window.location.href = '/index.html'; // Redirigir al usuario al index.html
+            window.location.href = '/'; // Redirigir al usuario al index.html
         }
     })
     .catch(error => console.error('Error al registrar usuario:', error));
@@ -307,14 +307,14 @@ function checkSession() {
             const adminLink = document.getElementById('adminLink');
 
             if (data.loggedin) {
-                authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
+                authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
                 if (data.rol !== null && data.rol === 2) {
                     adminLink.removeAttribute('hidden');
                 } else {
                     adminLink.setAttribute('hidden', 'true');
                 }
             } else {
-                authSection.innerHTML = '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
+                authSection.innerHTML = '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
                 adminLink.setAttribute('hidden', 'true');
             }
         })
@@ -532,7 +532,7 @@ function agregarProducto() {
     
     function cancelarAccion() {
         // Redirigir a admin.html sin agregar el producto
-        window.location.href = '/admin.html';
+        window.location.href = '/admin';
     }
     
 // Agregar una variable booleana para verificar si los productos ya se cargaron
