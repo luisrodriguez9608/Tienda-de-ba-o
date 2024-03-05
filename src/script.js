@@ -9,22 +9,22 @@ function registrarUsuario() {
     confirmarContraseña: document.getElementById("confirmarContraseña").value,
   };
 
-  // Enviar los datos al servidor
-  fetch("/registro", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.text())
-    .then((message) => {
-      // Manejar la respuesta del servidor
-      alert(message);
-      // Redireccionar al usuario a la página de inicio si el registro fue exitoso
-      if (message === "Usuario registrado correctamente") {
-        window.location.href = "/index.html"; // Redirigir al usuario al index.html
-      }
+    // Enviar los datos al servidor
+    fetch('/registro', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.text())
+    .then(message => {
+        // Manejar la respuesta del servidor
+        alert(message);
+        // Redireccionar al usuario a la página de inicio si el registro fue exitoso
+        if (message === 'Usuario registrado correctamente') {
+            window.location.href = '/'; // Redirigir al usuario al index.html
+        }
     })
     .catch((error) => console.error("Error al registrar usuario:", error));
 
@@ -523,11 +523,12 @@ function agregarProducto() {
   return false;
 }
 
-function cancelarAccion() {
-  // Redirigir a admin.html sin agregar el producto
-  window.location.href = "/admin.html";
-}
-
+    
+    function cancelarAccion() {
+        // Redirigir a admin.html sin agregar el producto
+        window.location.href = '/admin';
+    }
+    
 // Agregar una variable booleana para verificar si los productos ya se cargaron
 let productosCargados = false;
 
