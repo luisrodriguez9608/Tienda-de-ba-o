@@ -9,22 +9,22 @@ function registrarUsuario() {
     confirmarContraseña: document.getElementById("confirmarContraseña").value,
   };
 
-    // Enviar los datos al servidor
-    fetch('/registro', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.text())
-    .then(message => {
-        // Manejar la respuesta del servidor
-        alert(message);
-        // Redireccionar al usuario a la página de inicio si el registro fue exitoso
-        if (message === 'Usuario registrado correctamente') {
-            window.location.href = '/'; // Redirigir al usuario al index.html
-        }
+  // Enviar los datos al servidor
+  fetch("/registro", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.text())
+    .then((message) => {
+      // Manejar la respuesta del servidor
+      alert(message);
+      // Redireccionar al usuario a la página de inicio si el registro fue exitoso
+      if (message === "Usuario registrado correctamente") {
+        window.location.href = "/"; // Redirigir al usuario al index.html
+      }
     })
     .catch((error) => console.error("Error al registrar usuario:", error));
 
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
   // Obtener los productos disponibles en la tienda y mostrarlos
-  fetch("/admin")
+  fetch("/get-productos")
     .then((response) => response.json())
     .then((productos) => {
       const productosContainer = document.getElementById("productos-container");
@@ -327,48 +327,45 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 });
 function checkSession() {
-    fetch("/checkSession")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Respuesta del servidor no válida");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Respuesta del servidor:", data);
-        const authSection = document.getElementById("authSection");
-        const adminLink = document.getElementById("adminLink");
-        const dashboardLink = document.getElementById("dashboardLink"); // Agregamos referencia al enlace del dashboard
-        const accountOptions = document.getElementById("accountOptions");
-        const logoutLink = document.getElementById("logoutLink");
-  
-        if (data.loggedin) {
-          authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
-          if (data.rol !== null && data.rol === 2) {
-            adminLink.removeAttribute("hidden");
-            dashboardLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
-          } else {
-            adminLink.setAttribute("hidden", "true");
-            dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
-          }
-          accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
-          logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
+  fetch("/checkSession")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Respuesta del servidor no válida");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Respuesta del servidor:", data);
+      const authSection = document.getElementById("authSection");
+      const adminLink = document.getElementById("adminLink");
+      const dashboardLink = document.getElementById("dashboardLink"); // Agregamos referencia al enlace del dashboard
+      const accountOptions = document.getElementById("accountOptions");
+      const logoutLink = document.getElementById("logoutLink");
+
+      if (data.loggedin) {
+        authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
+        if (data.rol !== null && data.rol === 2) {
+          adminLink.removeAttribute("hidden");
+          dashboardLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
         } else {
-          authSection.innerHTML =
-            '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
           adminLink.setAttribute("hidden", "true");
-          dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
-          accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
-          logoutLink.style.display = "none"; // Ocultar el enlace de cerrar sesión
+          dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
         }
-      })
-      .catch((error) => console.error("Error al verificar la sesión: ", error));
-  }
-  
-  document.addEventListener("DOMContentLoaded", checkSession);
-  
+        accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
+        logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
+      } else {
+        authSection.innerHTML =
+          '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
+        adminLink.setAttribute("hidden", "true");
+        dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
+        accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
+        logoutLink.style.display = "none"; // Ocultar el enlace de cerrar sesión
+      }
+    })
+    .catch((error) => console.error("Error al verificar la sesión: ", error));
+}
 
-
+document.addEventListener("DOMContentLoaded", checkSession);
 
 function confirmarEliminacion(productoID) {
   console.log("ID del producto a eliminar:", productoID);
@@ -523,12 +520,11 @@ function agregarProducto() {
   return false;
 }
 
-    
-    function cancelarAccion() {
-        // Redirigir a admin.html sin agregar el producto
-        window.location.href = '/admin';
-    }
-    
+function cancelarAccion() {
+  // Redirigir a admin.html sin agregar el producto
+  window.location.href = "/admin";
+}
+
 // Agregar una variable booleana para verificar si los productos ya se cargaron
 let productosCargados = false;
 
@@ -632,5 +628,3 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch((error) => console.error("Error al obtener el producto: ", error));
 });
-
-

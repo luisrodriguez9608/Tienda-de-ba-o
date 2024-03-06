@@ -1,15 +1,10 @@
 const express = require('express');
-const webpack = require('webpack');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackConfig = require('../webpack.config');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mysql = require('mysql2');
 const session = require('express-session');
-const phpExpress = require('php-express')();
 const nodemailer = require('nodemailer');
 const axios = require('axios');
-const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 const router = require("./app/router");
@@ -491,7 +486,7 @@ app.post("/registro", (req, res) => {
 });
 
 // Ruta para mostrar productos en admin.html
-app.get("/admin", (req, res) => {
+app.get("/get-productos", (req, res) => {
   db.query(
     "SELECT productoID, nombre, imagen, precio FROM productos",
     (err, results) => {
