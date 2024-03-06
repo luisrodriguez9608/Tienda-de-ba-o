@@ -1,4 +1,3 @@
-<!-- Breadcrumb Begin -->
 <section class="shop-cart spad">
     <div class="container">
         <div class="row">
@@ -24,25 +23,20 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="cart__btn">
-                    <a href="/shop">Continuar comprando</a>
+                    <a href="shop.html">Continuar comprando</a>
                 </div>
 
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="cart__btn update__btn">
-                    <a href="#"><span class="icon_loading"></span> Actualizar carrito</a>
+
+
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-6">
-                <div class="discount__content">
-                    <h6>Codigos de descuento</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Enter your coupon code">
-                        <button type="submit" class="site-btn">Apply</button>
-                    </form>
-                </div>
+
             </div>
             <div class="col-lg-4 offset-lg-2">
                 <div class="cart__total__procced">
@@ -51,14 +45,29 @@
                         <li>Subtotal <span id="subtotal"></span></li>
                         <li>Total <span id="total"></span></li>
                     </ul>
-                    <div id="paypal-button-container"></div>
+
+                    <!-- En la vista shop-cart -->
+                    <form id="checkoutForm">
+                        <input type="hidden" name="userID" value="{{ userID }}">
+                        <input type="hidden" name="carritoID" value="{{ carritoID }}">
+                        <button type="button" id="checkoutButton">Realizar Compra</button>
+                    </form>
+
+                    <script>
+                        document.getElementById("checkoutButton").addEventListener("click", function () {
+                            // Obtener los valores de userID y carritoID
+                            const userID = document.querySelector('input[name="userID"]').value;
+                            const carritoID = document.querySelector('input[name="carritoID"]').value;
+
+                            // Redirigir a la página de checkout con los parámetros en la URL
+                            window.location.href = `checkout.html?userID=${userID}&carritoID=${carritoID}`;
+                        });
+                    </script>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<script
-    src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -89,38 +98,6 @@
                 })
                 .catch(error => console.error('Error al obtener productos del carrito: ', error));
         }
-
-        // Función para renderizar el botón de PayPal con el total del carrito
-        function renderizarBotonPayPal(total) {
-            paypal.Buttons({
-                style: {
-                    color: 'blue',
-                    shape: 'pill',
-                    label: 'pay',
-                },
-                createOrder: function (data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            amount: {
-                                value: total // Aquí se pasa el total del carrito como el valor del amount
-                            }
-                        }]
-                    });
-                },
-                onApprove: function (data, actions) {
-                    alert("Pago Realizado");
-                    actions.order.capture().then(function (details) {
-                        console.log(details);
-
-                        window.location.href = "index.html";
-                    });
-                },
-                onCancel: function (data) {
-                    alert("Pago Cancelado");
-                }
-            }).render('#paypal-button-container');
-        }
-
         // Llamar a la función para calcular el total del carrito cuando el contenido del DOM esté completamente cargado
         calcularTotalCarrito();
     });
