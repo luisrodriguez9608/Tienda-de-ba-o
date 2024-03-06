@@ -23,7 +23,7 @@ function registrarUsuario() {
       alert(message);
       // Redireccionar al usuario a la página de inicio si el registro fue exitoso
       if (message === "Usuario registrado correctamente") {
-        window.location.href = "/"; // Redirigir al usuario al index.html
+        window.location.href = "/index.html"; // Redirigir al usuario al index.html
       }
     })
     .catch((error) => console.error("Error al registrar usuario:", error));
@@ -327,45 +327,48 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 });
 function checkSession() {
-  fetch("/checkSession")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Respuesta del servidor no válida");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Respuesta del servidor:", data);
-      const authSection = document.getElementById("authSection");
-      const adminLink = document.getElementById("adminLink");
-      const dashboardLink = document.getElementById("dashboardLink"); // Agregamos referencia al enlace del dashboard
-      const accountOptions = document.getElementById("accountOptions");
-      const logoutLink = document.getElementById("logoutLink");
-
-      if (data.loggedin) {
-        authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
-        if (data.rol !== null && data.rol === 2) {
-          adminLink.removeAttribute("hidden");
-          dashboardLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
-        } else {
-          adminLink.setAttribute("hidden", "true");
-          dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
+    fetch("/checkSession")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Respuesta del servidor no válida");
         }
-        accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
-        logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
-      } else {
-        authSection.innerHTML =
-          '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
-        adminLink.setAttribute("hidden", "true");
-        dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
-        accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
-        logoutLink.style.display = "none"; // Ocultar el enlace de cerrar sesión
-      }
-    })
-    .catch((error) => console.error("Error al verificar la sesión: ", error));
-}
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Respuesta del servidor:", data);
+        const authSection = document.getElementById("authSection");
+        const adminLink = document.getElementById("adminLink");
+        const dashboardLink = document.getElementById("dashboardLink"); // Agregamos referencia al enlace del dashboard
+        const accountOptions = document.getElementById("accountOptions");
+        const logoutLink = document.getElementById("logoutLink");
+  
+        if (data.loggedin) {
+          authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
+          if (data.rol !== null && data.rol === 2) {
+            adminLink.removeAttribute("hidden");
+            dashboardLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
+          } else {
+            adminLink.setAttribute("hidden", "true");
+            dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
+          }
+          accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
+          logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
+        } else {
+          authSection.innerHTML =
+            '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
+          adminLink.setAttribute("hidden", "true");
+          dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
+          accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
+          logoutLink.style.display = "none"; // Ocultar el enlace de cerrar sesión
+        }
+      })
+      .catch((error) => console.error("Error al verificar la sesión: ", error));
+  }
+  
+  document.addEventListener("DOMContentLoaded", checkSession);
+  
 
-document.addEventListener("DOMContentLoaded", checkSession);
+
 
 function confirmarEliminacion(productoID) {
   console.log("ID del producto a eliminar:", productoID);
@@ -522,7 +525,7 @@ function agregarProducto() {
 
 function cancelarAccion() {
   // Redirigir a admin.html sin agregar el producto
-  window.location.href = "/admin";
+  window.location.href = "/admin.html";
 }
 
 // Agregar una variable booleana para verificar si los productos ya se cargaron
@@ -628,3 +631,5 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch((error) => console.error("Error al obtener el producto: ", error));
 });
+
+

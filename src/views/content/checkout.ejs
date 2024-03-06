@@ -1,0 +1,413 @@
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index"><i class="fa fa-home"></i> Inicio</a>
+                        <span>Factuación</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Checkout Section Begin -->
+
+    <section class="checkout spad">
+        <div class="container">
+          
+            
+
+
+            <form action="/placeOrder" method="POST" class="checkout__form">
+                <div class="row">
+                    
+                    
+                    <div class="col-lg-8">
+                        <h5>Detalles de compra</h5>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="checkout__form__input">
+                                    <p>Nombre <span>*</span></p>
+                                    <input type="text" name="nombre">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="checkout__form__input">
+                                    <p>Apellido <span>*</span></p>
+                                    <input type="text" name="apellido">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="checkout__form__input">
+                                    <p>País <span>*</span></p>
+                                    <input type="text" name="pais" value="Costa Rica" readonly>
+                                </div>
+                                <div class="checkout__form__input">
+                                    <p>Dirección <span>*</span></p>
+                                    <input type="text" name="direccion">
+                                </div>
+                                <div class="checkout__form__input">
+                                    <p>Provincia <span>*</span></p>
+                                    <select name="provincia" id="provincia">
+                                        <option value="" disabled selected>Seleccione una provincia</option>
+                                        <option value="San José">San José</option>
+                                        <option value="Alajuela">Alajuela</option>
+                                        <option value="Cartago">Cartago</option>
+                                        <option value="Heredia">Heredia</option>
+                                        <option value="Guanacaste">Guanacaste</option>
+                                        <option value="Puntarenas">Puntarenas</option>
+                                        <option value="Limón">Limón</option>
+                                    </select>
+                                </div>
+                                <div class="checkout__form__input">
+                                    <p>Cantón <span>*</span></p>
+                                    <select name="canton" id="canton" disabled>
+                                        <option value="" disabled selected>Seleccione un cantón</option>
+                                    </select>
+                                </div>
+                                <div class="checkout__form__input">
+                                    <p>Distrito <span>*</span></p>
+                                    <select name="distrito" id="distrito">
+                                        <option value="" disabled selected>Seleccione un distrito</option>
+                                        <!-- Aquí se cargarán los distritos de la provincia seleccionada mediante JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="checkout__form__input">
+                                        <p>Teléfono <span>*</span></p>
+                                        <input type="text" name="telefono">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="checkout__form__input">
+                                        <p>Correo <span>*</span></p>
+                                        <input type="text" name="correo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+
+                    <div class="col-lg-4">
+                        <div class="checkout__order">
+                            <h5>Su Orden</h5>
+                            <div class="checkout__order__product" id="product-list">
+                                <!-- Aquí se insertarán los productos del carrito -->
+                            </div>
+                            <div class="checkout__order__total">
+                                <ul id="total-list">
+                                    <li>Subtotal <span id="subtotal"></span></li>
+                                    <li>Total <span id="total"></span></li>
+                                </ul>
+                                <div id="paypal-button-container"></div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Hacer una solicitud al servidor para obtener los productos del carrito
+                            fetch('/productos-carrito')
+                                .then(response => response.json())
+                                .then(productos => {
+                                    const productList = document.getElementById('product-list');
+                                    let subtotal = 0;
+                                    // Verificar si hay productos en el carrito
+                                    if (productos.length === 0) {
+                                        const item = document.createElement('li');
+                                        item.textContent = 'No hay productos en el carrito';
+                                        productList.appendChild(item);
+                                    } else {
+                                        // Mostrar los productos del carrito
+                                        productos.forEach(producto => {
+                                            const item = document.createElement('li');
+                                            item.innerHTML = `${producto.nombre} <span>$${producto.subtotal.toFixed(2)}</span>`;
+                                            productList.appendChild(item);
+                                            subtotal += producto.subtotal;
+                                        });
+                                    }
+                                    // Actualizar el subtotal y el total en el DOM
+                                    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                                    document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+                                })
+                                .catch(error => console.error('Error al obtener productos del carrito:', error));
+                        });
+                    </script>
+                    
+
+
+                    <script>
+                        const provinciaSelect = document.getElementById('provincia');
+                        const cantonSelect = document.getElementById('canton');
+                        const distritoSelect = document.getElementById('distrito');
+                    
+                        const cantonesPorProvincia = {
+                            'San José': ['San José', 'Escazú', 'Desamparados', 'Puriscal', 'Tarrazú', 'Aserrí', 'Mora', 'Goicoechea', 'Santa Ana', 'Alajuelita', 'Vázquez de Coronado', 'Acosta', 'Tibás', 'Moravia', 'Montes de Oca', 'Turrubares', 'Dota', 'Curridabat', 'Pérez Zeledón', 'León Cortés Castro'],
+                            'Alajuela': ['Alajuela', 'San Ramón', 'Grecia', 'San Mateo', 'Atenas', 'Naranjo', 'Palmares', 'Poás', 'Orotina', 'San Carlos', 'Zarcero', 'Sarchí', 'Upala', 'Los Chiles', 'Guatuso', 'Río Cuarto'],
+                            'Cartago': ['Cartago', 'Paraíso', 'La Unión', 'Jiménez', 'Turrialba', 'Alvarado', 'Oreamuno', 'El Guarco'],
+                            'Heredia': ['Heredia', 'Barva', 'Santo Domingo', 'Santa Bárbara', 'San Rafael', 'San Isidro', 'Belén', 'Flores', 'San Pablo', 'Sarapiquí'],
+                            'Guanacaste': ['Liberia', 'Nicoya', 'Santa Cruz', 'Bagaces', 'Carrillo', 'Cañas', 'Abangares', 'Tilarán', 'Nandayure', 'La Cruz', 'Hojancha'],
+                            'Puntarenas': ['Puntarenas', 'Esparza', 'Buenos Aires', 'Montes de Oro', 'Osa', 'Quepos', 'Golfito', 'Coto Brus', 'Parrita', 'Corredores', 'Garabito'],
+                            'Limón': ['Limón', 'Pococí', 'Siquirres', 'Talamanca', 'Matina', 'Guácimo']
+                        };
+                    
+                        const distritosPorCanton = {
+    'San José': {
+        'San José': ['Carmen', 'Merced', 'Hospital', 'Catedral'],
+        'Escazú': ['Escazú Centro', 'San Antonio'],
+        'Desamparados': ['Desamparados Centro', 'San Miguel', 'San Rafael Arriba'],
+        'Puriscal': ['Santiago', 'Barbacoas', 'Grifo Alto'],
+        'Tarrazú': ['San Marcos', 'San Lorenzo', 'San Carlos'],
+        'Aserrí': ['Aserrí', 'Tarbaca', 'Vuelta de Jorco'],
+        'Mora': ['Ciudad Colón', 'Tabarcia', 'Piedras Negras'],
+        'Goicoechea': ['Goicoechea', 'San Francisco', 'Calle Blancos'],
+        'Santa Ana': ['Santa Ana', 'Salitral', 'Pozos'],
+        'Alajuelita': ['Alajuelita', 'San Josecito', 'San Antonio'],
+        'Vázquez de Coronado': ['San Isidro', 'San Rafael', 'Dulce Nombre'],
+        'Acosta': ['San Ignacio', 'Guaitil', 'Palmichal'],
+        'Tibás': ['San Juan', 'Cinco Esquinas', 'Anselmo Llorente'],
+        'Moravia': ['San Vicente', 'San Jerónimo', 'La Trinidad'],
+        'Montes de Oca': ['San Pedro', 'Sabanilla', 'Mercedes'],
+        'Turrubares': ['San Pablo', 'San Pedro', 'San Juan de Mata'],
+        'Dota': ['Santa María', 'Jardín', 'Copey'],
+        'Curridabat': ['Curridabat', 'Granadilla', 'Sánchez'],
+        'Pérez Zeledón': ['San Isidro de El General', 'Páramo', 'Río Nuevo'],
+        'León Cortés Castro': ['San Pablo', 'San Andrés', 'Llano Bonito']
+    },
+    'Alajuela': {
+        'Alajuela': ['Alajuela Centro', 'San José', 'San Isidro'],
+        'San Ramón': ['San Ramón Centro', 'Piedades Norte'],
+        'Grecia': ['Grecia Centro', 'San Isidro', 'San Roque'],
+        'San Mateo': ['San Mateo Centro', 'Desmonte', 'Jesús María'],
+        'Atenas': ['Atenas Centro', 'Jesús', 'Mercedes'],
+        'Naranjo': ['Naranjo Centro', 'San Miguel', 'Cirrí Sur'],
+        'Palmares': ['Palmares Centro', 'Zaragoza', 'Buenos Aires'],
+        'Poás': ['San Pedro', 'San Juan', 'San Rafael'],
+        'Orotina': ['Orotina Centro', 'Mastate', 'Coyolar'],
+        'San Carlos': ['Quesada', 'Florencia', 'Buenavista'],
+        'Zarcero': ['Zarcero Centro', 'Laguna', 'Tapezco'],
+        'Sarchí': ['Sarchí Norte', 'Sarchí Sur', 'Toro Amarillo'],
+        'Upala': ['Upala Centro', 'Aguas Claras', 'San José (Pizote)'],
+        'Los Chiles': ['Los Chiles Centro', 'Caño Negro', 'El Amparo'],
+        'Guatuso': ['San Rafael', 'Buenavista', 'Cote']
+    },
+    'Cartago': {
+        'Cartago': ['Cartago Centro', 'Oriental', 'Occidental'],
+        'Paraíso': ['Paraíso Centro', 'Santiago', 'Orosi'],
+        'La Unión': ['Tres Ríos', 'San Diego', 'San Juan'],
+        'Jiménez': ['Juan Viñas', 'Tucurrique', 'Pejibaye'],
+        'Turrialba': ['Turrialba Centro', 'La Suiza', 'Pavones'],
+        'Alvarado': ['Pacayas', 'Cervantes', 'Capellades'],
+        'Oreamuno': ['San Rafael', 'Cot', 'Potrero Cerrado'],
+        'El Guarco': ['Tejar', 'San Isidro', 'Tobosi']
+    },
+    'Heredia': {
+        'Heredia': ['Heredia Centro', 'Mercedes', 'San Francisco'],
+        'Barva': ['Barva Centro', 'San Pedro', 'San Pablo'],
+        'Santo Domingo': ['Santo Domingo Centro', 'San Vicente', 'San Miguel'],
+        'Santa Bárbara': ['Santa Bárbara Centro', 'San Pedro', 'San Juan'],
+        'San Rafael': ['San Rafael Centro', 'San Josecito', 'Santiago'],
+        'San Isidro': ['San Isidro Centro', 'San José', 'Concepción'],
+        'Belén': ['Belén Centro', 'Llorente', 'La Ribera'],
+        'Flores': ['San Joaquín', 'Barrantes', 'Llanos de Santa Lucía'],
+        'San Pablo': ['San Pablo Centro', 'Rincón de Sabanilla', 'Rincón de Salas'],
+        'Sarapiquí': ['Puerto Viejo', 'La Virgen', 'Horquetas']
+    },
+    'Guanacaste': {
+        'Liberia': ['Liberia Centro', 'Cañas Dulces', 'Mayorga'],
+        'Nicoya': ['Nicoya Centro', 'Mansión', 'San Antonio'],
+        'Santa Cruz': ['Santa Cruz Centro', 'Bolsón', 'Veintisiete de Abril'],
+        'Bagaces': ['Bagaces Centro', 'La Fortuna', 'Mogote'],
+        'Carrillo': ['Filadelfia', 'Palmira', 'Sardinal'],
+        'Cañas': ['Cañas Centro', 'Palmira', 'San Miguel'],
+        'Abangares': ['Las Juntas', 'Sierra', 'Colorado'],
+        'Tilarán': ['Tilarán Centro', 'Quebrada Grande', 'Tronadora'],
+        'Nandayure': ['Carmona', 'Santa Rita', 'Zapotal'],
+        'La Cruz': ['La Cruz Centro', 'Santa Cecilia', 'La Garita'],
+        'Hojancha': ['Hojancha Centro', 'Monte Romo', 'Puerto Carrillo']
+    },
+    'Puntarenas': {
+        'Puntarenas': ['Puntarenas Centro', 'Pitahaya', 'Chacarita'],
+        'Esparza': ['Espíritu Santo', 'San Juan Grande', 'Macacona'],
+        'Buenos Aires': ['Buenos Aires Centro', 'Volcán', 'Potrero Grande'],
+        'Montes de Oro': ['Miramar', 'La Unión', 'San Isidro'],
+        'Osa': ['Ciudad Cortés', 'Palmar', 'Sierpe'],
+        'Quepos': ['Quepos Centro', 'Savegre', 'Naranjito'],
+        'Golfito': ['Golfito Centro', 'Puerto Jiménez', 'Guaycará'],
+        'Coto Brus': ['San Vito', 'Sabalito', 'Aguabuena'],
+        'Parrita': ['Parrita Centro', 'Caballo', 'Panama'],
+        'Corredores': ['Ciudad Neily', 'Rincon', 'La Cuesta'],
+        'Garabito': ['Jacó', 'Tárcoles', 'Playa Hermosa']
+    },
+    'Limón': {
+        'Limón': ['Limón Centro', 'Valle La Estrella', 'Río Blanco'],
+        'Pococí': ['Guápiles', 'Jiménez', 'La Rita'],
+        'Siquirres': ['Siquirres Centro', 'Pacuarito', 'Reventazón'],
+        'Talamanca': ['Bratsi', 'Sixaola', 'Cahuita'],
+        'Matina': ['Matina Centro', 'Batán', 'Carrandi'],
+        'Guácimo': ['Guácimo Centro', 'Mercedes', 'Pocora']
+    }
+};
+
+                    
+                        provinciaSelect.addEventListener('change', cargarCantones);
+                        cantonSelect.addEventListener('change', cargarDistritos);
+                    
+                        function cargarCantones() {
+                            const provinciaSeleccionada = provinciaSelect.value;
+                            const cantones = cantonesPorProvincia[provinciaSeleccionada];
+                    
+                            cantonSelect.innerHTML = '<option value="" disabled selected>Seleccione un cantón</option>';
+                    
+                            cantones.forEach(canton => {
+                                const option = document.createElement('option');
+                                option.text = canton;
+                                option.value = canton;
+                                cantonSelect.add(option);
+                            });
+                    
+                            cantonSelect.disabled = false;
+                            distritoSelect.disabled = true;
+                            distritoSelect.innerHTML = '<option value="" disabled selected>Seleccione un distrito</option>';
+                        }
+                    
+                        function cargarDistritos() {
+                            const provinciaSeleccionada = provinciaSelect.value;
+                            const cantonSeleccionado = cantonSelect.value;
+                            const distritos = distritosPorCanton[provinciaSeleccionada][cantonSeleccionado];
+                    
+                            distritoSelect.innerHTML = '<option value="" disabled selected>Seleccione un distrito</option>';
+                    
+                            distritos.forEach(distrito => {
+                                const option = document.createElement('option');
+                                option.text = distrito;
+                                option.value = distrito;
+                                distritoSelect.add(option);
+                            });
+                    
+                            distritoSelect.disabled = false;
+                        }
+                    </script>
+                 
+
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="server.js" defer></script>
+
+    <script>
+        // Función para llamar a enviarMail en el servidor
+        function llamarEnviarMail() {
+            fetch('/enviar-correo', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Correo enviado correctamente');
+                    } else {
+                        console.error('Error al enviar el correo');
+                    }
+                })
+                .catch(error => console.error('Error al enviar el correo:', error));
+        }
+    
+        // Función para llamar a facturacion en el servidor
+        function llamarFacturacion() {
+            fetch('/facturacion', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Facturación realizada correctamente');
+                    } else {
+                        console.error('Error en la facturación');
+                    }
+                })
+                .catch(error => console.error('Error en la facturación:', error));
+        }
+    
+        // Función para renderizar el botón de PayPal con el total del carrito y el token
+        function renderizarBotonPayPal(total) {
+            paypal.Buttons({
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    label: 'pay',
+                },
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: total // Aquí se pasa el total del carrito como el valor del amount
+                            }
+                        }]
+                    });
+                },
+    
+                onApprove: function (data, actions) {
+                    alert("Pago Realizado");
+                    actions.order.capture().then(function (details) {
+                        console.log(details);
+                        // Llamar a la función para enviar el correo
+                        llamarEnviarMail();
+    
+                        // Llamar a la función para realizar la facturación
+                        llamarFacturacion();
+    
+                        // Realizar el submit del formulario
+                        document.querySelector('.checkout__form').submit();
+                        window.location.href = "index.html";
+                    });
+                },
+    
+                onCancel: function (data) {
+                    alert("Pago Cancelado");
+                }
+            }).render('#paypal-button-container');
+        }
+    
+        // Calcular el total del carrito y renderizar el botón de PayPal
+        document.addEventListener('DOMContentLoaded', function () {
+            // Función para calcular el total del carrito
+            function calcularTotalCarrito() {
+                // Obtener los productos en el carrito y calcular el total
+                fetch('/productos-carrito')
+                    .then(response => response.json())
+                    .then(productos => {
+                        let subtotal = 0;
+    
+                        // Calcular el subtotal sumando el precio total de cada producto en el carrito
+                        productos.forEach(producto => {
+                            subtotal += producto.precio * producto.cantidad;
+                        });
+    
+                        // Actualizar el subtotal en el DOM
+                        document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+    
+                        // Calcular el total sumando el subtotal y los impuestos, si corresponde
+                        const total = subtotal; // Aquí puedes agregar impuestos o gastos de envío, si corresponde
+    
+                        // Actualizar el total en el DOM
+                        document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+    
+                        // Renderizar el botón de PayPal con el total del carrito
+                        renderizarBotonPayPal(total);
+                    })
+                    .catch(error => console.error('Error al obtener productos del carrito: ', error));
+            }
+    
+            // Llamar a la función para calcular el total del carrito cuando el contenido del DOM esté completamente cargado
+            calcularTotalCarrito();
+        });
+    </script>
+    
+    
+
+    
+
+        <!-- Checkout Section End -->

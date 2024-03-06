@@ -44,5 +44,11 @@ router.get("/edit-products", function (req, res, next) {
 router.get("/details-products", function (req, res, next) {
   res.render("details-product");
 });
+router.get("/contact", function (req, res, next) {
+  res.render("contact");
+});
+router.get("/checkout", function (req, res, next) {
+  res.render("checkout");
+});
 
 module.exports = router;

@@ -1,0 +1,105 @@
+
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Inicio</a>
+                        <span>Contacto</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Contact Section Begin -->
+    <section class="contact spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__content">
+                        <div class="contact__address">
+                            <h5>Información de Contacto</h5>
+                            <ul>
+                                <li>
+                                    <h6><i class="fa fa-map-marker"></i> Direccioón</h6>
+                                    <p>Av. Pastor Díaz, Provincia de Puntarenas, Jacó</p>
+                                </li>
+                                <li>
+                                    <h6><i class="fa fa-phone"></i> Telefono</h6>
+                                    <p><span>8736 7898</span>
+                                </li>
+                                <li>
+                                    <h6><i class="fa fa-headphones"></i> Soporte</h6>
+                                    <p>pineapplesea@gmail.com</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="contact__form">
+                            <h5>Enviar mensaje</h5>
+                            <form id="contactForm">
+                                <input type="text" id="nombre" placeholder="Nombre Completo" required>
+                                <input type="email" id="correo" placeholder="Correo" required>
+                                <input type="text" id="asunto" placeholder="Asunto" required>
+                                <textarea id="mensaje" placeholder="Mensaje" required></textarea>
+                                <button type="submit" class="site-btn">Enviar</button>
+                            </form>
+                        </div>
+<script>document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const nombre = document.getElementById('nombre').value;
+        const correo = document.getElementById('correo').value;
+        const asunto = document.getElementById('asunto').value;
+        const mensaje = document.getElementById('mensaje').value;
+
+        enviarMensaje(nombre, correo, asunto, mensaje);
+    });
+
+    function enviarMensaje(nombre, correo, asunto, mensaje) {
+        fetch('/enviarMensaje', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                correo: correo,
+                asunto: asunto,
+                mensaje: mensaje
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Respuesta del servidor no válida');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message); // Muestra un mensaje de éxito o error
+            contactForm.reset(); // Reinicia el formulario después de enviar el mensaje
+        })
+        .catch(error => console.error('Error al enviar mensaje:', error));
+    }
+});
+</script>                        
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__map">
+                        <iframe
+                        
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3933.7509378280647!2d-84.6349501532626!3d9.61670087132338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa1c715b8e3472d%3A0x354554cdd91ea84a!2sAv.%20Pastor%20D%C3%ADaz%2C%20Provincia%20de%20Puntarenas%2C%20Jac%C3%B3!5e0!3m2!1ses-419!2scr!4v1709237823141!5m2!1ses-419!2scr"
+                        height="780" style="border:0" allowfullscreen="">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Contact Section End -->
