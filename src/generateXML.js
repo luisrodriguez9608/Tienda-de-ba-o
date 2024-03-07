@@ -1,27 +1,35 @@
 const axios = require('axios');
 
-async function generateXML() {
+function codigo_actividad() {
+    var codigo = "";
+    for (var i = 0; i < 6; i++) {
+        codigo += Math.floor(Math.random() * 10); // Genera un dígito aleatorio del 0 al 9 y lo concatena a la cadena
+    }
+    return codigo;
+}
+
+async function generateXML(clave, userdata) {
     const postData = new URLSearchParams();
     postData.append('w', 'genXML');
     postData.append('r', 'gen_xml_fe');
-    postData.append('clave', '50613051800070232071700100001011522773408107756348');
-    postData.append('codigo_actividad', '725002');
-    postData.append('consecutivo', '00100001011522773408');
-    postData.append('fecha_emision', '2018-05-13T15:30:00-06:00');
-    postData.append('emisor_nombre', 'Walner Borbon');
+    postData.append('clave', clave.clave);
+    postData.append('codigo_actividad', codigo_actividad());
+    postData.append('consecutivo', clave.consecutivo);
+    postData.append('fecha_emision', new Date());
+    postData.append('emisor_nombre', 'PineApple Sea');
     postData.append('emisor_tipo_identif', '01');
-    postData.append('emisor_num_identif', '702320717');
-    postData.append('nombre_comercial', 'Walner Borbon');
+    postData.append('emisor_num_identif', '122223333');
+    postData.append('nombre_comercial', 'PineApple Sea');
     postData.append('emisor_provincia', '6');
     postData.append('emisor_canton', '02');
     postData.append('emisor_distrito', '03');
     postData.append('emisor_barrio', '01');
-    postData.append('emisor_otras_senas', 'Frente a la escuela');
+    postData.append('emisor_otras_senas', 'Avenida Pastór Díaz');
     postData.append('emisor_cod_pais_tel', '506');
-    postData.append('emisor_tel', '64206205');
+    postData.append('emisor_tel', '87367898');
     postData.append('emisor_cod_pais_fax', '506');
     postData.append('emisor_fax', '00000000');
-    postData.append('emisor_email', 'walner1borbon@gmail.com');
+    postData.append('emisor_email', 'pineapplesea@gmail.com');
     postData.append('receptor_nombre', 'Julian Subiros');
     postData.append('receptor_tipo_identif', '01');
     postData.append('receptor_num_identif', '114480790');
@@ -58,7 +66,7 @@ async function generateXML() {
             "cantidad": "2",
             "unidadMedida": " Unid",
             "detalle": "Globos",
-            "precioUnitario": "10.00",
+            "precioUnitario": "1000.00",
             "montoTotal": "20",
             "descuento": [{"montoDescuento": "3", "naturalezaDescuento": "Promoción fin de año"}],
             "subtotal": "17",
@@ -76,8 +84,8 @@ async function generateXML() {
     try {
         const response = await axios.post('http://155.138.238.173:8080/api.php', postData, config);
         // Retornar el XML generado en lugar de solo imprimirlo
-        console.log('Respuesta completa:', response.data);
-        return response.data.resp.xml;
+        //console.log('Generación del XML:', response.data.resp);
+        return response.data.resp;
     } catch (error) {
         console.error('Error al generar el XML:', error);
         throw error;

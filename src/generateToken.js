@@ -14,7 +14,7 @@ async function getToken() {
         });
 
         if (response.status === 200) {
-            console.log('Respuesta completa:', response.data);
+            //console.log('Respuesta completa:', response.data);
             return response.data.resp.access_token;
         } else {
             throw new Error('Error al obtener el token');

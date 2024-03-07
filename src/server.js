@@ -11,7 +11,7 @@ const port = process.env.PORT || 8080;
 const db = require('./app/db')
 
 // Servir archivos estáticos desde la carpeta 'src'
-app.use(express.static("src"));
+app.use(express.static("/public"));
 
 // Motor de vistas Ejs
 app.set("views", path.join(__dirname, "../src/views/pages/"));
@@ -34,6 +34,7 @@ app.use((req, res, next) => {
 // Configuración de express-session
 app.use(session({
   secret: 'tu_secreto',
+  cookie: { maxAge: 60000 },
   resave: true,
   saveUninitialized: true
 }));
@@ -131,21 +132,25 @@ const getToken = require('./generateToken');
 const generateXML = require('./generateXML');
 const firmarXML = require('./firmarXML');
 const enviarXML = require('./enviarXML'); // Importar el nuevo script
+const getClave = require('./generateClave')
 
 // Endpoint para realizar la facturación
 app.post('/facturacion', async (req, res) => {
   try {
-      // Obtener el token
-      const accessToken = await getToken();
+      // Generar clave y consecutivo
+      const clave = await getClave()
 
       // Generar el XML
-      const xmlGenerado = await generateXML();
-
+      const xmlGenerado = await generateXML(clave);
+      
       // Firmar el XML
       const xmlFirmado = await firmarXML(xmlGenerado);
 
+      // Obtener el token
+      const accessToken = await getToken();
+
       // Enviar el XML
-      const resultadoEnvio = await enviarXML(xmlFirmado, accessToken); // Almacenar el resultado de enviarXML
+      const resultadoEnvio = await enviarXML(xmlFirmado.xmlFirmado, accessToken, xmlGenerado.clave); // Almacenar el resultado de enviarXML
 
       console.log('Resultado del envío:', resultadoEnvio); // Imprimir el resultado del envío
 
@@ -261,8 +266,8 @@ const enviarMail = async (userId, carritoId) => {
       host: 'smtp.gmail.com',
       port: 587,
       auth: {
-        user: 'gabrieljbc2@gmail.com',
-        pass: 'jvjj kdul kdza icsd',
+        user: 'fabimv23@gmail.com',
+        pass: 'inru ygul cqtr hzit',
       }
     };
 
@@ -294,8 +299,8 @@ const enviarMail = async (userId, carritoId) => {
 
       // Mensaje de correo electrónico con los detalles de la compra
       const mensaje = {
-        from: 'gabrieljbc2@gmail.com',
-        to: 'gabrieljbc2@gmail.com',
+        from: 'pineapplesea@gmail.com',
+        to: 'fabimv23@gmail.com',
         subject: 'Confirmación de Compra en PineApple Sea',
         html: `
           <p>Estimado/a Cliente,</p>
@@ -308,13 +313,18 @@ const enviarMail = async (userId, carritoId) => {
           <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
           <p>¡Esperamos que disfrutes de tu producto!</p>
           <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
-        `
+        `,
+        attachments: {
+          filename: "Compra_PineAppleSea_.xml",
+          content: '',
+          contentType: 'text/xml' 
+        }
       };
 
       // Enviar el correo electrónico
       const transport = nodemailer.createTransport(config);
       const info = await transport.sendMail(mensaje);
-      console.log('Correo enviado:', info);
+      //console.log('Correo enviado:', info);
     });
 
   } catch (error) {
