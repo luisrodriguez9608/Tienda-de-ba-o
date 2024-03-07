@@ -300,10 +300,20 @@
 <script
     src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="server.js" defer></script>
-
 <script>
+    // Función para llamar a facturacion en el servidor
+    function llamarFacturacion() {
+        fetch('/facturacion', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Facturación realizada correctamente');
+                } else {
+                    console.error('Error en la facturación');
+                }
+            })
+            .catch(error => console.error('Error en la facturación:', error));
+    }
+
     // Función para llamar a enviarMail en el servidor
     function llamarEnviarMail() {
         fetch('/enviar-correo', { method: 'POST' })
@@ -315,30 +325,6 @@
                 }
             })
             .catch(error => console.error('Error al enviar el correo:', error));
-    }
-
-    // Función para llamar a facturacion en el servidor
-    function llamarFacturacion() {
-        const user_billing = {
-            nombre: getElementById('nombre').value,
-            apellido: getElementById('apellido').value,
-            pais: getElementById('pais').value,
-            direccion: getElementById('direccion').value,
-            provincia: getElementById('provincia').value,
-            canton: getElementById('canton').value,
-            distrito: getElementById('distrito').value,
-            telefono: getElementById('telefono').value,
-            correo: getElementById('correo').value,
-        }
-        fetch('/facturacion', { method: 'POST', body: user_billing })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Facturación realizada correctamente');
-                } else {
-                    console.error('Error en la facturación');
-                }
-            })
-            .catch(error => console.error('Error en la facturación:', error));
     }
 
     // Función para renderizar el botón de PayPal con el total del carrito y el token
@@ -363,12 +349,11 @@
                 alert("Pago Realizado");
                 actions.order.capture().then(function (details) {
                     console.log(details);
-                    // Llamar a la función para enviar el correo
-                    llamarEnviarMail();
-
                     // Llamar a la función para realizar la facturación
                     llamarFacturacion();
-
+                    // Llamar a la función para enviar el correo
+                    llamarEnviarMail();
+                    
                     // Realizar el submit del formulario
                     document.querySelector('.checkout__form').submit();
                     window.location.href = "/";

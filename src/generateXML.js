@@ -8,7 +8,7 @@ function codigo_actividad() {
     return codigo;
 }
 
-async function generateXML(clave, userdata) {
+async function generateXML(clave) {
     const postData = new URLSearchParams();
     postData.append('w', 'genXML');
     postData.append('r', 'gen_xml_fe');

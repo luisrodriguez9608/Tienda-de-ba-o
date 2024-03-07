@@ -20,7 +20,7 @@ async function firmarXML(xmlGenerado) {
         });
 
         if (response.status === 200) {
-            console.log('XML firmado:', response.data.resp);
+            //console.log('XML firmado:', response.data.resp.xmlFirmado);
             return response.data.resp;
         } else {
             throw new Error('Error al firmar el XML');
