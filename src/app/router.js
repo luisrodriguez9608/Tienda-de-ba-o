@@ -1,5 +1,5 @@
 const express = require("express");
-var router = express.Router();
+const router = express.Router();
 
 router.get("/", function (req, res, next) {
   res.render("index");
@@ -37,12 +37,12 @@ router.get("/add-products", function (req, res, next) {
   res.render("add-product");
 });
 
-router.get("/edit-products", function (req, res, next) {
+router.get("/edit-product", function (req, res, next) {
   res.render("edit-product");
 });
 
 router.get("/details-products", function (req, res, next) {
-  res.render("details-product");
+    res.render("details-product")
 });
 router.get("/contact", function (req, res, next) {
   res.render("contact");

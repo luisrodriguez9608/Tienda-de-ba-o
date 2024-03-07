@@ -34,4 +34,6 @@ function handleDisconnect() {
   });
 }
 
-module.exports = { db, handleDisconnect }
+handleDisconnect()
+
+module.exports = db

@@ -1,24 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const mysql = require('mysql2');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
-const axios = require('axios');
 const app = express();
 const router = require("./app/router");
 const port = process.env.PORT || 8080;
 
 
-
-// Configuración de la conexión a MySQL
-let db;
-
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-
+const db = require('./app/db')
 
 // Servir archivos estáticos desde la carpeta 'src'
 app.use(express.static("src"));
@@ -28,55 +18,10 @@ app.set("views", path.join(__dirname, "../src/views/pages/"));
 app.set("view engine", "ejs");
 
 app.use("/", router);
-
-// Función para reconectar a la base de datos
-function handleDisconnect() {
-  db = mysql.createConnection({
-    host: process.env.DATBASE_HOST ? process.env.DATBASE_HOST : "localhost",
-    user: process.env.DATABASE_USERNAME
-      ? process.env.DATABASE_USERNAME
-      : "root",
-    password: process.env.DATABASE_PASSWORD
-      ? process.env.DATABASE_PASSWORD
-      : "1x6x-osq5-S719.()",
-    database: "pineapplesea",
-  });
-
-  db.connect((err) => {
-    if (err) {
-      console.error("Error de MySQL:", err);
-      setTimeout(handleDisconnect, 2000);
-    }
-  });
-
-  db.on("error", (err) => {
-    console.error("Error de MySQL:", err);
-    if (
-      err.code === "PROTOCOL_CONNECTION_LOST" ||
-      err.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR"
-    ) {
-      handleDisconnect();
-    } else {
-      throw err;
-    }
-  });
-}
-
-// Establecer la conexión inicial
-handleDisconnect();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Servir archivos estáticos desde la carpeta 'src'
-app.use(express.static("src"));
-
-// Motor de vistas Ejs
-app.set("views", path.join(__dirname, "../src/views/pages/"));
-app.set("view engine", "ejs");
-
-app.use("/", router);
 
 // Configurar CORS para permitir solicitudes desde cualquier origen
 app.use((req, res, next) => {
@@ -114,7 +59,8 @@ app.get('/productDetails', (req, res) => {
           imagen: productDetails.imagen,
           precio: productDetails.precio,
           descripcion: productDetails.descripcion,
-          categoria: productDetails.categoria
+          categoria: productDetails.categoria,
+          stock: productDetails.stock
       });
   });
 });
@@ -496,7 +442,7 @@ app.post('/inicio.html', (req, res) => {
       req.session.correo = correo;
       req.session.rol = usuario.rol; // Establecer correctamente el rol en la sesión
       console.log('Inicio de sesión exitoso. Rol del usuario:', req.session.rol);
-      res.redirect('/index.html');
+      res.redirect('/');
     } else {
       req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
       req.session.rol = null; // También establece el rol en null
@@ -583,6 +529,27 @@ app.post('/agregarProducto', (req, res) => {
   });
 });
 
+// Ruta para editar un producto
+app.post('/editarProducto/:id', (req, res) => {
+  const { nombre, descripcion, imagen, precio, stock, categoria } = req.body; // Obtener la categoría del cuerpo de la solicitud
+  if (!nombre || !descripcion || !imagen || !precio || !stock || !categoria) { // Verificar que todos los campos necesarios estén presentes
+      res.status(400).json({ error: 'Por favor, complete todos los campos incluyendo la categoría.' });
+      return;
+  }
+  db.query(`UPDATE productos SET nombre = ?, descripcion = ?, imagen = ?, precio = ?, stock = ?, categoria = ? WHERE productoID = ?`, [nombre, descripcion, imagen, precio, stock, categoria, req.params.id], (err, results) => {
+      if (err) {
+          if (err.code === 'ER_DUP_ENTRY') {
+              res.status(400).json({ error: 'Ya existe un producto con este nombre.' });
+          } else {
+              console.error('Error al editar producto: ', err);
+              res.status(500).json({ error: 'Error interno del servidor' });
+          }
+          return;
+      }
+      res.json({ message: 'Producto editado exitosamente', productId: results.insertId });
+  });
+});
+
 
 
 
@@ -604,14 +571,14 @@ app.delete('/eliminarProducto/:id', (req, res) => {
 });
 
 // Ruta para cerrar sesión
-app.get('/cerrarSesion', (req, res) => {
+app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.error('Error al cerrar sesión: ', err);
       res.status(500).send('Error interno del servidor');
       return;
     }
-    res.redirect('/index.html');
+    res.redirect('/');
   });
 });
 
