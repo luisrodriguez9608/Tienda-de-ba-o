@@ -24,7 +24,7 @@ async function enviarXML(xmlFirmado, accessToken, clave) {
         });
 
         if (response.status === 200) {
-            console.log('Respuesta del XML enviado: ', response.data);
+            //console.log('Respuesta del XML enviado: ', response.data);
             return response.data;
         } else {
             throw new Error('Error al enviar el XML');

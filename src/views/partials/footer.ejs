@@ -1,4 +1,3 @@
-
 <!-- Instagram Begin -->
 <div class="instagram">
     <div class="container-fluid">
@@ -63,15 +62,15 @@
             <div class="col-lg-4 col-md-6 col-sm-7">
                 <div class="footer__about">
                     <div class="footer__logo">
-                        <a href="./index"><img src="img/logo.png" alt=""></a>
+                        <a href="/"><img src="img/logo/logo.png" alt=""></a>
                     </div>
                     <p>Poseemos distintos metodos de pago</p>
                     <div class="footer__payment">
                         <a href="#"><img src="img/payment/payment-1.png" alt=""></a>
                         <a href="#"><img src="img/payment/payment-2.png" alt=""></a>
-                       
+
                         <a href="#"><img src="img/payment/payment-4.png" alt=""></a>
-                       
+
                     </div>
                 </div>
             </div>
@@ -82,70 +81,70 @@
                         <li><a href="index">Sobre nosotros</a></li>
                         <li><a href="shop">Tienda</a></li>
                         <li><a href="contact">Contacto</a></li>
-                     
+
                     </ul>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-4">
                 <div class="footer__widget">
                     <h6>Cuenta</h6>
-<ul id="accountOptions">
-    <!-- Dentro del <ul> de opciones de cuenta -->
-<li><a href="#" id="eliminarCuentaLink">Eliminar mi cuenta</a></li>
-<script>
-    // Agregar un listener de evento 'DOMContentLoaded'
-    document.addEventListener('DOMContentLoaded', function() {
-      // Obtener referencia al enlace de eliminar cuenta
-      const eliminarCuentaLink = document.getElementById('eliminarCuentaLink');
-  
-      // Agregar un listener de evento 'click' al enlace de eliminar cuenta
-      eliminarCuentaLink.addEventListener('click', function(event) {
-        event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
-        if (confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) {
-          eliminarCuenta();
-        }
-      });
-  
-      // Función para enviar la solicitud de eliminación de cuenta al servidor
-      function eliminarCuenta() {
-        fetch('/eliminarCuenta', {
-            method: 'DELETE' // Usar el método DELETE para eliminar la cuenta
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Respuesta del servidor no válida');
-            }
-            return response.json();
-          })
-          .then(data => {
-            alert(data.message); // Mostrar mensaje de éxito
-            cerrarSesion(); // Llamar a la función para cerrar sesión después de eliminar la cuenta
-          })
-          .catch(error => console.error('Error al eliminar cuenta de usuario:', error));
-      }
-  
-      // Función para cerrar sesión
-      function cerrarSesion() {
-        fetch('/cerrarSesion')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Respuesta del servidor no válida');
-            }
-            return response.json();
-          })
-          .then(data => {
-            alert(data.message); // Mostrar mensaje de éxito
-            window.location.href = './inicio'; // Redirigir a la página de inicio después de cerrar sesión
-          })
-          .catch(error => console.error('Error al cerrar sesión:', error));
-      }
-    });
-  </script>
-  
-  
-    <li><a href="shop-cart">Carrito</a></li>
-    <li id="logoutLink" style="display: none;"><a href="/cerrarSesion">Cerrar sesión</a></li>
-</ul>
+                    <ul id="accountOptions">
+                        <!-- Dentro del <ul> de opciones de cuenta -->
+                        <li><a href="#" id="eliminarCuentaLink">Eliminar mi cuenta</a></li>
+                        <script>
+                            // Agregar un listener de evento 'DOMContentLoaded'
+                            document.addEventListener('DOMContentLoaded', function () {
+                                // Obtener referencia al enlace de eliminar cuenta
+                                const eliminarCuentaLink = document.getElementById('eliminarCuentaLink');
+
+                                // Agregar un listener de evento 'click' al enlace de eliminar cuenta
+                                eliminarCuentaLink.addEventListener('click', function (event) {
+                                    event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+                                    if (confirm('¿Estás seguro de que deseas eliminar tu cuenta?')) {
+                                        eliminarCuenta();
+                                    }
+                                });
+
+                                // Función para enviar la solicitud de eliminación de cuenta al servidor
+                                function eliminarCuenta() {
+                                    fetch('/eliminarCuenta', {
+                                        method: 'DELETE' // Usar el método DELETE para eliminar la cuenta
+                                    })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error('Respuesta del servidor no válida');
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            alert(data.message); // Mostrar mensaje de éxito
+                                            cerrarSesion(); // Llamar a la función para cerrar sesión después de eliminar la cuenta
+                                        })
+                                        .catch(error => console.error('Error al eliminar cuenta de usuario:', error));
+                                }
+
+                                // Función para cerrar sesión
+                                function cerrarSesion() {
+                                    fetch('/cerrarSesion')
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error('Respuesta del servidor no válida');
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            alert(data.message); // Mostrar mensaje de éxito
+                                            window.location.href = './inicio'; // Redirigir a la página de inicio después de cerrar sesión
+                                        })
+                                        .catch(error => console.error('Error al cerrar sesión:', error));
+                                }
+                            });
+                        </script>
+
+
+                        <li><a href="shop-cart">Carrito</a></li>
+                        <li id="logoutLink" style="display: none;"><a href="/cerrarSesion">Cerrar sesión</a></li>
+                    </ul>
 
                 </div>
             </div>
@@ -155,33 +154,33 @@
                     <form id="suscribirseForm">
                         <input type="text" name="correo" placeholder="Correo electrónico">
                         <button type="submit" class="site-btn">Suscribirse</button>
-                      </form>
-<script>document.getElementById('suscribirseForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
-  
-    const correo = this.correo.value; // Obtener el valor del campo de correo electrónico
-  
-    // Enviar solicitud POST al servidor para suscribirse
-    fetch('/suscribirse', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ correo }) // Enviar el correo electrónico como un objeto JSON
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Respuesta del servidor no válida');
-      }
-      return response.json();
-    })
-    .then(data => {
-      alert(data.message); // Mostrar mensaje de éxito
-      // Puedes agregar cualquier otra lógica aquí, como limpiar el formulario
-    })
-    .catch(error => console.error('Error al suscribirse:', error));
-  });
-  </script>                      
+                    </form>
+                    <script>document.getElementById('suscribirseForm').addEventListener('submit', function (event) {
+                            event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+                            const correo = this.correo.value; // Obtener el valor del campo de correo electrónico
+
+                            // Enviar solicitud POST al servidor para suscribirse
+                            fetch('/suscribirse', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ correo }) // Enviar el correo electrónico como un objeto JSON
+                            })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Respuesta del servidor no válida');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    alert(data.message); // Mostrar mensaje de éxito
+                                    // Puedes agregar cualquier otra lógica aquí, como limpiar el formulario
+                                })
+                                .catch(error => console.error('Error al suscribirse:', error));
+                        });
+                    </script>
                     <div class="footer__social">
                         <a href="#"><i class="fa fa-facebook"></i></a>
                         <a href="#"><i class="fa fa-twitter"></i></a>
@@ -196,7 +195,8 @@
             <div class="col-lg-12">
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 <div class="footer__copyright__text">
-                    <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> All rights reserved 
+                    <p>Copyright &copy;
+                        <script>document.write(new Date().getFullYear());</script> All rights reserved
                 </div>
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             </div>

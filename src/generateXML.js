@@ -32,7 +32,7 @@ async function generateXML(clave) {
     postData.append('emisor_email', 'pineapplesea@gmail.com');
     postData.append('receptor_nombre', 'Julian Subiros');
     postData.append('receptor_tipo_identif', '01');
-    postData.append('receptor_num_identif', '114480790');
+    postData.append('receptor_num_identif', '988887777');
     postData.append('receptor_provincia', '6');
     postData.append('receptor_canton', '02');
     postData.append('receptor_distrito', '03');

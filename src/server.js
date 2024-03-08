@@ -135,6 +135,7 @@ const getClave = require("./generateClave");
 
 // Endpoint para realizar la facturación
 app.post("/facturacion", async (req, res) => {
+  console.log(req.body)
   try {
     // Generar Claves y el Consecutivo
     const clave = await getClave();
@@ -143,7 +144,7 @@ app.post("/facturacion", async (req, res) => {
 
     // Firmar el XML
     const xmlFirmado = await firmarXML(xmlGenerado);
-    XML_FILE = Base64ToXML(xmlFirmado.xmlFirmado)
+    XML_FILE = Base64ToXML(xmlFirmado.xmlFirmado);
 
     // Obtener el token
     const accessToken = await getToken();
@@ -155,7 +156,7 @@ app.post("/facturacion", async (req, res) => {
       xmlGenerado.clave
     ); // Almacenar el resultado de enviarXML
 
-    console.log("Resultado del envío:", resultadoEnvio); // Imprimir el resultado del envío
+    //console.log("Resultado del envío:", resultadoEnvio); // Imprimir el resultado del envío
 
     // Envía una respuesta de éxito
     res.json({ message: "Facturación realizada exitosamente" });
@@ -281,7 +282,7 @@ app.post("/placeOrder", (req, res) => {
   });
 });
 
-var XML_FILE
+var XML_FILE;
 
 // Modificar la función enviarMail para incluir console.log de los productos recuperados
 const enviarMail = async (userId) => {
@@ -307,7 +308,7 @@ const enviarMail = async (userId) => {
           return;
         }
 
-        console.log("Productos del carrito:", productosCarrito); // Verificar los productos recuperados
+        //console.log("Productos del carrito:", productosCarrito); // Verificar los productos recuperados
 
         // Construir la lista de productos en el carrito para el correo electrónico
         const listaProductos = productosCarrito.map((producto) => {
@@ -325,7 +326,7 @@ const enviarMail = async (userId) => {
           0
         );
 
-        console.log("Total del carrito:", totalCompra); // Verificar el total del carrito
+        //console.log("Total del carrito:", totalCompra); // Verificar el total del carrito
 
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
@@ -349,8 +350,7 @@ const enviarMail = async (userId) => {
               "Compra_PineAppleSea_" +
               new Date().toLocaleDateString("en-US") +
               ".xml",
-            content: XML_FILE,
-            contentType: "text/xml",
+            path: __dirname + "/Compra_PineAppleSea_.xml",
           },
         };
 
@@ -366,13 +366,17 @@ const enviarMail = async (userId) => {
   }
 };
 
+const fs = require("fs");
+
 function Base64ToXML(xmlBase64) {
-  const base64String = xmlBase64;
-  const base64Decoded = Buffer.from(base64String, "base64").toString("binary"); // Decodificar a datos binarios
-  const xmlString = Buffer.from(base64Decoded, "binary").toString("utf8"); // Convertir a string
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlString, "text/xml"); // Analizar como XML
-  console.log(xmlDoc);
+  const xmlStringify = Buffer.from(xmlBase64, "base64").toString("utf-8");
+  fs.writeFileSync(
+    __dirname + "/Compra_PineAppleSea_.xml",
+    xmlStringify,
+    (err) => {
+      if (err) throw err;
+    }
+  );
 }
 
 // Modificar la ruta para enviar el correo

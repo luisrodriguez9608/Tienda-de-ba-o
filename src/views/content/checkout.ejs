@@ -17,18 +17,24 @@
 
 <section class="checkout spad">
     <div class="container">
-        <section action="/placeOrder" method="POST" class="checkout__form">
+        <form action="/placeOrder" method="POST" class="checkout__form">
             <div class="row">
                 <div class="col-lg-8">
                     <h5>Detalles de compra</h5>
                     <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="col-lg-4">
+                            <div class="checkout__form__input">
+                                <p>Cédula <span>*</span></p>
+                                <input type="text" id="cedula" name="cedula">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
                             <div class="checkout__form__input">
                                 <p>Nombre <span>*</span></p>
                                 <input type="text" id="nombre" name="nombre">
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
                             <div class="checkout__form__input">
                                 <p>Apellido <span>*</span></p>
                                 <input type="text" id="apellido" name="apellido">
@@ -39,10 +45,8 @@
                                 <p>País <span>*</span></p>
                                 <input type="text" id="pais" name="pais" value="Costa Rica" readonly>
                             </div>
-                            <div class="checkout__form__input">
-                                <p>Dirección <span>*</span></p>
-                                <input type="text" id="direccion" name="direccion">
-                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
                             <div class="checkout__form__input">
                                 <p>Provincia <span>*</span></p>
                                 <select name="provincia" id="provincia">
@@ -56,12 +60,16 @@
                                     <option value="Limón">Limón</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
                             <div class="checkout__form__input">
                                 <p>Cantón <span>*</span></p>
                                 <select name="canton" id="canton" disabled>
                                     <option value="" disabled selected>Seleccione un cantón</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
                             <div class="checkout__form__input">
                                 <p>Distrito <span>*</span></p>
                                 <select name="distrito" id="distrito">
@@ -69,25 +77,27 @@
                                     <!-- Aquí se cargarán los distritos de la provincia seleccionada mediante JavaScript -->
                                 </select>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="checkout__form__input">
-                                    <p>Teléfono <span>*</span></p>
-                                    <input type="text" id="telefono" name="telefono">
-                                </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="checkout__form__input">
+                                <p>Dirección <span>*</span></p>
+                                <input type="text" id="direccion" name="direccion">
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="checkout__form__input">
-                                    <p>Correo <span>*</span></p>
-                                    <input type="text" id="correo" name="correo">
-                                </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>Teléfono <span>*</span></p>
+                                <input type="text" id="telefono" name="telefono">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="checkout__form__input">
+                                <p>Correo <span>*</span></p>
+                                <input type="text" id="correo" name="correo">
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
-
                 <div class="col-lg-4">
                     <div class="checkout__order">
                         <h5>Su Orden</h5>
@@ -105,7 +115,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </form>
         <!-- Checkout Section End -->
     </div>
 </section>
@@ -301,6 +311,10 @@
     src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
 
 <script>
+    document.getElementsByClassName('paypal-button-label-container').onclick = function () {
+        document.getElementsByClassName('checkout__form').submit()
+    };
+
     // Función para llamar a facturacion en el servidor
     function llamarFacturacion() {
         fetch('/facturacion', { method: 'POST' })
@@ -349,11 +363,13 @@
                 alert("Pago Realizado");
                 actions.order.capture().then(function (details) {
                     console.log(details);
+                    // Crear la factura en la base de datos
+                    crearFactura()
                     // Llamar a la función para realizar la facturación
                     llamarFacturacion();
                     // Llamar a la función para enviar el correo
                     llamarEnviarMail();
-                    
+
                     // Realizar el submit del formulario
                     document.querySelector('.checkout__form').submit();
                     window.location.href = "/";
