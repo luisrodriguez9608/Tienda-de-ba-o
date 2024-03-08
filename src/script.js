@@ -632,4 +632,202 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch((error) => console.error("Error al obtener el producto: ", error));
 });
 
+const roles = {
+  1: 'Cliente',
+  2: 'Admin',
+  3: 'Repartidor'
+};
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Obtener la tabla de usuarios
+  const tablaUsuarios = document.getElementById('tabla-usuarios');
+
+  // Realizar una solicitud al servidor para obtener la lista de usuarios
+  fetch('/obtener-usuarios')
+      .then(response => response.json())
+      .then(usuarios => {
+          // Generar dinámicamente las filas de la tabla con los datos de los usuarios
+          usuarios.forEach(usuario => {
+              const filaUsuario = `
+                  <tr>
+                      <th scope="row">${usuario.userID}</th>
+                      <td>${usuario.nombre}</td>
+                      <td>${usuario.apellido}</td>
+                      <td>${usuario.correo}</td>
+                      <td>${roles[usuario.rol]}</td>
+                      <td>
+                   
+                      <button class="btn btn-primary btn-sm" onclick="modificarUsuario('${usuario.userID}')">Modificar</button>
+
+
+                          <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${usuario.userID})">Eliminar</button>
+                      </td>
+                  </tr>
+              `;
+              tablaUsuarios.innerHTML += filaUsuario;
+          });
+      })
+      .catch(error => console.error('Error al obtener la lista de usuarios:', error));
+});
+
+// Función para confirmar la eliminación de un usuario
+function confirmarEliminar(userID) {
+  if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+      eliminarUsuario(userID);
+  }
+}
+
+// Función para eliminar un usuario
+function eliminarUsuario(userID) {
+  fetch(`/eliminar-usuario/${userID}`, { method: 'DELETE' })
+      .then(response => {
+          if (response.ok) {
+              // Eliminación exitosa, recargar la página para actualizar la tabla
+              location.reload();
+          } else {
+              console.error('Error al eliminar el usuario');
+          }
+      })
+      .catch(error => console.error('Error al eliminar el usuario:', error));
+}
+
+// Función para redirigir a la página de agregar usuario
+function agregarUsuarioVista() {
+  window.location.href = '/agregarUsuario';
+}
+
+// Función para redirigir a la página de modificar usuario
+function modificarUsuario() {
+  window.location.href = `/modificarUsuario`;
+}
+// Función para eliminar un usuario
+function eliminarUsuario(userID) {
+  // Mostrar un mensaje de confirmación
+  if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+      // Realizar una solicitud al servidor para eliminar el usuario con el userID especificado
+      fetch(`/eliminarUsuario?userID=${userID}`, { method: 'DELETE' })
+          .then(response => {
+              if (response.ok) {
+                  console.log('Usuario eliminado correctamente');
+                  // Recargar la página después de eliminar el usuario
+                  window.location.reload();
+              } else {
+                  console.error('Error al eliminar el usuario');
+              }
+          })
+          .catch(error => console.error('Error al eliminar el usuario:', error));
+  }
+}
+function redirectUsuarios() {
+  window.location.href = '/users'; // Cambia '/usuarios' por la ruta correcta de tu página de usuarios
+}
+
+
+
+function modificarUsuario(userID) {
+  const nombre = document.getElementById('nombre').value;
+  const apellido = document.getElementById('apellido').value;
+  const correo = document.getElementById('correo').value;
+  const contraseña = document.getElementById('contraseña').value;
+  const rol = document.getElementById('rol').value;
+
+  const datosUsuario = {
+      userID: userID,
+      nombre: nombre,
+      apellido: apellido,
+      correo: correo,
+      contraseña: contraseña,
+      rol: rol
+  };
+
+  fetch("/actualizarUsuario", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosUsuario)
+  })
+  .then(response => response.text())
+  .then(result => {
+      console.log(result);
+  })
+  .catch(error => console.error('Error al actualizar usuario:', error));
+}
+
+
+
+function agregarUsuario() {
+  // Obtener los valores de los campos de entrada
+  const nombre = document.getElementById('nombre').value;
+  const apellido = document.getElementById('apellido').value;
+  const correo = document.getElementById('correo').value;
+  const contraseña = document.getElementById('contraseña').value;
+  const rol = document.getElementById('rol').value;
+
+  // Crear un objeto con los datos del usuario
+  const datosUsuario = {
+      nombre: nombre,
+      apellido: apellido,
+      correo: correo,
+      contraseña: contraseña,
+      rol: rol
+  };
+
+  // Enviar una solicitud POST al servidor para agregar el nuevo usuario
+  fetch("/agregarUsuario", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosUsuario)
+  })
+  .then(response => response.text())
+  .then(result => {
+      console.log(result); // Imprimir mensaje de respuesta del servidor en la consola
+      // Aquí puedes agregar cualquier lógica adicional después de agregar el usuario, si es necesario
+  })
+  .catch(error => console.error('Error al agregar usuario:', error));
+}
+
+
+// Realizar una solicitud al servidor para obtener los datos de facturación
+fetch('/obtener-facturacion')
+    .then(response => response.json())
+    .then(facturaciones => {
+        const tablaRepartidor = document.getElementById('tabla-repartidor');
+        facturaciones.forEach(facturacion => {
+            const filaRepartidor = `
+                <tr>
+                    <th scope="row">${facturacion.facturaID}</th>
+                    <td>${facturacion.nombre}</td>
+                    <td>${facturacion.apellido}</td>
+                    <td>${facturacion.provincia}</td>
+                    <td>${facturacion.canton}</td>
+                    <td>${facturacion.distrito}, ${facturacion.direccion}</td>
+                    <td>${facturacion.telefono}</td>
+                    <td>${facturacion.correo}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="realizarEnvio(${facturacion.facturaID})">Realizar Envío</button>
+                        <button class="btn btn-success btn-sm" onclick="marcarEntregado(${facturacion.facturaID})">Entregado</button>
+                    </td>
+                </tr>
+            `;
+            tablaRepartidor.innerHTML += filaRepartidor;
+        });
+    })
+    .catch(error => console.error('Error al obtener los datos de facturación:', error));
+
+
+// Función para marcar como entregado y eliminar el registro de la base de datos
+function marcarEntregado(facturaID) {
+  // Realizar una solicitud DELETE al servidor para eliminar la factura por su ID
+  fetch(`/eliminar-facturacion/${facturaID}`, {
+      method: 'DELETE'
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log(data.message);
+      // Actualizar la interfaz o hacer cualquier otra acción necesaria después de eliminar el registro
+  })
+  .catch(error => console.error('Error al eliminar la factura:', error));
+}

@@ -1,0 +1,55 @@
+<!-- Breadcrumb Begin -->
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="/"><i class="fa fa-home"></i> Inicio</a>
+                    <span>Modificar Usuario</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userID = obtenerUserIDDesdeURL(); // Implementa esta función para obtener el userID de la URL
+        cargarDatosUsuario(userID);
+    });
+</script>
+<!-- Contact Section Begin -->
+<section class="contact spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="contact__content">
+                    <div class="contact__form">
+                        <h5>Modificar usuario</h5>
+                        <form id="modificarUsuarioForm" onsubmit="return modificarUsuario()">
+                            <h>Nombre</h>
+                            <input type="text" id="nombre" placeholder="Nombre" required>
+                            <h>Apellido</h>
+                            <input type="text" id="apellido" placeholder="Apellido" required>
+                            <h>Correo Electrónico</h>
+                            <input type="email" id="correo" placeholder="Correo electrónico" required>
+                            <h>Contraseña</h>
+                            <input type="password" id="contraseña" placeholder="Contraseña" required>
+                            <h>Rol</h>
+                            <select id="rol" required>
+                                <option value="1">Cliente</option>
+                                <option value="2">Admin</option>
+                                <option value="3">Repartidor</option>
+                            </select>
+                            <button type="submit" class="site-btn">Guardar cambios</button>
+                            <button type="button" onclick="redirectUsuarios()" class="site-btn">Cancelar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section End -->
+

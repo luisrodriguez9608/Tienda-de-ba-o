@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 
 // Servir archivos estáticos desde la carpeta 'src'
-app.use(express.static("src"));
+app.use(express.static(path.join(__dirname,"src")));
 
 // Motor de vistas Ejs
 app.set("views", path.join(__dirname, "../src/views/pages/"));
@@ -92,6 +92,129 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
+
+
+
+// Endpoint para eliminar un registro de la tabla de facturación por su ID
+app.delete('/eliminar-facturacion/:facturaID', (req, res) => {
+  const facturaID = req.params.facturaID;
+  db.query('DELETE FROM facturacion WHERE facturaID = ?', [facturaID], (err, result) => {
+      if (err) {
+          console.error('Error al eliminar la factura:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      res.json({ message: 'Factura eliminada correctamente' });
+  });
+});
+
+// Endpoint para obtener la lista de datos de facturación
+app.get('/obtener-facturacion', (req, res) => {
+  db.query('SELECT * FROM facturacion', (err, results) => {
+      if (err) {
+          console.error('Error al obtener los datos de facturación:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      res.json(results);
+  });
+});
+
+
+
+// Endpoint para agregar un nuevo usuario
+app.post("/agregarUsuario", function (req, res, next) {
+  const { nombre, apellido, correo, contraseña } = req.body;
+
+  // Verificar si el correo electrónico ya está registrado
+  db.query(`SELECT * FROM usuarios WHERE correo = ?`, [correo], (err, results) => {
+    if (err) {
+      console.error('Error al realizar la consulta: ', err);
+      res.status(500).send('Error interno del servidor');
+      return;
+    }
+
+    if (results.length > 0) {
+      res.send('El correo electrónico ya está registrado');
+    } else {
+      // Insertar el nuevo usuario en la base de datos
+      db.query(`INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, 1)`, [nombre, apellido, correo, contraseña], (err, result) => {
+        if (err) {
+          console.error('Error al insertar el nuevo usuario: ', err);
+          res.status(500).send('Error interno del servidor');
+          return;
+        }
+        console.log('Usuario agregado correctamente');
+        res.send('Usuario agregado correctamente');
+      });
+    }
+  });
+});
+
+
+
+// Actualizar datos del usuario
+app.post("/actualizarUsuario", function (req, res, next) {
+  // Recibir datos actualizados del usuario desde el cliente
+  const usuarioActualizado = req.body;
+  // Lógica para actualizar el registro del usuario en la base de datos
+  // Aquí debes actualizar el registro del usuario con los nuevos valores
+  res.send("Usuario actualizado correctamente");
+});
+// Obtener datos del usuario por userID
+app.get("/obtenerUsuario/:userID", function (req, res, next) {
+  const userID = req.params.userID;
+  // Lógica para obtener los datos del usuario desde la base de datos
+  // Aquí debes obtener los datos del usuario con el userID proporcionado
+  // Luego enviar los datos del usuario como respuesta
+  res.json(usuario); // usuario debe ser el objeto que contiene los datos del usuario
+});
+
+
+// Endpoint para eliminar un usuario
+app.delete('/eliminarUsuario', (req, res) => {
+  const userID = req.query.userID; // Obtener el ID de usuario de la solicitud
+  // Realizar una consulta a la base de datos para eliminar el usuario con el userID especificado
+  db.query('DELETE FROM usuarios WHERE userID = ?', [userID], (err, results) => {
+      if (err) {
+          console.error('Error al eliminar el usuario:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      // Verificar si se eliminó correctamente algún usuario
+      if (results.affectedRows === 0) {
+          res.status(404).json({ message: 'Usuario no encontrado' });
+          return;
+      }
+      // Enviar una respuesta de éxito
+      res.json({ message: 'Usuario eliminado correctamente' });
+  });
+});
+
+
+// Endpoint para obtener la lista de usuarios
+app.get('/obtener-usuarios', (req, res) => {
+  // Realizar una consulta a la base de datos para obtener la lista de usuarios
+  db.query('SELECT * FROM usuarios', (err, results) => {
+      if (err) {
+          console.error('Error al obtener la lista de usuarios:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      // Enviar la lista de usuarios como respuesta
+      res.json(results);
+  });
+});
+
+
+
+
+
+
+
+
+
 
 /// Endpoint para obtener los detalles de un producto por su ID
 app.get('/productDetails', (req, res) => {
