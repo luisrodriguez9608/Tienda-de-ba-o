@@ -1,12 +1,12 @@
 const axios = require('axios');
 const qs = require('querystring');
 
-async function firmarXML(xml) {
+async function firmarXML(xmlGenerado) {
     try {
-        console.log('XML a firmar:', xml); // Agregar esta línea para verificar el contenido del XML
+        //console.log('XML a firmar:', xml); // Agregar esta línea para verificar el contenido del XML
 
         const params = {
-            inXml: xml,
+            inXml: xmlGenerado.xml,
             r: 'firmar',
             w: 'firmarXML',
             p12Url: '54594f1ad8ce69ce52956b5123e64e93',
@@ -20,11 +20,8 @@ async function firmarXML(xml) {
         });
 
         if (response.status === 200) {
-            
-            console.log('XML firmado:', response.data);
-            return response.data.resp.xmlFirmado;
-
-
+            //console.log('XML firmado:', response.data.resp.xmlFirmado);
+            return response.data.resp;
         } else {
             throw new Error('Error al firmar el XML');
         }

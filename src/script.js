@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <img src="${producto.imagen}" alt="${producto.nombre}">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
-                                        <li><a href="product-details.html?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
+                                        <li><a href="details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
                                        
                                         <li><a href="#" class="agregar-al-carrito" data-producto-id="${producto.productoID}"><span class="icon_bag_alt"></span></a></li>
                                     </ul>
@@ -350,7 +350,7 @@ function checkSession() {
         const logoutLink = document.getElementById("logoutLink");
   
         if (data.loggedin) {
-          authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
+          authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
           if (data.rol !== null && data.rol === 2) {
             adminLink.removeAttribute("hidden");
             userLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
@@ -362,7 +362,7 @@ function checkSession() {
           logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
         } else {
           authSection.innerHTML =
-            '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
+            '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
           adminLink.setAttribute("hidden", "true");
           userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
           accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let productosCargados = false;
 
   if (!productosCargados) {
-    fetch("/admin")
+    fetch("/get-productos")
       .then((response) => response.json())
       .then((productos) => {
         const productosContainer = document.getElementById(
@@ -424,8 +424,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <img src="${producto.imagen}" alt="${producto.nombre}">
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
-                                        <li><a href="product-details.html?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
+                                        <li><a href="/details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
                                         <li><a href="#" onclick="confirmarEliminacion(${producto.productoID})"><span class="icon_bag_alt"></span></a></li>
+                                        <li><a href="/edit-product?producto=${producto.productoID}"><span class="icon_pencil"></span></a></li>
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
@@ -531,8 +532,8 @@ function agregarProducto() {
 }
 
 function cancelarAccion() {
-  // Redirigir a admin.html sin agregar el producto
-  window.location.href = "/admin.html";
+  // Redirigir a la vista admin sin agregar el producto
+  window.location.href = "/admin";
 }
 
 // Agregar una variable booleana para verificar si los productos ya se cargaron

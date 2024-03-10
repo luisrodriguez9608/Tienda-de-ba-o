@@ -1,7 +1,7 @@
 const axios = require('axios');
 const qs = require('querystring');
 
-async function enviarXML(xmlFirmado, accessToken) {
+async function enviarXML(xmlFirmado, accessToken, clave) {
     const postData = {
         comprobanteXml: xmlFirmado,
         client_id: 'api-stag',
@@ -13,7 +13,7 @@ async function enviarXML(xmlFirmado, accessToken) {
         r: 'json',
         w: 'send',
         token: accessToken,
-        clave: '50613051800070232071700100001011522773408107756348'
+        clave: clave
     };
 
     try {
@@ -24,7 +24,7 @@ async function enviarXML(xmlFirmado, accessToken) {
         });
 
         if (response.status === 200) {
-            console.log('XML enviado correctamente:', response.data);
+            //console.log('Respuesta del XML enviado: ', response.data);
             return response.data;
         } else {
             throw new Error('Error al enviar el XML');

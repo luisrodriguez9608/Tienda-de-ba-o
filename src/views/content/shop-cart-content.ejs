@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-6">
                 <div class="cart__btn">
-                    <a href="shop.html">Continuar comprando</a>
+                    <a href="/shop">Continuar comprando</a>
                 </div>
 
             </div>
@@ -52,22 +52,30 @@
                         <input type="hidden" name="carritoID" value="{{ carritoID }}">
                         <button type="button" id="checkoutButton">Realizar Compra</button>
                     </form>
-
-                    <script>
-                        document.getElementById("checkoutButton").addEventListener("click", function () {
-                            // Obtener los valores de userID y carritoID
-                            const userID = document.querySelector('input[name="userID"]').value;
-                            const carritoID = document.querySelector('input[name="carritoID"]').value;
-
-                            // Redirigir a la página de checkout con los parámetros en la URL
-                            window.location.href = `checkout.html?userID=${userID}&carritoID=${carritoID}`;
-                        });
-                    </script>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('#cart-items-table')
+        const table_rows = table.getElementsByTagName('tr')
+        table_rows.forEach(element => {
+            console.log(element)
+        });
+    })
+
+    document.getElementById("checkoutButton").addEventListener("click", function () {
+        // Obtener los valores de userID y carritoID
+        const userID = document.querySelector('input[name="userID"]').value;
+        const carritoID = document.querySelector('input[name="carritoID"]').value;
+
+        // Redirigir a la página de checkout con los parámetros en la URL
+        window.location.href = `/checkout`;
+    });
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
