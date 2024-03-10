@@ -7,14 +7,14 @@ let db;
 // Función para reconectar a la base de datos
 function handleDisconnect() {
   db = mysql.createConnection({
-    host: process.env.DATBASE_HOST ? process.env.DATBASE_HOST : "localhost",
-    user: process.env.DATABASE_USERNAME
-      ? process.env.DATABASE_USERNAME
+    host: process.env.DB_HOST ? process.env.DB_HOST : "localhost",
+    user: process.env.DB_USR
+      ? process.env.DB_USR
       : "root",
-    password: process.env.DATABASE_PASSWORD
-      ? process.env.DATABASE_PASSWORD
-      : "1x6x-osq5-S719.()",
-    database: "pineapplesea",
+    password: process.env.DB_PWD
+      ? process.env.DB_PWD
+      : "",
+    database: process.env.DB ? process.env.DB : "pineapplesea",
   });
 
   db.connect((err) => {

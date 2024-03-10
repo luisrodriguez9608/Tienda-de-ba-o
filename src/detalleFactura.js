@@ -20,7 +20,6 @@ function rellenar_detalle(orden_productos) {
       montoTotalLinea: "18.3",
     };
   });
-  console.log(detalle)
   return detalle;
 }
 

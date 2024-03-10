@@ -459,14 +459,14 @@ app.post("/placeOrder", async (req, res) => {
       correo: correo,
       orden_productos: productos
     }
-    console.log("Orden de compra: ", orden_compra)
+    //console.log("Orden de compra: ", orden_compra)
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {
         console.error("Error al insertar datos en la base de datos:", err);
         res.status(500).send("Error interno del servidor");
       } else {
-        console.log("Factura registrada exitosamente");
+        //console.log("Factura registrada exitosamente");
         res.redirect('/shop')
       }
     });
@@ -490,11 +490,11 @@ const enviarMail = async (userId) => {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "gabrieljbc2@gmail.com",
-        pass: "gwds zvus hlmm xvaq",
+        user: "fabimv23@gmail.com",
+        pass: "goco fxax mjkq qfna",
       },
     };
-
+    crearPDF(orden_compra)
     // Obtener los productos del carrito del usuario
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
@@ -529,7 +529,7 @@ const enviarMail = async (userId) => {
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
           from: "pineapplesea@gmail.com",
-          to: "gabrieljbc2@gmail.com",
+          to: "fabimv23@gmail.com",
           subject: "Confirmación de Compra en PineApple Sea",
           html: `
           <p>Estimado/a Cliente,</p>
@@ -538,18 +538,27 @@ const enviarMail = async (userId) => {
           <ul>
             ${listaProductos.join("")}
           </ul>
-          <p>Total: $${totalCompra}</p>
           <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
           <p>¡Esperamos que disfrutes de tu producto!</p>
           <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
         `,
-          attachments: {
-            filename:
-              "Compra_PineAppleSea_" +
-              new Date().toLocaleDateString("en-US") +
-              ".xml",
-            path: __dirname + "/Compra_PineAppleSea_.xml",
-          },
+          attachments: [
+            {
+              filename:
+                "Compra_PineAppleSea_" +
+                new Date().toLocaleDateString("en-US") +
+                ".xml",
+              path: __dirname + "/Compra_PineAppleSea_.xml",
+              contentType: "text/xml"
+            },
+            /*{
+              filename:
+                "Compra_PineAppleSea_" +
+                new Date().toLocaleDateString("en-US") +
+                ".pdf",
+              path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
+            }*/
+          ],
         };
 
         // Enviar el correo electrónico
@@ -571,6 +580,7 @@ const enviarMail = async (userId) => {
 
 
 const fs = require("fs");
+const crearPDF = require("./generatePDF");
 
 function Base64ToXML(xmlBase64) {
   const xmlStringify = Buffer.from(xmlBase64, "base64").toString("utf-8");

@@ -67,7 +67,7 @@ async function generateXML(clave, orden_compra) {
     "detalles",
     JSON.stringify(rellenar_detalle(orden_compra.orden_productos))
   );
-  console.log(JSON.stringify(rellenar_detalle(orden_compra.orden_productos)));
+  //console.log(JSON.stringify(rellenar_detalle(orden_compra.orden_productos)));
   const config = {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
