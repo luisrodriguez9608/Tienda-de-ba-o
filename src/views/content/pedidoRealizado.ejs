@@ -5,7 +5,7 @@
             <div class="col-lg-12">
                 <div class="breadcrumb__links">
                     <a href="/"><i class="fa fa-home"></i> Inicio</a>
-                    <span>Gestión de usuarios</span>
+                    <span>Compras Realizadas</span>
                 </div>
             </div>
         </div>
@@ -17,33 +17,29 @@
 <section class="shop spad">
     <div class="container">
         <div class="row">
-           
             <div class="col-lg-9 col-md-9">
                 <div class="row">
-                    <div id="acciones-usuario">
-                        <button onclick="agregarUsuarioVista()">Agregar</button>
-                    </div>
-                    <!-- admin.html -->
+                    <!-- Tabla para mostrar los pedidos realizados -->
                     <table class="table">
                         <thead>
-                            <tr>
+                            <tr> 
                                 <th scope="col">ID</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
-                                <th scope="col">Correo Electrónico</th>
-                                <th scope="col">Rol</th>
-                                <th scope="col">Acciones</th> <!-- Nueva columna para los botones -->
+                                <th scope="col">Provincia</th>
+                                <th scope="col">Cantón</th>
+                                <th scope="col">Ubicación exacta</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Estado</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-usuarios">
+                        <tbody id="tabla-pedidoRealizado">
                             <!-- Aquí se generarán dinámicamente las filas de la tabla -->
                         </tbody>
                     </table>
-                    
-                
-                    
 
-
+                    <!-- Paginación opcional -->
                     <div class="col-lg-12 text-center">
                         <div class="pagination__option">
                             <a href="#">1</a>
@@ -56,5 +52,5 @@
             </div>
         </div>
     </div>
-</section> 
+</section>
 <!-- Shop Section End -->

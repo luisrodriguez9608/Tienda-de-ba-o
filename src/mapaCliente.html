@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Rastreo de Repartidor</title>
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfj7gqJyLE-kwBv39mz6rw0hikOWAieF0&libraries=drawing,places"></script>
+  <script>
+    var map;
+    var repartidorMarker;
+    var trayectoRestantePolyline;
+
+    function initialize() {
+      var mapOptions = {
+        zoom: 14,
+        center: { lat: -33.8667, lng: 151.1955 }
+      };
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    }
+
+    // Función para mostrar la ubicación del repartidor y el trayecto restante
+    function mostrarUbicacionRepartidor(ubicacionRepartidor, trayectoRestante) {
+      if (!repartidorMarker) {
+        repartidorMarker = new google.maps.Marker({
+          position: ubicacionRepartidor,
+          map: map,
+          title: 'Ubicación del Repartidor'
+        });
+      } else {
+        repartidorMarker.setPosition(ubicacionRepartidor);
+      }
+
+      if (!trayectoRestantePolyline) {
+        trayectoRestantePolyline = new google.maps.Polyline({
+          path: trayectoRestante,
+          geodesic: true,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+        trayectoRestantePolyline.setMap(map);
+      } else {
+        trayectoRestantePolyline.setPath(trayectoRestante);
+      }
+
+      map.setCenter(ubicacionRepartidor);
+    }
+
+    // Llamada a la función para mostrar la ubicación del repartidor y el trayecto restante
+    mostrarUbicacionRepartidor({ lat: -33.8667, lng: 151.1955 }, [
+      { lat: -33.8667, lng: 151.1955 }, // Ejemplo de trayecto restante
+      { lat: -33.8700, lng: 151.2000 }  // Ejemplo de trayecto restante
+    ]);
+  </script>
+</head>
+<body onload="initialize()">
+  <div id="map"></div>
+</body>
+</html>

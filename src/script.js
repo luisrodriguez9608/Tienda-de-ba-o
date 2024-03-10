@@ -1,36 +1,42 @@
 // Función para registrar un nuevo usuario
 function registrarUsuario() {
   // Obtener los datos del formulario
-  const data = {
-    nombre: document.getElementById("nombre").value,
-    apellido: document.getElementById("apellido").value,
-    correo: document.getElementById("correo").value,
-    contraseña: document.getElementById("contraseña").value,
-    confirmarContraseña: document.getElementById("confirmarContraseña").value,
-  };
+  const nombre = document.getElementById("nombre").value;
+  const apellido = document.getElementById("apellido").value;
+  const correo = document.getElementById("correo").value;
+  const contraseña = document.getElementById("contraseña").value;
+  const confirmarContraseña = document.getElementById("confirmarContraseña").value;
+
+  // Verificar si la contraseña coincide con la confirmación de la contraseña
+  if (contraseña !== confirmarContraseña) {
+      alert("Las contraseñas no coinciden");
+      return false; // Evitar que el formulario se envíe si las contraseñas no coinciden
+  }
 
   // Enviar los datos al servidor
+  const data = { nombre, apellido, correo, contraseña };
   fetch("/registro", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
   })
-    .then((response) => response.text())
-    .then((message) => {
-      // Manejar la respuesta del servidor
-      alert(message);
-      // Redireccionar al usuario a la página de inicio si el registro fue exitoso
-      if (message === "Usuario registrado correctamente") {
-        window.location.href = "/index.html"; // Redirigir al usuario al index.html
-      }
-    })
-    .catch((error) => console.error("Error al registrar usuario:", error));
+      .then((response) => response.text())
+      .then((message) => {
+          // Manejar la respuesta del servidor
+          alert(message);
+          // Redireccionar al usuario a la página de inicio si el registro fue exitoso
+          if (message === "Usuario registrado correctamente") {
+              window.location.href = "/index.html"; // Redirigir al usuario al index.html
+          }
+      })
+      .catch((error) => console.error("Error al registrar usuario:", error));
 
   // Evitar que el formulario se envíe de forma convencional
   return false;
 }
+
 
 // Función para agregar un producto al carrito
 function agregarAlCarrito(productoId) {
@@ -326,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error al obtener productos del carrito: ", error)
     );
 });
+
 function checkSession() {
     fetch("/checkSession")
       .then((response) => {
@@ -338,7 +345,7 @@ function checkSession() {
         console.log("Respuesta del servidor:", data);
         const authSection = document.getElementById("authSection");
         const adminLink = document.getElementById("adminLink");
-        const dashboardLink = document.getElementById("dashboardLink"); // Agregamos referencia al enlace del dashboard
+        const userLink = document.getElementById("userLink"); // Agregamos referencia al enlace del dashboard
         const accountOptions = document.getElementById("accountOptions");
         const logoutLink = document.getElementById("logoutLink");
   
@@ -346,10 +353,10 @@ function checkSession() {
           authSection.innerHTML = '<a href="/cerrarSesion">Cerrar sesión</a>';
           if (data.rol !== null && data.rol === 2) {
             adminLink.removeAttribute("hidden");
-            dashboardLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
+            userLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
           } else {
             adminLink.setAttribute("hidden", "true");
-            dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
+            userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
           }
           accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
           logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
@@ -357,7 +364,7 @@ function checkSession() {
           authSection.innerHTML =
             '<a href="./inicio.html">Iniciar sesión</a> <a href="./registro.html">Registrarse</a>';
           adminLink.setAttribute("hidden", "true");
-          dashboardLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
+          userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
           accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
           logoutLink.style.display = "none"; // Ocultar el enlace de cerrar sesión
         }
@@ -607,68 +614,101 @@ fetch("/productos-por-categoria?categoria=masculino") // Endpoint para obtener p
   .catch((error) =>
     console.error("Error al obtener productos masculinos: ", error)
   );
+ 
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Obtener el ID del producto del parámetro de la URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const productoID = urlParams.get("productoID");
+  document.addEventListener("DOMContentLoaded", function () {
+    // Obtener el ID del producto del parámetro de la URL
+    const productoID = urlParams.get("productoID");
 
-  // Obtener la información del producto del servidor
-  fetch(`/obtener-producto/${productoID}`)
-    .then((response) => response.json())
-    .then((producto) => {
-      // Actualizar el nombre del producto
-      document.getElementById("product-name").textContent = producto.nombre;
-      // Actualizar la descripción del producto
-      document.getElementById("product-description").textContent =
-        producto.descripcion;
-      // Actualizar el precio del producto
-      document.getElementById("product-price").textContent = producto.precio;
-      // Actualizar la categoría del producto
-      document.getElementById(
-        "product-category"
-      ).textContent = `Categoría: ${producto.categoria}`;
-    })
-    .catch((error) => console.error("Error al obtener el producto: ", error));
+    // Obtener la información del producto del servidor
+    fetch(`/obtener-producto/${productoID}`)
+        .then((response) => response.json())
+        .then((producto) => {
+            // Actualizar el nombre del producto
+            document.getElementById("product-name").textContent = producto.nombre;
+            // Actualizar la descripción del producto
+            document.getElementById("product-description").textContent =
+                producto.descripcion;
+            // Actualizar el precio del producto
+            document.getElementById("product-price").textContent = producto.precio;
+            // Actualizar la categoría del producto
+            document.getElementById(
+                "product-category"
+            ).textContent = `Categoría: ${producto.categoria}`;
+        })
+        .catch((error) => console.error("Error al obtener el producto: ", error));
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const roles = {
-  1: 'Cliente',
-  2: 'Admin',
-  3: 'Repartidor'
+    1: 'Cliente',
+    2: 'Admin',
+    3: 'Repartidor'
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Obtener la tabla de usuarios
-  const tablaUsuarios = document.getElementById('tabla-usuarios');
+    const tablaUsuarios = document.getElementById('tabla-usuarios');
 
-  // Realizar una solicitud al servidor para obtener la lista de usuarios
-  fetch('/obtener-usuarios')
-      .then(response => response.json())
-      .then(usuarios => {
-          // Generar dinámicamente las filas de la tabla con los datos de los usuarios
-          usuarios.forEach(usuario => {
-              const filaUsuario = `
-                  <tr>
-                      <th scope="row">${usuario.userID}</th>
-                      <td>${usuario.nombre}</td>
-                      <td>${usuario.apellido}</td>
-                      <td>${usuario.correo}</td>
-                      <td>${roles[usuario.rol]}</td>
-                      <td>
-                   
-                      <button class="btn btn-primary btn-sm" onclick="modificarUsuario('${usuario.userID}')">Modificar</button>
+    tablaUsuarios.addEventListener('click', function(event) {
+        if (event.target.classList.contains('btn-modificar')) {
+            const userID = obtenerUserIDDesdeBoton(event);
+            cargarDatosUsuario(userID);
+        }
+    });
+    // Realizar una solicitud al servidor para obtener la lista de usuarios
+    fetch('/obtener-usuarios')
+        .then(response => response.json())
+        .then(usuarios => {
+            // Generar dinámicamente las filas de la tabla con los datos de los usuarios
+            usuarios.forEach(usuario => {
+                const filaUsuario = `
+                    <tr>
+                        <th scope="row">${usuario.userID}</th>
+                        <td>${usuario.nombre}</td>
+                        <td>${usuario.apellido}</td>
+                        <td>${usuario.correo}</td>
+                        <td>${roles[usuario.rol]}</td>
+                        <td>
+                     
+                        <button class="btn btn-primary btn-sm btn-modificar" data-userid="${usuario.userID}">Modificar</button>
 
 
-                          <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${usuario.userID})">Eliminar</button>
-                      </td>
-                  </tr>
-              `;
-              tablaUsuarios.innerHTML += filaUsuario;
-          });
-      })
-      .catch(error => console.error('Error al obtener la lista de usuarios:', error));
+                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${usuario.userID})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                tablaUsuarios.innerHTML += filaUsuario;
+            });
+        })
+        .catch(error => console.error('Error al obtener la lista de usuarios:', error));
 });
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Función para confirmar la eliminación de un usuario
 function confirmarEliminar(userID) {
@@ -724,35 +764,6 @@ function redirectUsuarios() {
 
 
 
-function modificarUsuario(userID) {
-  const nombre = document.getElementById('nombre').value;
-  const apellido = document.getElementById('apellido').value;
-  const correo = document.getElementById('correo').value;
-  const contraseña = document.getElementById('contraseña').value;
-  const rol = document.getElementById('rol').value;
-
-  const datosUsuario = {
-      userID: userID,
-      nombre: nombre,
-      apellido: apellido,
-      correo: correo,
-      contraseña: contraseña,
-      rol: rol
-  };
-
-  fetch("/actualizarUsuario", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datosUsuario)
-  })
-  .then(response => response.text())
-  .then(result => {
-      console.log(result);
-  })
-  .catch(error => console.error('Error al actualizar usuario:', error));
-}
 
 
 
@@ -790,12 +801,18 @@ function agregarUsuario() {
 }
 
 
+
+
+
+
+
 // Realizar una solicitud al servidor para obtener los datos de facturación
 fetch('/obtener-facturacion')
     .then(response => response.json())
     .then(facturaciones => {
         const tablaRepartidor = document.getElementById('tabla-repartidor');
         facturaciones.forEach(facturacion => {
+            const estado = obtenerEstado(facturacion.estado); // Traducir el estado numérico a texto
             const filaRepartidor = `
                 <tr>
                     <th scope="row">${facturacion.facturaID}</th>
@@ -806,8 +823,9 @@ fetch('/obtener-facturacion')
                     <td>${facturacion.distrito}, ${facturacion.direccion}</td>
                     <td>${facturacion.telefono}</td>
                     <td>${facturacion.correo}</td>
+                    <td>${estado}</td> <!-- Mostrar el estado traducido -->
                     <td>
-                        <button class="btn btn-primary btn-sm" onclick="realizarEnvio(${facturacion.facturaID})">Realizar Envío</button>
+                        <button class="btn btn-primary btn-sm" onclick="realizarEnvio('${facturacion.facturaID}')">Realizar Envío</button>
                         <button class="btn btn-success btn-sm" onclick="marcarEntregado(${facturacion.facturaID})">Entregado</button>
                     </td>
                 </tr>
@@ -816,6 +834,93 @@ fetch('/obtener-facturacion')
         });
     })
     .catch(error => console.error('Error al obtener los datos de facturación:', error));
+
+// Función para traducir el estado numérico a texto
+function obtenerEstado(estadoNum) {
+    switch (estadoNum) {
+        case 1:
+            return "Recibido";
+        case 2:
+            return "Pendiente";
+        case 3:
+            return "En camino";
+        default:
+            return "Desconocido";
+    }
+}
+
+
+
+
+// Realizar una solicitud al servidor para obtener los datos de facturación
+fetch('/obtener-facturacion')
+    .then(response => response.json())
+    .then(facturaciones => {
+        const tablaPedidoRealizado = document.getElementById('tabla-pedidoRealizado');
+        facturaciones.forEach(facturacion => {
+            const estado = obtenerEstado(facturacion.estado); // Traducir el estado numérico a texto
+            const filaPedidoRealizado = `
+                <tr>
+                    <th scope="row">${facturacion.facturaID}</th>
+                    <td>${facturacion.nombre}</td>
+                    <td>${facturacion.apellido}</td>
+                    <td>${facturacion.provincia}</td>
+                    <td>${facturacion.canton}</td>
+                    <td>${facturacion.distrito}, ${facturacion.direccion}</td>
+                    <td>${facturacion.telefono}</td>
+                    <td>${facturacion.correo}</td>
+                    <td>${estado}</td> <!-- Mostrar el estado traducido -->
+                    <td>
+                        ${generarBotones(facturacion.estado)}
+                    </td>
+                </tr>
+            `;
+            tablaPedidoRealizado.innerHTML += filaPedidoRealizado;
+        });
+    })
+    .catch(error => console.error('Error al obtener los datos de facturación:', error));
+
+// Función para traducir el estado numérico a texto
+function obtenerEstado(estadoNum) {
+    switch (estadoNum) {
+        case 1:
+            return "Recibido";
+        case 2:
+            return "Pendiente";
+        case 3:
+            return "En camino";
+        default:
+            return "Desconocido";
+    }
+}
+
+// Función para generar los botones según el estado de la factura
+function generarBotones(estado) {
+    switch (estado) {
+        case 1: // Recibido
+            return ``;
+        case 3: // En camino
+            return `<button class="btn btn-info btn-sm" onclick="verDetallePedido()">Ver Detalle</button>`;
+        default:
+            return ''; // No se muestran botones para otros estados
+    }
+}
+
+function verDetallePedido() {
+  // Redirigir al usuario a la vista de detallePedido
+  window.location.href = '/detallePedido';
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Función para marcar como entregado y eliminar el registro de la base de datos
@@ -830,4 +935,55 @@ function marcarEntregado(facturaID) {
       // Actualizar la interfaz o hacer cualquier otra acción necesaria después de eliminar el registro
   })
   .catch(error => console.error('Error al eliminar la factura:', error));
+}
+
+
+function realizarEnvio(facturaID) {
+  // Realizar una solicitud al servidor para obtener los datos de la factura seleccionada
+  fetch(`/obtener-factura/${facturaID}`)
+      .then(response => response.json())
+      .then(facturacion => {
+        // Almacenar los datos de la factura en el almacenamiento local
+        localStorage.setItem('facturacionSeleccionada', JSON.stringify(facturacion));
+  
+        // Redirigir a la vista de pedido
+        window.location.href = '/pedido';
+
+        // Llenar los campos con los datos de la factura recibidos del servidor
+        const informacionContacto = document.getElementById('informacion-contacto');
+        informacionContacto.innerHTML = `
+            <h5>Información de Contacto</h5>
+            <ul>
+                <li>
+                    <h6><i class="fa fa-map-marker"></i> Cliente</h6>
+                    <p>${facturacion.nombre} ${facturacion.apellido}</p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-map-marker"></i> Provincia</h6>
+                    <p>${facturacion.provincia}</p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-map-marker"></i> Canton</h6>
+                    <p>${facturacion.canton}</p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-map-marker"></i> Distrito</h6>
+                    <p>${facturacion.distrito}</p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-map-marker"></i> Dirección</h6>
+                    <p>${facturacion.direccion}</p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-phone"></i> Teléfono</h6>
+                    <p><span>${facturacion.telefono}</span></p>
+                </li>
+                <li>
+                    <h6><i class="fa fa-headphones"></i> Correo Electrónico</h6>
+                    <p>${facturacion.correo}</p>
+                </li>
+            </ul>
+        `;
+      })
+      .catch(error => console.error('Error al obtener los datos de la factura:', error));
 }

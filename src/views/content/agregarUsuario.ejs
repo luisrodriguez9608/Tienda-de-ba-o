@@ -26,14 +26,57 @@
                             <input type="text" id="apellido" placeholder="Apellido" required>
                             <input type="email" id="correo" placeholder="Correo electrónico" required>
                             <input type="password" id="contraseña" placeholder="Contraseña" required>
-                            <select id="rol" required>
+                            <select id="rolSelect" required>
                                 <option value="1">Cliente</option>
                                 <option value="2">Admin</option>
                                 <option value="3">Repartidor</option>
-                            </select> <!-- Cierre de la etiqueta select -->
+                            </select>
                             <button type="submit" class="site-btn">Agregar</button>
                         </form>
                     </div>
+<script>// Función para agregar un nuevo usuario
+    function agregarUsuario() {
+        var nombre = document.getElementById('nombre').value;
+        var apellido = document.getElementById('apellido').value;
+        var correo = document.getElementById('correo').value;
+        var contraseña = document.getElementById('contraseña').value;
+        var rolSelect = document.getElementById('rolSelect');
+        var rol = rolSelect.options[rolSelect.selectedIndex].value; // Obtener el valor seleccionado del rol
+    
+        var data = {
+            nombre: nombre,
+            apellido: apellido,
+            correo: correo,
+            contraseña: contraseña,
+            rol: rol // Pasar el valor seleccionado del rol al objeto de datos
+        };
+    
+        // Realizar una solicitud POST al servidor para agregar un nuevo usuario
+        fetch('/agregarUsuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Usuario agregado correctamente');
+                return response.text();
+            }
+            throw new Error('Error al agregar el usuario');
+        })
+        .then(data => {
+            alert(data); // Mostrar el mensaje de éxito devuelto por el servidor
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al agregar el usuario');
+        });
+    
+        return false; // Evitar que el formulario se envíe normalmente
+    }
+    </script>                  
                 </div>
             </div>
         </div>

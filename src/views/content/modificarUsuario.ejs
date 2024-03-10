@@ -1,55 +1,135 @@
-<!-- Breadcrumb Begin -->
-<div class="breadcrumb-option">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="breadcrumb__links">
-                    <a href="/"><i class="fa fa-home"></i> Inicio</a>
-                    <span>Modificar Usuario</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Breadcrumb End -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const userID = obtenerUserIDDesdeURL(); // Implementa esta función para obtener el userID de la URL
-        cargarDatosUsuario(userID);
-    });
-</script>
-<!-- Contact Section Begin -->
-<section class="contact spad">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <div class="contact__content">
-                    <div class="contact__form">
-                        <h5>Modificar usuario</h5>
-                        <form id="modificarUsuarioForm" onsubmit="return modificarUsuario()">
-                            <h>Nombre</h>
-                            <input type="text" id="nombre" placeholder="Nombre" required>
-                            <h>Apellido</h>
-                            <input type="text" id="apellido" placeholder="Apellido" required>
-                            <h>Correo Electrónico</h>
-                            <input type="email" id="correo" placeholder="Correo electrónico" required>
-                            <h>Contraseña</h>
-                            <input type="password" id="contraseña" placeholder="Contraseña" required>
-                            <h>Rol</h>
-                            <select id="rol" required>
-                                <option value="1">Cliente</option>
-                                <option value="2">Admin</option>
-                                <option value="3">Repartidor</option>
-                            </select>
-                            <button type="submit" class="site-btn">Guardar cambios</button>
-                            <button type="button" onclick="redirectUsuarios()" class="site-btn">Cancelar</button>
-                        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Usuario</title>
+</head>
+<body>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="/"><i class="fa fa-home"></i> Inicio</a>
+                        <span>Modificar Usuario</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+    <!-- Breadcrumb End -->
 
-<!-- Contact Section End -->
+    <!-- Contact Section Begin -->
+    <section class="contact spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__content">
+                        <div class="contact__form">
+                            <h5>Modificar usuario</h5>
+                            <form id="modificarUsuarioForm">
+                                <input type="hidden" id="userID" name="userID">
+                                <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                                <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
+                                <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+                                <input type="password" id="contraseña" name="contraseña" placeholder="Contraseña" required>
+                                <select id="rol" name="rol" required>
+                                    <option value="1">Cliente</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">Repartidor</option>
+                                </select>
+                                <button type="submit" class="site-btn">Guardar cambios</button>
+                                <button type="button" onclick="redirectUsuarios()" class="site-btn">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userID = obtenerParametroURL('userID');
+            if (userID) {
+                console.log("Usuario ID:", userID);
+                cargarDatosUsuario(userID);
+            } else {
+                console.error("Error: No se proporcionó el ID del usuario en la URL.");
+            }
+            
+            const formulario = document.getElementById('modificarUsuarioForm');
+            formulario.addEventListener('submit', function(event) {
+                event.preventDefault();
+                console.log("Formulario enviado");
+                modificarUsuario();
+            });
+        });
+
+        function obtenerParametroURL(parametro) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(parametro);
+        }
+
+        function cargarDatosUsuario(userID) {
+            fetch(`/obtenerUsuario/${userID}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Datos del usuario cargados:", data);
+                    document.getElementById('userID').value = data.userID;
+                    document.getElementById('nombre').value = data.nombre;
+                    document.getElementById('apellido').value = data.apellido;
+                    document.getElementById('correo').value = data.correo;
+                    document.getElementById('contraseña').value = data.contraseña;
+                    document.getElementById('rol').value = data.rol;
+                })
+                .catch(error => console.error('Error al cargar los datos del usuario:', error));
+        }
+
+        function modificarUsuario() {
+    console.log("Intentando modificar usuario...");
+
+    const userID = document.getElementById('userID').value;
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const correo = document.getElementById('correo').value;
+    const contraseña = document.getElementById('contraseña').value;
+    const rol = document.getElementById('rol').value;
+
+    console.log("Datos del formulario a enviar:", { userID, nombre, apellido, correo, contraseña, rol });
+
+    const datosUsuario = {
+        userID: userID,
+        nombre: nombre,
+        apellido: apellido,
+        correo: correo,
+        contraseña: contraseña,
+        rol: rol
+    };
+
+    fetch("/actualizarUsuario", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(datosUsuario)
+    })
+    .then(response => response.text())
+    .then(result => {
+        console.log("Respuesta del servidor:", result);
+        window.location.href = '/users';
+        // Aquí puedes redirigir a otra página o realizar alguna otra acción después de actualizar el usuario
+    })
+    .catch(error => console.error('Error al actualizar usuario:', error));
+}
+
+
+        function redirectUsuarios() {
+            window.location.href = '/users'; // Reemplaza '/usuarios' con la URL de la página de usuarios
+        }
+    </script>
+</body>
+</html>

@@ -65,5 +65,16 @@ router.get("/repartidor", function (req, res, next) {
 router.get("/envio", function (req, res, next) {
   res.render("envio");
 });
-
+router.get("/pedido", function (req, res, next) {
+  res.render("pedido");
+});
+router.get("/pedidos", function (req, res, next) {
+  res.render("pedidos");
+});
+router.get("/pedidoRealizado", function (req, res, next) {
+  res.render("pedidoRealizado");
+});
+router.get("/detallePedido", function (req, res, next) {
+  res.render("detallePedido");
+});
 module.exports = router;

@@ -96,6 +96,35 @@ app.use(session({
 
 
 
+// Endpoint para obtener los datos de una factura específica por su ID
+app.get('/obtener-factura/:facturaID', function(req, res) {
+  const facturaID = req.params.facturaID;
+
+  // Realiza una consulta a la base de datos para obtener los datos de la factura
+  db.query('SELECT * FROM facturacion WHERE facturaID = ?', [facturaID], (err, result) => {
+      if (err) {
+          console.error('Error al obtener los datos de la factura:', err);
+          res.status(500).send('Error interno del servidor');
+          return;
+      }
+
+      if (result.length === 0) {
+          res.status(404).send('Factura no encontrada');
+          return;
+      }
+
+      const factura = result[0];
+      res.json(factura);
+  });
+});
+
+
+
+
+
+
+
+
 // Endpoint para eliminar un registro de la tabla de facturación por su ID
 app.delete('/eliminar-facturacion/:facturaID', (req, res) => {
   const facturaID = req.params.facturaID;
@@ -121,11 +150,31 @@ app.get('/obtener-facturacion', (req, res) => {
   });
 });
 
+// Endpoint para obtener la lista de datos de facturación para pedidos realizados
+app.get('/pedidoRealizado', (req, res) => {
+  const userID = req.session.userID;
+  db.query('SELECT * FROM facturacion WHERE userID = ?', [userID], (err, results) => {
+      if (err) {
+          console.error('Error al obtener los datos de facturación:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      res.json(results);
+  });
+});
+
+
+
+
+
+
+
+
 
 
 // Endpoint para agregar un nuevo usuario
 app.post("/agregarUsuario", function (req, res, next) {
-  const { nombre, apellido, correo, contraseña } = req.body;
+  const { nombre, apellido, correo, contraseña, rol } = req.body; // Agregar "rol" a los datos recibidos
 
   // Verificar si el correo electrónico ya está registrado
   db.query(`SELECT * FROM usuarios WHERE correo = ?`, [correo], (err, results) => {
@@ -138,8 +187,8 @@ app.post("/agregarUsuario", function (req, res, next) {
     if (results.length > 0) {
       res.send('El correo electrónico ya está registrado');
     } else {
-      // Insertar el nuevo usuario en la base de datos
-      db.query(`INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, 1)`, [nombre, apellido, correo, contraseña], (err, result) => {
+      // Insertar el nuevo usuario en la base de datos, incluyendo el valor del rol
+      db.query(`INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, ?)`, [nombre, apellido, correo, contraseña, rol], (err, result) => {
         if (err) {
           console.error('Error al insertar el nuevo usuario: ', err);
           res.status(500).send('Error interno del servidor');
@@ -154,22 +203,50 @@ app.post("/agregarUsuario", function (req, res, next) {
 
 
 
-// Actualizar datos del usuario
-app.post("/actualizarUsuario", function (req, res, next) {
+
+
+
+// Endpoint para actualizar datos del usuario
+app.post("/actualizarUsuario", function (req, res) {
   // Recibir datos actualizados del usuario desde el cliente
-  const usuarioActualizado = req.body;
+  const { userID, nombre, apellido, correo, contraseña, rol } = req.body;
   // Lógica para actualizar el registro del usuario en la base de datos
-  // Aquí debes actualizar el registro del usuario con los nuevos valores
-  res.send("Usuario actualizado correctamente");
+  db.query(`UPDATE usuarios SET nombre = ?, apellido = ?, correo = ?, contraseña = ?, rol = ? WHERE userID = ?`, [nombre, apellido, correo, contraseña, rol, userID], (err, result) => {
+      if (err) {
+          console.error('Error al actualizar el usuario: ', err);
+          res.status(500).send('Error interno del servidor');
+          return;
+      }
+      console.log('Usuario actualizado correctamente');
+      res.send('Usuario actualizado correctamente');
+  });
 });
-// Obtener datos del usuario por userID
-app.get("/obtenerUsuario/:userID", function (req, res, next) {
+
+// Endpoint para obtener datos de un usuario específico por su ID
+app.get("/obtenerUsuario/:userID", function (req, res) {
   const userID = req.params.userID;
-  // Lógica para obtener los datos del usuario desde la base de datos
-  // Aquí debes obtener los datos del usuario con el userID proporcionado
-  // Luego enviar los datos del usuario como respuesta
-  res.json(usuario); // usuario debe ser el objeto que contiene los datos del usuario
+  // Realiza una consulta a la base de datos para obtener los datos del usuario
+  db.query('SELECT * FROM usuarios WHERE userID = ?', [userID], (err, result) => {
+      if (err) {
+          console.error('Error al obtener los datos del usuario:', err);
+          res.status(500).send('Error interno del servidor');
+          return;
+      }
+      if (result.length === 0) {
+          res.status(404).send('Usuario no encontrado');
+          return;
+      }
+      const usuario = result[0];
+      res.json(usuario);
+  });
 });
+
+
+
+
+
+
+
 
 
 // Endpoint para eliminar un usuario
@@ -702,7 +779,7 @@ app.post('/agregarProducto', (req, res) => {
           }
           return;
       }
-      res.json({ message: 'Producto agregado exitosamente', productId: results.insertId });
+      res.json({ message: 'Producto agregado exitosamente'});
   });
 });
 
@@ -846,7 +923,7 @@ app.get('/admin', (req, res) => {
 });
 
 // Ruta para asahboard.html
-app.get('/dashboard', (req, res) => {
+app.get('/users', (req, res) => {
   // Verificar si el usuario tiene sesión activa y si el rol es igual a 2
   if (req.session.loggedin && req.session.rol === 2) {
     // Si cumple con los requisitos, renderiza dashboard.html
