@@ -1729,7 +1729,7 @@ ol {
 .product__details__price span {
 	font-size: 18px;
 	color: #b1b0b0;
-	text-decoration: line-through;
+	
 	margin-left: 10px;
 	display: inline-block;
 }

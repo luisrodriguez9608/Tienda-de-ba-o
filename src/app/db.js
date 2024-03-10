@@ -13,7 +13,7 @@ function handleDisconnect() {
       : "root",
     password: process.env.DATABASE_PASSWORD
       ? process.env.DATABASE_PASSWORD
-      : "",
+      : "1x6x-osq5-S719.()",
     database: "pineapplesea",
   });
 

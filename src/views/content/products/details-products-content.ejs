@@ -31,33 +31,10 @@
             <div class="col-lg-6">
                 <div class="product__details__text">
                     <h3 id="product-name"></h3>
-                    <div class="product__details__price">$ <span id="product-price"></span></div>
+                    <div class="product__details__price">₡ <span id="product-price"></span></div>
                     <p id="product-description"></p>
                     <p id="product-category"></p>
-                    <div class="product__details__button">
-
-                        <a href="#" class="agregar-al-carrito" data-producto-id="${producto.productoID}"></span>
-                            Agregar al carrito</a>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                // Obtener todos los elementos con la clase 'cart-btn' y 'agregar-al-carrito'
-                                const cartButtons = document.querySelectorAll('.cart-btn, .agregar-al-carrito');
-
-                                // Iterar sobre cada elemento y agregar el event listener
-                                cartButtons.forEach(button => {
-                                    button.addEventListener('click', function (event) {
-                                        event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
-                                        const productID = this.dataset.productoId; // Obtener el ID del producto de los atributos de datos
-
-                                        // Aquí puedes realizar cualquier otra acción que necesites al agregar al carrito
-                                        console.log('Producto agregado al carrito con ID:', productID);
-                                    });
-                                });
-                            });
-                        </script>
-
-                    </div>
+                  
                 </div>
             </div>
         </div>

@@ -477,6 +477,12 @@ app.post("/placeOrder", async (req, res) => {
 
 var XML_FILE;
 
+
+
+
+
+
+
 // Modificar la función enviarMail para incluir console.log de los productos recuperados
 const enviarMail = async (userId) => {
   try {
@@ -484,8 +490,8 @@ const enviarMail = async (userId) => {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "fabimv23@gmail.com",
-        pass: "inru ygul cqtr hzit",
+        user: "gabrieljbc2@gmail.com",
+        pass: "gwds zvus hlmm xvaq",
       },
     };
 
@@ -523,7 +529,7 @@ const enviarMail = async (userId) => {
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
           from: "pineapplesea@gmail.com",
-          to: "fabimv23@gmail.com",
+          to: "gabrieljbc2@gmail.com",
           subject: "Confirmación de Compra en PineApple Sea",
           html: `
           <p>Estimado/a Cliente,</p>
@@ -557,6 +563,12 @@ const enviarMail = async (userId) => {
     throw error;
   }
 };
+
+
+
+
+
+
 
 const fs = require("fs");
 
@@ -632,8 +644,9 @@ app.post("/authenticate", (req, res) => {
       } else {
         req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
         req.session.rol = null; // También establece el rol en null
-        console.log("Inicio de sesión fallido.");
-        res.send("Correo o contraseña incorrectos");
+        
+       res.redirect('/login');
+     
       }
     }
   );
@@ -662,39 +675,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Ruta para la autenticación
-app.post("/inicio.html", (req, res) => {
-  const { correo, contraseña } = req.body;
-  db.query(
-    "SELECT * FROM usuarios WHERE correo = ? AND contraseña = ?",
-    [correo, contraseña],
-    (err, results) => {
-      if (err) {
-        console.error("Error al realizar la consulta: ", err);
-        res.status(500).send("Error interno del servidor");
-        return;
-      }
 
-      if (results.length > 0) {
-        const usuario = results[0];
-        req.session.loggedin = true;
-        req.session.userId = usuario.userID; // Configurar el ID de usuario en la sesión
-        req.session.correo = correo;
-        req.session.rol = usuario.rol; // Establecer correctamente el rol en la sesión
-        console.log(
-          "Inicio de sesión exitoso. Rol del usuario:",
-          req.session.rol
-        );
-        res.redirect("/");
-      } else {
-        req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
-        req.session.rol = null; // También establece el rol en null
-        console.log("Inicio de sesión fallido.");
-        res.send("Correo o contraseña incorrectos");
-      }
-    }
-  );
-});
 
 // Ruta para verificar sesión activa
 app.get("/checkSession", (req, res) => {

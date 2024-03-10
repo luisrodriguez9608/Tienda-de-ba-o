@@ -28,7 +28,7 @@ function registrarUsuario() {
           alert(message);
           // Redireccionar al usuario a la página de inicio si el registro fue exitoso
           if (message === "Usuario registrado correctamente") {
-              window.location.href = "/index.html"; // Redirigir al usuario al index.html
+              window.location.href = "/"; // Redirigir al usuario al index.html
           }
       })
       .catch((error) => console.error("Error al registrar usuario:", error));
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <div class="label new">New</div>
                                     <ul class="product__hover">
                                         <li><a href="details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
-                                       
+                                      
                                         <li><a href="#" class="agregar-al-carrito" data-producto-id="${producto.productoID}"><span class="icon_bag_alt"></span></a></li>
                                     </ul>
                                 </div>
@@ -348,9 +348,13 @@ function checkSession() {
         const userLink = document.getElementById("userLink"); // Agregamos referencia al enlace del dashboard
         const accountOptions = document.getElementById("accountOptions");
         const logoutLink = document.getElementById("logoutLink");
-  
+        const shopCart = document.getElementById("shopCart");
+        const pedidoRealizado = document.getElementById("pedidoRealizado");
+
         if (data.loggedin) {
           authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
+          shopCart.innerHTML = '<a href="/shop-cart"><span class="icon_bag_alt">';
+          pedidoRealizado.innerHTML = '<li id="pedidoRealizado"><a href="./pedidoRealizado">Pedido Realizado</a></li>';
           if (data.rol !== null && data.rol === 2) {
             adminLink.removeAttribute("hidden");
             userLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
@@ -363,6 +367,8 @@ function checkSession() {
         } else {
           authSection.innerHTML =
             '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
+            shopCart.setAttribute("hidden", "true");
+            pedidoRealizado.setAttribute("hidden", "true");
           adminLink.setAttribute("hidden", "true");
           userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
           accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
