@@ -8,7 +8,7 @@ function codigo_actividad() {
     return codigo;
 }
 
-async function generateXML(clave) {
+async function generateXML(clave, orden_compra) {
     const postData = new URLSearchParams();
     postData.append('w', 'genXML');
     postData.append('r', 'gen_xml_fe');
@@ -30,18 +30,18 @@ async function generateXML(clave) {
     postData.append('emisor_cod_pais_fax', '506');
     postData.append('emisor_fax', '00000000');
     postData.append('emisor_email', 'pineapplesea@gmail.com');
-    postData.append('receptor_nombre', 'Julian Subiros');
+    postData.append('receptor_nombre', orden_compra.nombre + " " + orden_compra.apellido);
     postData.append('receptor_tipo_identif', '01');
-    postData.append('receptor_num_identif', '988887777');
+    postData.append('receptor_num_identif', orden_compra.cedula);
     postData.append('receptor_provincia', '6');
     postData.append('receptor_canton', '02');
     postData.append('receptor_distrito', '03');
     postData.append('receptor_barrio', '01');
     postData.append('receptor_cod_pais_tel', '506');
-    postData.append('receptor_tel', '84922891');
+    postData.append('receptor_tel', orden_compra.telefono);
     postData.append('receptor_cod_pais_fax', '506');
     postData.append('receptor_fax', '00000000');
-    postData.append('receptor_email', 'julisubiros@gmail.com');
+    postData.append('receptor_email', orden_compra.correo);
     postData.append('condicion_venta', '01');
     postData.append('plazo_credito', '30');
     postData.append('medios_pago', JSON.stringify([{ "codigo": "01"}]));

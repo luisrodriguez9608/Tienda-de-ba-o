@@ -133,14 +133,15 @@ const firmarXML = require("./firmarXML");
 const enviarXML = require("./enviarXML");
 const getClave = require("./generateClave");
 
+let orden_compra
+
 // Endpoint para realizar la facturación
 app.post("/facturacion", async (req, res) => {
-  console.log(req.body)
   try {
     // Generar Claves y el Consecutivo
     const clave = await getClave();
     // Generar el XML
-    const xmlGenerado = await generateXML(clave);
+    const xmlGenerado = await generateXML(clave, orden_compra);
 
     // Firmar el XML
     const xmlFirmado = await firmarXML(xmlGenerado);
@@ -243,43 +244,36 @@ app.post("/suscribirse", (req, res) => {
 });
 
 // Ruta para manejar la solicitud de checkout
-app.post("/placeOrder", (req, res) => {
-  const {
-    userID,
-    carritoID,
-    nombre,
-    apellido,
-    pais,
-    direccion,
-    provincia,
-    distrito,
-    telefono,
-    correo,
-  } = req.body;
-
-  // Insertar datos en la tabla 'facturacion'
-  const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, distrito, telefono, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  const values = [
-    userID,
-    carritoID,
-    nombre,
-    apellido,
-    pais,
-    direccion,
-    provincia,
-    distrito,
-    telefono,
-    correo,
-  ];
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error("Error al insertar datos en la base de datos:", err);
-      res.status(500).send("Error interno del servidor");
-    } else {
-      console.log("Datos insertados correctamente en la tabla de facturación");
+app.post("/placeOrder", async (req, res) => {
+  const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  try {
+    const  { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo } = req.body; 
+    const values = [ req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo ];
+    orden_compra = { 
+      cedula: cedula,
+      nombre: nombre,
+      apellido: apellido,
+      pais: pais,
+      direccion : direccion,
+      provincia: provincia,
+      distrito: distrito,
+      canton: canton,
+      telefono: telefono,
+      correo: correo
     }
-  });
+    // Insertar datos en la tabla 'facturacion'
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error("Error al insertar datos en la base de datos:", err);
+        res.status(500).send("Error interno del servidor");
+      } else {
+        console.log("Factura registrada exitosamente");
+        res.redirect('/shop')
+      }
+    });
+  } catch (error) {
+    console.error(error)
+  }
 });
 
 var XML_FILE;
@@ -321,10 +315,9 @@ const enviarMail = async (userId) => {
         });
 
         // Calcular el total de la compra
-        const totalCompra = productosCarrito.reduce(
-          (total, producto) => total + producto.subtotal,
-          0
-        );
+        const totalCompra = productosCarrito.map((producto) => {
+          producto.precio * producto.cantidad
+        })
 
         //console.log("Total del carrito:", totalCompra); // Verificar el total del carrito
 
