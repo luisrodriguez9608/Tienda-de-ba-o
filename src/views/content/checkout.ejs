@@ -103,6 +103,7 @@
                         <h5>Su Orden</h5>
                         <div class="checkout__order__product" id="product-list">
                             <!-- Aquí se insertarán los productos del carrito -->
+                            <input hidden  id="orden_productos" name="productos"></input>
                         </div>
                         <div class="checkout__order__total">
                             <ul id="total-list">
@@ -133,7 +134,8 @@
                     item.textContent = 'No hay productos en el carrito';
                     productList.appendChild(item);
                 } else {
-                    console.log("Prductos en checkout: ", productos)
+                    //console.log("Prductos en checkout: ", productos)
+                    $('#orden_productos').val(JSON.stringify(productos))
                     // Mostrar los productos del carrito
                     productos.forEach(producto => {
                         if (producto) {
@@ -316,13 +318,10 @@
     async function iniciarFacturacion() {
         // Realizar el submit del formulario
         await document.getElementById('checkout__form').submit();
-        alert("Termine el POST")
         // Llamar a la función para realizar la facturación
         await llamarFacturacion();
-        alert("Termine la facturacion")
         // Llamar a la función para enviar el correo
         await llamarEnviarMail();
-        alert("Termine el email")
     }
 
     // Función para llamar a facturacion en el servidor

@@ -247,7 +247,7 @@ app.post("/suscribirse", (req, res) => {
 app.post("/placeOrder", async (req, res) => {
   const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   try {
-    const  { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo } = req.body; 
+    const  { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
     const values = [ req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo ];
     orden_compra = { 
       cedula: cedula,
@@ -259,8 +259,10 @@ app.post("/placeOrder", async (req, res) => {
       distrito: distrito,
       canton: canton,
       telefono: telefono,
-      correo: correo
+      correo: correo,
+      orden_productos: productos
     }
+    console.log("Orden de compra: ", orden_compra)
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {
