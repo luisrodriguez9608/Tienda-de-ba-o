@@ -83,7 +83,7 @@
             return response.json();
         })
         .then(data => {
-            alert(data.message); // Muestra un mensaje de éxito o error
+            $.notify(data.message); // Muestra un mensaje de éxito o error
             contactForm.reset(); // Reinicia el formulario después de enviar el mensaje
         })
         .catch(error => console.error('Error al enviar mensaje:', error));

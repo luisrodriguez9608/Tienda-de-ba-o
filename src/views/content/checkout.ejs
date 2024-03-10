@@ -376,7 +376,7 @@
                 },
     
                 onCancel: function (data) {
-                    alert("Pago Cancelado");
+                    $.notify("Pago cancelado"); // Muestra un mensaje de éxito o error
                 }
             }).render('#paypal-button-container');
         }

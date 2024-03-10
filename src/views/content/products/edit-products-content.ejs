@@ -107,7 +107,7 @@
 
         // Verificar si todos los campos requeridos están llenos
         if (!nombre || !descripcion || !imagen || !precio || !stock || !categoria) {
-            alert("Por favor, complete todos los campos.");
+            $.notify("Por favor, complete todos los campos.");
             return false;
         }
 
@@ -135,7 +135,7 @@
     return response.text();
 })
 .then((message) => {
-    alert("Producto editado exitosamente");
+    $.notify("Producto editado exitosamente");
     
     if (message === "Producto editado exitosamente") {
         window.location.href = "/admin";
@@ -143,7 +143,7 @@
 })
 .catch((error) => {
     console.error("Error al editar el producto:", error.message);
-    alert(error.message);
+    $.notify(error.message);
 });
 
 // Evitar que el formulario se envíe de forma convencional
