@@ -69,6 +69,11 @@ app.get('/obtener-factura/:facturaID', function(req, res) {
 
 
 
+
+
+
+
+
 // Endpoint para eliminar un registro de la tabla de facturación por su ID
 app.delete('/eliminar-facturacion/:facturaID', (req, res) => {
   const facturaID = req.params.facturaID;
@@ -380,6 +385,76 @@ app.get("/totalProductos", (req, res) => {
     }
   );
 });
+// Ruta para marcar un pedido como entregado
+app.put('/marcar-pedido-realizado/:facturaID', (req, res) => {
+  // Obtén el ID de la factura de los parámetros de la solicitud
+  const facturaID = req.params.facturaID;
+
+  // Realiza la consulta para actualizar el estado de la factura a entregado
+  db.query('UPDATE facturacion SET estado = ? WHERE facturaID = ?', [1, facturaID], (err, result) => {
+      if (err) {
+          console.error('Error al actualizar el estado del pedido:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+      } else {
+          console.log('Pedido marcado como entregado con éxito');
+          res.sendStatus(200); // Envía un código de estado 200 (OK) para indicar que la operación se completó con éxito
+      }
+  });
+});
+
+
+
+
+
+// Importa el módulo WebSocket
+const WebSocket = require('ws');
+
+// Crea un servidor HTTP y un servidor WebSocket
+const httpServer = require('http').createServer();
+const wss = new WebSocket.Server({ server: httpServer });
+
+// Almacena la posición del repartidor (inicialmente nula)
+let repartidorLocation = null;
+
+// Cuando se conecta un cliente WebSocket
+wss.on('connection', ws => {
+    // Envía la posición del repartidor al cliente cuando se conecta, si está disponible
+    if (repartidorLocation) {
+        ws.send(JSON.stringify(repartidorLocation));
+    }
+});
+
+// Modifica la ruta para obtener los datos de geolocalización del repartidor
+app.get('/datos-geolocalizacion-repartidor', (req, res) => {
+    // Envía los datos de geolocalización del repartidor al cliente HTTP
+    res.json(repartidorLocation);
+});
+
+// Modifica la ruta para actualizar la ubicación del repartidor
+app.post('/actualizar-ubicacion-repartidor', (req, res) => {
+    const nuevaUbicacion = req.body;
+    repartidorLocation = nuevaUbicacion;
+    // Envía una respuesta al cliente
+    res.sendStatus(200);
+});
+
+// Cuando se conecta un cliente WebSocket
+wss.on('connection', ws => {
+    // Envía la posición del repartidor al cliente cuando se conecta, si está disponible
+    if (repartidorLocation) {
+        ws.send(JSON.stringify(repartidorLocation));
+    }
+});
+
+
+
+
+
+
+
+
+
+
 
 // Endpoint para obtener el total de usuarios registrados
 app.get("/totalUsuarios", (req, res) => {
@@ -441,25 +516,13 @@ app.post("/suscribirse", (req, res) => {
 });
 
 // Ruta para manejar la solicitud de checkout
+// Ruta para manejar la solicitud de checkout
 app.post("/placeOrder", async (req, res) => {
-  const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO facturacion (userID, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo, productos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   try {
-    const  { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
-    const values = [ req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo ];
-    orden_compra = { 
-      cedula: cedula,
-      nombre: nombre,
-      apellido: apellido,
-      pais: pais,
-      direccion : direccion,
-      provincia: provincia,
-      distrito: distrito,
-      canton: canton,
-      telefono: telefono,
-      correo: correo,
-      orden_productos: productos
-    }
-    console.log("Orden de compra: ", orden_compra)
+    const { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
+    const values = [req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo, JSON.stringify(productos)]; // Convertir el objeto a JSON
+
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {
@@ -467,13 +530,15 @@ app.post("/placeOrder", async (req, res) => {
         res.status(500).send("Error interno del servidor");
       } else {
         console.log("Factura registrada exitosamente");
-        res.redirect('/shop')
+        res.redirect('/shop');
       }
     });
   } catch (error) {
-    console.error(error)
+    console.error(error);
+    res.status(500).send("Error interno del servidor");
   }
 });
+
 
 var XML_FILE;
 
@@ -482,8 +547,6 @@ var XML_FILE;
 
 
 
-
-// Modificar la función enviarMail para incluir console.log de los productos recuperados
 const enviarMail = async (userId) => {
   try {
     const config = {
@@ -507,8 +570,6 @@ const enviarMail = async (userId) => {
           return;
         }
 
-        //console.log("Productos del carrito:", productosCarrito); // Verificar los productos recuperados
-
         // Construir la lista de productos en el carrito para el correo electrónico
         const listaProductos = productosCarrito.map((producto) => {
           return `
@@ -520,11 +581,15 @@ const enviarMail = async (userId) => {
         });
 
         // Calcular el total de la compra
-        const totalCompra = productosCarrito.map((producto) => {
-          producto.precio * producto.cantidad
-        })
+        const totalCompra = productosCarrito.reduce((total, producto) => {
+          return total + producto.subtotal; // Sumar el subtotal de cada producto al total
+        }, 0); // Inicializar el total en 0
 
-        //console.log("Total del carrito:", totalCompra); // Verificar el total del carrito
+        // Formatear el total de la compra con dos decimales
+        const totalFormateado = totalCompra.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
 
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
@@ -538,7 +603,7 @@ const enviarMail = async (userId) => {
           <ul>
             ${listaProductos.join("")}
           </ul>
-          <p>Total: $${totalCompra}</p>
+          <p>Total: $${totalFormateado}</p> 
           <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
           <p>¡Esperamos que disfrutes de tu producto!</p>
           <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
@@ -555,7 +620,7 @@ const enviarMail = async (userId) => {
         // Enviar el correo electrónico
         const transport = nodemailer.createTransport(config);
         const info = await transport.sendMail(mensaje);
-        //console.log("Correo enviado:", info);
+        console.log("Correo enviado:", info);
       }
     );
   } catch (error) {
@@ -563,6 +628,7 @@ const enviarMail = async (userId) => {
     throw error;
   }
 };
+
 
 
 
@@ -793,8 +859,8 @@ app.post("/editarProducto/:id", (req, res) => {
         return;
       }
       res.json({
-        message: "Producto editado exitosamente",
-        productId: results.insertId,
+        message: "Producto editado exitosamente"
+    
       });
     }
   );

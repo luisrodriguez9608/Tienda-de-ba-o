@@ -38,7 +38,13 @@
                             <input type="number" id="product-price" placeholder="Precio" required>
 
                             <input type="number" min="1" id="product-stock" placeholder="Stock" required>
-                            <button type="submit" class="site-btn">Editar Producto</button>
+                            <button type="submit" class="site-btn" onclick="redirectToAdmin()">Editar Producto</button>
+                            <script>
+                                function redirectToAdmin() {
+                                    window.location.href = "/admin";
+                                }
+                            </script>
+                            
                             <button type="button" class="site-btn" onclick="cancelarAccion()">Cancelar</button>
                         </form>
                     </div>
@@ -120,27 +126,29 @@
                 categoria,
             }),
         })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(
-                        "Error al editar el producto. Por favor, inténtalo de nuevo."
-                    );
-                }
-                return response.text();
-            })
-            .then((message) => {
-                alert(message);
-                if (message === "Producto editado exitosamente") {
-                    window.location.href = "/admin";
-                }
-            })
-            .catch((error) => {
-                console.error("Error al editar el producto:", error.message);
-                alert(error.message);
-            });
+        .then((response) => {
+    if (!response.ok) {
+        throw new Error(
+            "Error al editar el producto. Por favor, inténtalo de nuevo."
+        );
+    }
+    return response.text();
+})
+.then((message) => {
+    alert("Producto editado exitosamente");
+    
+    if (message === "Producto editado exitosamente") {
+        window.location.href = "/admin";
+    }
+})
+.catch((error) => {
+    console.error("Error al editar el producto:", error.message);
+    alert(error.message);
+});
 
-        // Evitar que el formulario se envíe de forma convencional
-        return false;
+// Evitar que el formulario se envíe de forma convencional
+return false;
+
     }
 </script>
 

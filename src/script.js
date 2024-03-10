@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="product__item">
                                 <div class="product__item__pic">
                                     <img src="${producto.imagen}" alt="${producto.nombre}">
-                                    <div class="label new">New</div>
+                                 
                                     <ul class="product__hover">
                                         <li><a href="details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
                                       
@@ -350,6 +350,8 @@ function checkSession() {
         const logoutLink = document.getElementById("logoutLink");
         const shopCart = document.getElementById("shopCart");
         const pedidoRealizado = document.getElementById("pedidoRealizado");
+        const repartidor = document.getElementById("repartidor");
+        const tienda = document.getElementById("tienda");
 
         if (data.loggedin) {
           authSection.innerHTML = '<a href="/logout">Cerrar sesión</a>';
@@ -358,17 +360,28 @@ function checkSession() {
           if (data.rol !== null && data.rol === 2) {
             adminLink.removeAttribute("hidden");
             userLink.removeAttribute("hidden"); // Mostramos el enlace del dashboard si el usuario tiene rol de administrador
+            repartidor.setAttribute("hidden", "true");
+            pedidoRealizado.setAttribute("hidden", "true");
+          } else if (data.rol !== null && data.rol === 3) {
+            repartidor.removeAttribute("hidden");
+            shopCart.setAttribute("hidden", "true");
+            pedidoRealizado.setAttribute("hidden", "true");
+            adminLink.setAttribute("hidden", "true");
+            userLink.setAttribute("hidden", "true");
+            tienda.setAttribute("hidden", "true");
           } else {
             adminLink.setAttribute("hidden", "true");
-            userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
+            userLink.setAttribute("hidden", "true");
+            repartidor.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no tiene rol de administrador
           }
           accountOptions.style.display = "block"; // Mostrar las opciones de cuenta
           logoutLink.style.display = "block"; // Mostrar el enlace de cerrar sesión
-        } else {
+        } else { 
           authSection.innerHTML =
             '<a href="/login">Iniciar sesión</a> <a href="/signup">Registrarse</a>';
             shopCart.setAttribute("hidden", "true");
             pedidoRealizado.setAttribute("hidden", "true");
+            repartidor.setAttribute("hidden", "true");
           adminLink.setAttribute("hidden", "true");
           userLink.setAttribute("hidden", "true"); // Ocultamos el enlace del dashboard si el usuario no está autenticado
           accountOptions.style.display = "none"; // Ocultar las opciones de cuenta
@@ -428,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="product__item">
                                 <div class="product__item__pic">
                                     <img src="${producto.imagen}" alt="${producto.nombre}">
-                                    <div class="label new">New</div>
+                                 
                                     <ul class="product__hover">
                                         <li><a href="/details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
                                         <li><a href="#" onclick="confirmarEliminacion(${producto.productoID})"><span class="icon_bag_alt"></span></a></li>
@@ -587,7 +600,7 @@ fetch("/productos-por-categoria?categoria=masculino") // Endpoint para obtener p
                         <div class="product__item">
                             <div class="product__item__pic">
                                 <img src="${producto.imagen}" alt="${producto.nombre}">
-                                <div class="label new">New</div>
+                         
                                 <ul class="product__hover">
                                     <li><a href="product-details.html?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
                                  
@@ -669,14 +682,14 @@ const roles = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const tablaUsuarios = document.getElementById('tabla-usuarios');
+  const tablaUsuarios = document.getElementById('tabla-usuarios');
 
-    tablaUsuarios.addEventListener('click', function(event) {
-        if (event.target.classList.contains('btn-modificar')) {
-            const userID = obtenerUserIDDesdeBoton(event);
-            cargarDatosUsuario(userID);
-        }
-    });
+  tablaUsuarios.addEventListener('click', function(event) {
+      if (event.target.classList.contains('btn-modificar')) {
+          const userID = event.target.dataset.userid;
+          redirectToModificarUsuario(userID);
+      }
+  });
     // Realizar una solicitud al servidor para obtener la lista de usuarios
     fetch('/obtener-usuarios')
         .then(response => response.json())
@@ -706,7 +719,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
+function redirectToModificarUsuario(userID) {
+  window.location.href = `/modificarUsuario?userID=${userID}`;
+}
 
 
 
@@ -744,9 +759,11 @@ function agregarUsuarioVista() {
 }
 
 // Función para redirigir a la página de modificar usuario
-function modificarUsuario() {
-  window.location.href = `/modificarUsuario`;
+// Función para redirigir a la página de modificar usuario con un parámetro de ID de usuario
+function modificarUsuario(userID) {
+  window.location.href = `/modificarUsuario?userID=${userID}`;
 }
+
 // Función para eliminar un usuario
 function eliminarUsuario(userID) {
   // Mostrar un mensaje de confirmación
@@ -929,19 +946,23 @@ function verDetallePedido() {
 
 
 
-
-// Función para marcar como entregado y eliminar el registro de la base de datos
 function marcarEntregado(facturaID) {
-  // Realizar una solicitud DELETE al servidor para eliminar la factura por su ID
-  fetch(`/eliminar-facturacion/${facturaID}`, {
-      method: 'DELETE'
+  fetch(`/marcar-pedido-realizado/${facturaID}`, {
+      method: 'PUT'
   })
-  .then(response => response.json())
-  .then(data => {
-      console.log(data.message);
-      // Actualizar la interfaz o hacer cualquier otra acción necesaria después de eliminar el registro
+  .then(response => {
+      if (response.ok) {
+          console.log('Pedido marcado como entregado con éxito');
+          // Puedes agregar aquí cualquier acción adicional después de marcar el pedido como entregado
+      } else {
+          console.error('Error al marcar el pedido como entregado');
+          // Manejo de errores si es necesario
+      }
   })
-  .catch(error => console.error('Error al eliminar la factura:', error));
+  .catch(error => {
+      console.error('Error al marcar el pedido como entregado:', error);
+      // Manejo de errores si es necesario
+  });
 }
 
 

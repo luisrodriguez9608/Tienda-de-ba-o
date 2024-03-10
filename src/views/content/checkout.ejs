@@ -17,7 +17,8 @@
 
 <section class="checkout spad">
     <div class="container">
-        <form id="checkout__form" action="/placeOrder" method="POST" class="checkout__form">
+        <form id="checkout__form" action="/placeOrder" method="POST" class="checkout__form" onsubmit="return validarFormulario();">
+
             <div class="row">
                 <div class="col-lg-8">
                     <h5>Detalles de compra</h5>
@@ -140,15 +141,15 @@
                     productos.forEach(producto => {
                         if (producto) {
                             const item = document.createElement('ol');
-                            item.innerHTML += `${producto.nombre}<span>$ ${producto.precio}</span>`;
+                            item.innerHTML += `${producto.nombre}<span>₡ ${producto.precio}</span>`;
                             productList.appendChild(item);
                             subtotal += producto.subtotal;
                         }
                     });
                 }
                 // Actualizar el subtotal y el total en el DOM
-                document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-                document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('subtotal').textContent = `₡ ${subtotal.toFixed(2)}`;
+                document.getElementById('total').textContent = `₡ ${subtotal.toFixed(2)}`;
             })
             .catch(error => console.error('Error al obtener productos del carrito:', error));
     });
@@ -314,103 +315,103 @@
 <script
     src="https://www.paypal.com/sdk/js?client-id=AYDLBJ6oY26-b_3oR053TzHfIlGWD0FujibS7frrNIbhmPZCelMMzeKQq4DZPTVTv3MRKIMI15pq-OWW"></script>
 
-<script>
-    async function iniciarFacturacion() {
-        // Realizar el submit del formulario
-        await document.getElementById('checkout__form').submit();
-        // Llamar a la función para realizar la facturación
-        await llamarFacturacion();
-        // Llamar a la función para enviar el correo
-        await llamarEnviarMail();
-    }
-
-    // Función para llamar a facturacion en el servidor
-    async function llamarFacturacion() {
-       await fetch('/facturacion', { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Facturación realizada correctamente');
-                } else {
-                    console.error('Error en la facturación');
-                }
-            }).catch(error => console.error('Error en la facturación:', error));
-    }
-
-    // Función para llamar a enviarMail en el servidor
-    async function llamarEnviarMail() {
-        fetch('/enviar-correo', { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Correo enviado correctamente');
-                } else {
-                    console.error('Error al enviar el correo');
-                }
-            })
-            .catch(error => console.error('Error al enviar el correo:', error));
-    }
-
-    // Función para renderizar el botón de PayPal con el total del carrito y el token
-    function renderizarBotonPayPal(total) {
-        paypal.Buttons({
-            style: {
-                color: 'blue',
-                shape: 'pill',
-                label: 'pay',
-            },
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: total // Aquí se pasa el total del carrito como el valor del amount
-                        }
-                    }]
-                });
-            },
-
-            onApprove: function (data, actions) {
-                actions.order.capture().then(function (details) {
-                    // Iniciar el proceso de facturación y envío de correo
-                    iniciarFacturacion()
-                })
-            },
-
-            onCancel: function (data) {
-                alert("Pago Cancelado");
-            }
-        }).render('#paypal-button-container');
-    }
-
-    // Calcular el total del carrito y renderizar el botón de PayPal
-    document.addEventListener('DOMContentLoaded', function () {
-        // Función para calcular el total del carrito
-        function calcularTotalCarrito() {
-            // Obtener los productos en el carrito y calcular el total
-            fetch('/productos-carrito')
-                .then(response => response.json())
-                .then(productos => {
-                    let subtotal = 0;
-
-                    // Calcular el subtotal sumando el precio total de cada producto en el carrito
-                    productos.forEach(producto => {
-                        subtotal += producto.precio * producto.cantidad;
-                    });
-
-                    // Actualizar el subtotal en el DOM
-                    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-
-                    // Calcular el total sumando el subtotal y los impuestos, si corresponde
-                    const total = subtotal; // Aquí puedes agregar impuestos o gastos de envío, si corresponde
-
-                    // Actualizar el total en el DOM
-                    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
-
-                    // Renderizar el botón de PayPal con el total del carrito
-                    renderizarBotonPayPal(total);
-                })
-                .catch(error => console.error('Error al obtener productos del carrito: ', error));
+    <script>
+        async function iniciarFacturacion() {
+            // Realizar el submit del formulario
+            await document.getElementById('checkout__form').submit();
+            // Llamar a la función para realizar la facturación
+            await llamarFacturacion();
+            // Llamar a la función para enviar el correo
+            await llamarEnviarMail();
         }
-
-        // Llamar a la función para calcular el total del carrito cuando el contenido del DOM esté completamente cargado
-        calcularTotalCarrito();
-    });
-</script>
+    
+        // Función para llamar a facturacion en el servidor
+        async function llamarFacturacion() {
+           await fetch('/facturacion', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Facturación realizada correctamente');
+                    } else {
+                        console.error('Error en la facturación');
+                    }
+                }).catch(error => console.error('Error en la facturación:', error));
+        }
+    
+        // Función para llamar a enviarMail en el servidor
+        async function llamarEnviarMail() {
+            fetch('/enviar-correo', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Correo enviado correctamente');
+                    } else {
+                        console.error('Error al enviar el correo');
+                    }
+                })
+                .catch(error => console.error('Error al enviar el correo:', error));
+        }
+    
+        // Función para renderizar el botón de PayPal con el total del carrito y el token
+        function renderizarBotonPayPal(total) {
+            paypal.Buttons({
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    label: 'pay',
+                },
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: total // Aquí se pasa el total del carrito como el valor del amount
+                            }
+                        }]
+                    });
+                },
+    
+                onApprove: function (data, actions) {
+                    actions.order.capture().then(function (details) {
+                        // Iniciar el proceso de facturación y envío de correo
+                        iniciarFacturacion()
+                    })
+                },
+    
+                onCancel: function (data) {
+                    alert("Pago Cancelado");
+                }
+            }).render('#paypal-button-container');
+        }
+    
+        // Calcular el total del carrito y renderizar el botón de PayPal
+        document.addEventListener('DOMContentLoaded', function () {
+            // Función para calcular el total del carrito
+            function calcularTotalCarrito() {
+                // Obtener los productos en el carrito y calcular el total
+                fetch('/productos-carrito')
+                    .then(response => response.json())
+                    .then(productos => {
+                        let subtotal = 0;
+    
+                        // Calcular el subtotal sumando el precio total de cada producto en el carrito
+                        productos.forEach(producto => {
+                            subtotal += producto.precio * producto.cantidad;
+                        });
+    
+                        // Actualizar el subtotal en el DOM
+                        document.getElementById('subtotal').textContent = `₡${subtotal.toFixed(2)}`;
+    
+                        // Calcular el total sumando el subtotal y los impuestos, si corresponde
+                        const total = subtotal; // Aquí puedes agregar impuestos o gastos de envío, si corresponde
+    
+                        // Actualizar el total en el DOM
+                        document.getElementById('total').textContent = `₡${total.toFixed(2)}`;
+    
+                        // Renderizar el botón de PayPal con el total del carrito
+                        renderizarBotonPayPal(total);
+                    })
+                    .catch(error => console.error('Error al obtener productos del carrito: ', error));
+            }
+    
+            // Llamar a la función para calcular el total del carrito cuando el contenido del DOM esté completamente cargado
+            calcularTotalCarrito();
+        });
+    </script>
