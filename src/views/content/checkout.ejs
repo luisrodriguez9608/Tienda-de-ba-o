@@ -371,12 +371,13 @@
                 onApprove: function (data, actions) {
                     actions.order.capture().then(function (details) {
                         // Iniciar el proceso de facturación y envío de correo
+                        $.notify("Compra Realizada");
                         iniciarFacturacion()
                     })
                 },
     
                 onCancel: function (data) {
-                    $.notify("Pago cancelado"); // Muestra un mensaje de éxito o error
+                    $.notify("Compra cancelada"); // Muestra un mensaje de éxito o error
                 }
             }).render('#paypal-button-container');
         }
