@@ -587,9 +587,9 @@ const enviarMail = async (userId) => {
         const listaProductos = productosCarrito.map((producto) => {
           return `
           <li>Producto: ${producto.nombre}</li>
-          <li>Precio: $${producto.precio}</li>
+          <li>Precio: ₡${producto.precio}</li>
           <li>Cantidad: ${producto.cantidad}</li>
-          <li>Subtotal: $${producto.subtotal}</li>
+          <li>Subtotal: ₡${producto.subtotal}</li>
         `;
         });
 

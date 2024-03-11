@@ -9,7 +9,9 @@ function registrarUsuario() {
 
   // Verificar si la contraseña coincide con la confirmación de la contraseña
   if (contraseña !== confirmarContraseña) {
-      alert("Las contraseñas no coinciden");
+
+    $.notify("Las contraseñas no coinciden");
+
       return false; // Evitar que el formulario se envíe si las contraseñas no coinciden
   }
 
@@ -25,7 +27,7 @@ function registrarUsuario() {
       .then((response) => response.text())
       .then((message) => {
           // Manejar la respuesta del servidor
-          alert(message);
+          $.notify(message);
           // Redireccionar al usuario a la página de inicio si el registro fue exitoso
           if (message === "Usuario registrado correctamente") {
               window.location.href = "/"; // Redirigir al usuario al index.html
@@ -82,7 +84,7 @@ function eliminarProductoDelCarrito(productoId) {
       return response.json();
     })
     .then((data) => {
-      alert(data.message);
+      $.notify(data,message);
       location.reload(); // Recargar la página para reflejar los cambios en el carrito
     })
     .catch((error) => {
@@ -300,7 +302,8 @@ function eliminarProductoDelCarrito(productoId) {
       return response.json();
     })
     .then((data) => {
-      alert(data.message);
+    
+      $.notify(data.message);
       // Llamar a la función para actualizar la cantidad en el ícono del carrito después de eliminar un producto
       actualizarCantidadCarrito();
       location.reload(); // Recargar la página para reflejar los cambios en el carrito
@@ -416,7 +419,7 @@ function eliminarProducto(productoID) {
     .then((response) => response.json())
     .then((data) => {
       console.log("Respuesta del servidor:", data); // Imprime la respuesta del servidor
-      alert(data.message); // Puedes manejar la respuesta del servidor como desees
+      $.notify(data.message); // Puedes manejar la respuesta del servidor como desees
       // Recargar la página o actualizar la lista de productos después de eliminar
       window.location.reload();
     })
@@ -450,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="product__item__text">
                                     <h6><a href="#">${producto.nombre}</a></h6>
-                                    <div class="product__price">$ ${producto.precio}</div>
+                                    <div class="product__price">₡ ${producto.precio}</div>
                                 </div>
                             </div>
                         </div>
@@ -508,7 +511,8 @@ function agregarProducto() {
 
   // Verificar si todos los campos requeridos están llenos
   if (!nombre || !descripcion || !imagen || !precio || !stock || !categoria) {
-    alert("Por favor, complete todos los campos.");
+ 
+    $.notify("Por favor, complete todos los campos.");
     return false;
   }
 
@@ -536,14 +540,15 @@ function agregarProducto() {
       return response.text();
     })
     .then((message) => {
-      alert(message);
+      message = "Producto agregado exitosamente";
+      $.notify(message);
       if (message === "Producto agregado exitosamente") {
-        window.location.href = "/admin.html";
+        window.location.href = "/admin";
       }
     })
     .catch((error) => {
       console.error("Error al agregar el producto:", error.message);
-      alert(error.message);
+      $.notify(error.message);
     });
 
   // Evitar que el formulario se envíe de forma convencional
