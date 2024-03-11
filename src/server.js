@@ -538,7 +538,6 @@ app.post("/placeOrder", async (req, res) => {
   try {
     const { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
     const values = [req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo, JSON.stringify(productos)]; // Convertir el objeto a JSON
-
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {

@@ -67,11 +67,11 @@
             throw new Error('Error al agregar el usuario');
         })
         .then(data => {
-            alert(data); // Mostrar el mensaje de éxito devuelto por el servidor
+            $.notify(data); // Mostrar el mensaje de éxito devuelto por el servidor
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al agregar el usuario');
+            $.notify('Error al agregar el usuario'); // Muestra un mensaje de éxito o error
         });
     
         return false; // Evitar que el formulario se envíe normalmente

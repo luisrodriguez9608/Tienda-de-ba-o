@@ -52,16 +52,18 @@ async function generateXML(clave, orden_compra) {
   postData.append("cod_moneda", "CRC");
   postData.append("tipo_cambio", "502");
   postData.append("total_serv_gravados", "0");
-  postData.append("total_serv_exentos", "200000");
+  postData.append("total_serv_exentos", orden_compra.total);
   postData.append("total_merc_gravada", "0");
   postData.append("total_merc_exenta", "0");
   postData.append("total_gravados", "0");
-  postData.append("total_exentos", "200000");
-  postData.append("total_ventas", "200000");
+  postData.append("total_exentos", orden_compra.total);
+  postData.append("total_ventas", orden_compra.total);
   postData.append("total_descuentos", "100");
-  postData.append("total_ventas_neta", "200000");
+  postData.append("total_ventas_neta", orden_compra.total);
   postData.append("total_impuestos", "0");
-  postData.append("total_comprobante", "200000");
+  postData.append("total_comprobante", orden_compra.map(productos, () => {
+    productos.precio * productos.cantidad
+  }));
   postData.append("otros", "Muchas gracias");
   postData.append(
     "detalles",
