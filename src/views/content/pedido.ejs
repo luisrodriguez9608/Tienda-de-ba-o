@@ -278,8 +278,12 @@
                     <div id="map"></div>
                     <div id="bar">
                       <p class="auto"><input type="text" id="autoc"/></p>
-                      <button id="start">Iniciar Viaje</button>
-                      <button id="stop">Detener Viaje</button>
+                      <button class="btn btn-primary btn-sm btn-devolver"id="start">Iniciar Viaje</button>
+                      <button class="btn btn-primary btn-sm btn-devolver" onclick="devolverAVistaRepartidor()">Entregado</button>
+<script>function devolverAVistaRepartidor() {
+  window.location.href = '/repartidor'; // Reemplaza '/vista-repartidor' con la ruta correcta a la vista del repartidor
+}
+</script>
                     </div>
                     </body>
                     </html>

@@ -37,7 +37,26 @@ app.use(session({
   saveUninitialized: true
 }));
 
+// Endpoint para actualizar el estado de una factura específica por su ID
+app.post('/actualizar-estado-factura/:facturaID', function(req, res) {
+  const facturaID = req.params.facturaID;
+  const { estado } = req.body;
 
+  // Realiza la consulta para actualizar el estado de la factura
+  db.query('UPDATE facturacion SET estado = ? WHERE facturaID = ?', [estado, facturaID], (err, result) => {
+      if (err) {
+          console.error('Error al actualizar el estado del pedido:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+      } else {
+          console.log('Pedido marcado como en camino con éxito');
+
+          // Llama a la función para enviar el correo electrónico de envío
+          enviarMailEnvio(req.body.userId);
+
+          res.sendStatus(200); // Envía un código de estado 200 (OK) para indicar que la operación se completó con éxito
+      }
+  });
+});
 
 
 // Endpoint para obtener los datos de una factura específica por su ID
@@ -61,7 +80,6 @@ app.get('/obtener-factura/:facturaID', function(req, res) {
       res.json(factura);
   });
 });
-
 
 
 
@@ -404,8 +422,6 @@ app.put('/marcar-pedido-realizado/:facturaID', (req, res) => {
 
 
 
-
-
 // Importa el módulo WebSocket
 const WebSocket = require('ws');
 
@@ -545,19 +561,17 @@ var XML_FILE;
 
 
 
-
-
 const enviarMail = async (userId) => {
   try {
     const config = {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "fabimv23@gmail.com",
-        pass: "goco fxax mjkq qfna",
+        user: "gabrieljbc2@gmail.com",
+        pass: "ikvq ghnq etel wjcz",
       },
     };
-    crearPDF(orden_compra)
+   // crearPDF(orden_compra)
     // Obtener los productos del carrito del usuario
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
@@ -594,7 +608,7 @@ const enviarMail = async (userId) => {
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
           from: "pineapplesea@gmail.com",
-          to: "fabimv23@gmail.com",
+          to: "gabrieljbc2@gmail.com",
           subject: "Confirmación de Compra en PineApple Sea",
           html: `
           <p>Estimado/a Cliente,</p>
@@ -640,7 +654,40 @@ const enviarMail = async (userId) => {
 
 
 
+const enviarMailEnvio = async (userId) => {
+  try {
+    const config = {
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: "gabrieljbc2@gmail.com",
+        pass: "ikvq ghnq etel wjcz",
+      },
+    };
 
+    // Mensaje de correo electrónico informando que el repartidor está en camino
+    const mensaje = {
+      from: "pineapplesea@gmail.com",
+      to: "gabrieljbc2@gmail.com", // Cambiar el destinatario al correo del usuario
+      subject: "¡Tu pedido está en camino!",
+      html: `
+        <p>Estimado/a Cliente,</p>
+        <p>¡Tu pedido de PineApple Sea está en camino!</p>
+        <p>El repartidor estará llegando en los próximos minutos.</p>
+        <p>¡Gracias por tu compra!</p>
+        <p>Atentamente,<br>Equipo de PineApple Sea</p>
+      `,
+    };
+
+    // Enviar el correo electrónico
+    const transport = nodemailer.createTransport(config);
+    const info = await transport.sendMail(mensaje);
+    console.log("Correo enviado:", info);
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    throw error;
+  }
+};
 
 
 

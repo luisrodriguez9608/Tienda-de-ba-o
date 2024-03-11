@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <h6>${producto.nombre}</h6>
                             </div>
                         </td>
-                        <td class="cart__price">$${producto.precio}</td>
+                        <td class="cart__price">₡${producto.precio}</td>
                         <td class="cart__quantity">${producto.cantidad}</td>
-                        <td class="cart__total">$${precioTotal.toFixed(2)}</td>
+                        <td class="cart__total">₡${precioTotal.toFixed(2)}</td>
                         <td class="cart__close"><button class="close-btn" data-product-id="${
                           producto.productoID
                         }"><span class="icon_close"></span></button></td>
@@ -945,7 +945,6 @@ function verDetallePedido() {
 
 
 
-
 function marcarEntregado(facturaID) {
   fetch(`/marcar-pedido-realizado/${facturaID}`, {
       method: 'PUT'
@@ -971,47 +970,65 @@ function realizarEnvio(facturaID) {
   fetch(`/obtener-factura/${facturaID}`)
       .then(response => response.json())
       .then(facturacion => {
-        // Almacenar los datos de la factura en el almacenamiento local
-        localStorage.setItem('facturacionSeleccionada', JSON.stringify(facturacion));
-  
-        // Redirigir a la vista de pedido
-        window.location.href = '/pedido';
+          // Almacenar los datos de la factura en el almacenamiento local
+          localStorage.setItem('facturacionSeleccionada', JSON.stringify(facturacion));
 
-        // Llenar los campos con los datos de la factura recibidos del servidor
-        const informacionContacto = document.getElementById('informacion-contacto');
-        informacionContacto.innerHTML = `
-            <h5>Información de Contacto</h5>
-            <ul>
-                <li>
-                    <h6><i class="fa fa-map-marker"></i> Cliente</h6>
-                    <p>${facturacion.nombre} ${facturacion.apellido}</p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-map-marker"></i> Provincia</h6>
-                    <p>${facturacion.provincia}</p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-map-marker"></i> Canton</h6>
-                    <p>${facturacion.canton}</p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-map-marker"></i> Distrito</h6>
-                    <p>${facturacion.distrito}</p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-map-marker"></i> Dirección</h6>
-                    <p>${facturacion.direccion}</p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-phone"></i> Teléfono</h6>
-                    <p><span>${facturacion.telefono}</span></p>
-                </li>
-                <li>
-                    <h6><i class="fa fa-headphones"></i> Correo Electrónico</h6>
-                    <p>${facturacion.correo}</p>
-                </li>
-            </ul>
-        `;
+          // Realizar una solicitud al servidor para actualizar el estado de la factura a "en camino"
+          fetch(`/actualizar-estado-factura/${facturaID}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ estado: 3 }) // 3 representa el estado "en camino"
+          })
+          .then(response => {
+              if (response.ok) {
+                  // Redirigir a la vista de pedido si la actualización del estado fue exitosa
+                  window.location.href = '/pedido';
+              } else {
+                  console.error('Error al actualizar el estado del pedido:', response.statusText);
+              }
+          })
+          .catch(error => console.error('Error al actualizar el estado del pedido:', error));
+
+          // Enviar el correo electrónico informando sobre el envío
+          enviarMailEnvio(facturacion.userID);
+
+          const informacionContacto = document.getElementById('informacion-contacto');
+          informacionContacto.innerHTML = `
+              <h5>Información de Contacto</h5>
+              <ul>
+                  <li>
+                      <h6><i class="fa fa-map-marker"></i> Cliente</h6>
+                      <p>${facturacion.nombre} ${facturacion.apellido}</p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-map-marker"></i> Provincia</h6>
+                      <p>${facturacion.provincia}</p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-map-marker"></i> Canton</h6>
+                      <p>${facturacion.canton}</p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-map-marker"></i> Distrito</h6>
+                      <p>${facturacion.distrito}</p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-map-marker"></i> Dirección</h6>
+                      <p>${facturacion.direccion}</p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-phone"></i> Teléfono</h6>
+                      <p><span>${facturacion.telefono}</span></p>
+                  </li>
+                  <li>
+                      <h6><i class="fa fa-headphones"></i> Correo Electrónico</h6>
+                      <p>${facturacion.correo}</p>
+                  </li>
+              </ul>
+          `;
       })
       .catch(error => console.error('Error al obtener los datos de la factura:', error));
 }
+

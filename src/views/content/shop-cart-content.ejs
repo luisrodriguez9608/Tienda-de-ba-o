@@ -93,13 +93,13 @@
                     });
 
                     // Actualizar el subtotal en el DOM
-                    document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                    document.getElementById('subtotal').textContent = `₡${subtotal.toFixed(2)}`;
 
                     // Calcular el total sumando el subtotal y los impuestos, si corresponde
                     const total = subtotal; // Aquí puedes agregar impuestos o gastos de envío, si corresponde
 
                     // Actualizar el total en el DOM
-                    document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+                    document.getElementById('total').textContent = `₡${total.toFixed(2)}`;
 
                     // Renderizar el botón de PayPal con el total del carrito
                     renderizarBotonPayPal(total);
