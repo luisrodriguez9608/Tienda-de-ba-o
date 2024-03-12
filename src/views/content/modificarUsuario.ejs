@@ -51,62 +51,91 @@
     </section>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.10.0/build/sha256.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userID = obtenerParametroURL('userID');
-            if (userID) {
-                console.log("Usuario ID:", userID);
-                cargarDatosUsuario(userID);
-            } else {
-                console.error("Error: No se proporcionó el ID del usuario en la URL.");
-            }
-            
-            const formulario = document.getElementById('modificarUsuarioForm');
-            formulario.addEventListener('submit', function(event) {
-                event.preventDefault();
-                console.log("Formulario enviado");
-                modificarUsuario();
-            });
-        });
+       document.addEventListener('DOMContentLoaded', function() {
+    const userID = obtenerParametroURL('userID');
+    if (userID) {
+        console.log("Usuario ID:", userID);
+        cargarDatosUsuario(userID);
+    } else {
+        console.error("Error: No se proporcionó el ID del usuario en la URL.");
+    }
+    
+    const formulario = document.getElementById('modificarUsuarioForm');
+    formulario.addEventListener('submit', function(event) {
+        event.preventDefault();
+        console.log("Formulario enviado");
+        modificarUsuario();
+    });
+});
 
-        function obtenerParametroURL(parametro) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(parametro);
-        }
+function obtenerParametroURL(parametro) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(parametro);
+}
 
-        function cargarDatosUsuario(userID) {
-            fetch(`/obtenerUsuario/${userID}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Datos del usuario cargados:", data);
-                    document.getElementById('userID').value = data.userID;
-                    document.getElementById('nombre').value = data.nombre;
-                    document.getElementById('apellido').value = data.apellido;
-                    document.getElementById('correo').value = data.correo;
-                    document.getElementById('contraseña').value = data.contraseña;
-                    document.getElementById('rol').value = data.rol;
-                })
-                .catch(error => console.error('Error al cargar los datos del usuario:', error));
-        }
-
-        function modificarUsuario() {
+function cargarDatosUsuario(userID) {
+    fetch(`/obtenerUsuario/${userID}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Datos del usuario cargados:", data);
+            document.getElementById('userID').value = data.userID;
+            document.getElementById('nombre').value = data.nombre;
+            document.getElementById('apellido').value = data.apellido;
+            document.getElementById('correo').value = data.correo;
+            document.getElementById('contraseña').value = data.contraseña;
+            document.getElementById('rol').value = data.rol;
+        })
+        .catch(error => console.error('Error al cargar los datos del usuario:', error));
+}
+function modificarUsuario() {
     console.log("Intentando modificar usuario...");
 
     const userID = document.getElementById('userID').value;
     const nombre = document.getElementById('nombre').value;
     const apellido = document.getElementById('apellido').value;
     const correo = document.getElementById('correo').value;
-    const contraseña = document.getElementById('contraseña').value;
+    let contraseña = document.getElementById('contraseña').value;
     const rol = document.getElementById('rol').value;
 
     console.log("Datos del formulario a enviar:", { userID, nombre, apellido, correo, contraseña, rol });
+
+    // Validar nombre y apellido (solo letras)
+    const nombreValido = /^[A-Za-z]+$/.test(nombre);
+    const apellidoValido = /^[A-Za-z]+$/.test(apellido);
+
+    if (!nombreValido || !apellidoValido) {
+        alert("El nombre y el apellido solo pueden contener letras.");
+        return;
+    }
+
+    // Validar contraseña
+    if (contraseña.length < 8) {
+        alert("La contraseña debe tener al menos 8 caracteres.");
+        return;
+    }
+
+    if (!/[A-Z]/.test(contraseña)) {
+        alert("La contraseña debe contener al menos una letra mayúscula.");
+        return;
+    }
+
+    if (!/\d/.test(contraseña)) {
+        alert("La contraseña debe contener al menos un número.");
+        return;
+    }
+
+    // Hash de la contraseña antes de enviarla al servidor
+    const hashedPassword = sha256(contraseña); // Usamos la función sha256 de js-sha256
 
     const datosUsuario = {
         userID: userID,
         nombre: nombre,
         apellido: apellido,
         correo: correo,
-        contraseña: contraseña,
+        contraseña: hashedPassword, // Enviamos la contraseña cifrada al servidor
         rol: rol
     };
 
@@ -121,15 +150,16 @@
     .then(result => {
         console.log("Respuesta del servidor:", result);
         window.location.href = '/users';
-        // Aquí puedes redirigir a otra página o realizar alguna otra acción después de actualizar el usuario
     })
     .catch(error => console.error('Error al actualizar usuario:', error));
 }
 
 
-        function redirectUsuarios() {
-            window.location.href = '/users'; // Reemplaza '/usuarios' con la URL de la página de usuarios
-        }
+
+function redirectUsuarios() {
+    window.location.href = '/users';
+}
+
     </script>
 </body>
 </html>
