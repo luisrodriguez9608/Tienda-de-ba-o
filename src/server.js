@@ -365,7 +365,8 @@ app.post("/facturacion", async (req, res) => {
 
     // Firmar el XML
     const xmlFirmado = await firmarXML(xmlGenerado);
-    XML_FILE = Base64ToXML(xmlFirmado.xmlFirmado);
+    Base64ToXML(xmlFirmado.xmlFirmado);
+    generarResponseXML(clave, orden_compra)
 
     // Obtener el token
     const accessToken = await getToken();
@@ -375,7 +376,7 @@ app.post("/facturacion", async (req, res) => {
       xmlFirmado.xmlFirmado,
       accessToken,
       xmlGenerado.clave
-    ); // Almacenar el resultado de enviarXML
+    ); 
 
     //console.log("Resultado del envío:", resultadoEnvio); // Imprimir el resultado del envío
 
@@ -538,6 +539,20 @@ app.post("/placeOrder", async (req, res) => {
   try {
     const { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
     const values = [req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo, JSON.stringify(productos)]; // Convertir el objeto a JSON
+    orden_compra = { 
+      cedula: cedula,
+      nombre: nombre,
+      apellido: apellido,
+      pais: pais,
+      direccion : direccion,
+      provincia: provincia,
+      distrito: distrito,
+      canton: canton,
+      telefono: telefono,
+      correo: correo,
+      orden_productos: productos
+    }
+    
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {
@@ -566,10 +581,12 @@ async function enviarMail(userId) {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "gabrieljbc2@gmail.com",
-        pass: "ikvq ghnq etel wjcz",
+        user: "fabimv23@gmail.com",
+        pass: "yiuv rgor vhmi cain",
       },
     };
+    crearPDF(orden_compra)
+    // Obtener los productos del carrito del usuario
 
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
@@ -724,7 +741,8 @@ app.post("/enviar-correo-y-redirigir", (req, res) => {
 
 
 
-const enviarMailEnvio = async (userId) => {
+// Función para enviar el correo y redirigir al usuario
+async function enviarMailFisico(userId) {
   try {
     const config = {
       host: "smtp.gmail.com",
@@ -764,6 +782,7 @@ const enviarMailEnvio = async (userId) => {
 
 const fs = require("fs");
 const crearPDF = require("./generatePDF");
+const generarResponseXML = require("./responseXML");
 
 function Base64ToXML(xmlBase64) {
   const xmlStringify = Buffer.from(xmlBase64, "base64").toString("utf-8");

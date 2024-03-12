@@ -1,6 +1,23 @@
 const axios = require('axios');
 const qs = require('querystring');
 
+function obtenerFechaHoraActual() {
+    const fecha = new Date();
+    const year = fecha.getFullYear();
+    const month = ("0" + (fecha.getMonth() + 1)).slice(-2);
+    const day = ("0" + fecha.getDate()).slice(-2);
+    const hora = ("0" + fecha.getHours()).slice(-2);
+    const minutos = ("0" + fecha.getMinutes()).slice(-2);
+    const segundos = ("0" + fecha.getSeconds()).slice(-2);
+    const zonaHorariaOffset = -fecha.getTimezoneOffset() / 60;
+    const zonaHoraria =
+      (zonaHorariaOffset >= 0 ? "+" : "-") +
+      ("0" + Math.abs(zonaHorariaOffset)).slice(-2) +
+      ":00";
+    const fechaHoraFormateada = `${year}-${month}-${day}T${hora}:${minutos}:${segundos}${zonaHoraria}`;
+    return fechaHoraFormateada;
+  }
+
 async function enviarXML(xmlFirmado, accessToken, clave) {
     const postData = {
         comprobanteXml: xmlFirmado,
@@ -9,7 +26,7 @@ async function enviarXML(xmlFirmado, accessToken, clave) {
         recp_tipoIdentificacion: '01',
         emi_numeroIdentificacion: '702110235',
         emi_tipoIdentificacion: '01',
-        fecha: '2018-05-13T15:30:00-06:00',
+        fecha: obtenerFechaHoraActual(),
         r: 'json',
         w: 'send',
         token: accessToken,
@@ -24,7 +41,7 @@ async function enviarXML(xmlFirmado, accessToken, clave) {
         });
 
         if (response.status === 200) {
-            //console.log('Respuesta del XML enviado: ', response.data);
+            console.log('Respuesta del XML enviado: ', response.data);
             return response.data;
         } else {
             throw new Error('Error al enviar el XML');
