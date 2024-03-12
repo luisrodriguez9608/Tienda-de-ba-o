@@ -538,6 +538,20 @@ app.post("/placeOrder", async (req, res) => {
   try {
     const { userID, carritoID, cedula, nombre, apellido, pais, direccion, provincia, distrito, canton, telefono, correo, productos } = req.body; 
     const values = [req.session.userId, carritoID, nombre, apellido, pais, direccion, provincia, canton, distrito, telefono, correo, JSON.stringify(productos)]; // Convertir el objeto a JSON
+    orden_compra = { 
+      cedula: cedula,
+      nombre: nombre,
+      apellido: apellido,
+      pais: pais,
+      direccion : direccion,
+      provincia: provincia,
+      distrito: distrito,
+      canton: canton,
+      telefono: telefono,
+      correo: correo,
+      orden_productos: productos
+    }
+    
     // Insertar datos en la tabla 'facturacion'
     db.query(sql, values, (err, result) => {
       if (err) {
@@ -566,11 +580,11 @@ const enviarMail = async (userId) => {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "gabrieljbc2@gmail.com",
-        pass: "ikvq ghnq etel wjcz",
+        user: "fabimv23@gmail.com",
+        pass: "yiuv rgor vhmi cain",
       },
     };
-   // crearPDF(orden_compra)
+    crearPDF(orden_compra)
     // Obtener los productos del carrito del usuario
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
@@ -607,7 +621,7 @@ const enviarMail = async (userId) => {
         // Mensaje de correo electrónico con los detalles de la compra
         const mensaje = {
           from: "pineapplesea@gmail.com",
-          to: "gabrieljbc2@gmail.com",
+          to: "fabimv23@gmail.com",
           subject: "Confirmación de Compra en PineApple Sea",
           html: `
           <p>Estimado/a Cliente,</p>
@@ -629,13 +643,13 @@ const enviarMail = async (userId) => {
               path: __dirname + "/Compra_PineAppleSea_.xml",
               contentType: "text/xml"
             },
-            /*{
+            {
               filename:
                 "Compra_PineAppleSea_" +
                 new Date().toLocaleDateString("en-US") +
                 ".pdf",
               path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
-            }*/
+            }
           ],
         };
 
@@ -659,8 +673,8 @@ const enviarMailEnvio = async (userId) => {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "gabrieljbc2@gmail.com",
-        pass: "ikvq ghnq etel wjcz",
+        user: "fabimv23@gmail.com",
+        pass: "yiuv rgor vhmi cain",
       },
     };
 
