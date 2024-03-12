@@ -464,15 +464,6 @@ wss.on('connection', ws => {
 });
 
 
-
-
-
-
-
-
-
-
-
 // Endpoint para obtener el total de usuarios registrados
 app.get("/totalUsuarios", (req, res) => {
   // Consultar la base de datos para obtener el total de usuarios
@@ -634,14 +625,34 @@ const totalFormateado = totalCompra.toLocaleString("en-US", {
         <p>¡Esperamos que disfrutes de tu producto!</p>
         <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
       `,
-        attachments: [
-          {
-            filename: "Compra_PineAppleSea_" + new Date().toLocaleDateString("en-US") + ".xml",
-            path: __dirname + "/Compra_PineAppleSea_.xml",
-            contentType: "text/xml"
-          },
-        ],
-      };
+       
+
+attachments: [
+  {
+    filename:
+      "Compra_PineAppleSea_" +
+      new Date().toLocaleDateString("en-US") +
+      ".xml",
+    path: __dirname + "/Compra_PineAppleSea_.xml",
+    contentType: "text/xml"
+  },
+  {
+    filename:
+      "Compra_PineAppleSea_" +
+      new Date().toLocaleDateString("en-US") +
+      ".pdf",
+    path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
+  },
+  {
+    filename:
+      "Response_Hacienda_" +
+      new Date().toLocaleDateString("en-US") +
+      ".xml",
+    path: __dirname + "/Response.xml",
+  }
+],
+};
+
 
       const transport = nodemailer.createTransport(config);
       const info = await transport.sendMail(mensaje);
