@@ -9,6 +9,23 @@ function codigo_actividad() {
   return codigo;
 }
 
+function obtenerFechaHoraActual() {
+  const fecha = new Date();
+  const year = fecha.getFullYear();
+  const month = ("0" + (fecha.getMonth() + 1)).slice(-2);
+  const day = ("0" + fecha.getDate()).slice(-2);
+  const hora = ("0" + fecha.getHours()).slice(-2);
+  const minutos = ("0" + fecha.getMinutes()).slice(-2);
+  const segundos = ("0" + fecha.getSeconds()).slice(-2);
+  const zonaHorariaOffset = -fecha.getTimezoneOffset() / 60;
+  const zonaHoraria =
+    (zonaHorariaOffset >= 0 ? "+" : "-") +
+    ("0" + Math.abs(zonaHorariaOffset)).slice(-2) +
+    ":00";
+  const fechaHoraFormateada = `${year}-${month}-${day}T${hora}:${minutos}:${segundos}${zonaHoraria}`;
+  return fechaHoraFormateada;
+}
+
 async function generateXML(clave, orden_compra) {
   const postData = new URLSearchParams();
   postData.append("w", "genXML");
@@ -16,7 +33,7 @@ async function generateXML(clave, orden_compra) {
   postData.append("clave", clave.clave);
   postData.append("codigo_actividad", codigo_actividad());
   postData.append("consecutivo", clave.consecutivo);
-  postData.append("fecha_emision", new Date());
+  postData.append("fecha_emision", obtenerFechaHoraActual());
   postData.append("emisor_nombre", "PineApple Sea");
   postData.append("emisor_tipo_identif", "01");
   postData.append("emisor_num_identif", "122223333");

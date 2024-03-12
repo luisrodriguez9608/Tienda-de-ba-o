@@ -365,7 +365,8 @@ app.post("/facturacion", async (req, res) => {
 
     // Firmar el XML
     const xmlFirmado = await firmarXML(xmlGenerado);
-    XML_FILE = Base64ToXML(xmlFirmado.xmlFirmado);
+    Base64ToXML(xmlFirmado.xmlFirmado);
+    generarResponseXML(clave, orden_compra)
 
     // Obtener el token
     const accessToken = await getToken();
@@ -375,7 +376,7 @@ app.post("/facturacion", async (req, res) => {
       xmlFirmado.xmlFirmado,
       accessToken,
       xmlGenerado.clave
-    ); // Almacenar el resultado de enviarXML
+    ); 
 
     //console.log("Resultado del envío:", resultadoEnvio); // Imprimir el resultado del envío
 
@@ -568,12 +569,6 @@ app.post("/placeOrder", async (req, res) => {
   }
 });
 
-
-var XML_FILE;
-
-
-
-
 const enviarMail = async (userId) => {
   try {
     const config = {
@@ -649,6 +644,13 @@ const enviarMail = async (userId) => {
                 new Date().toLocaleDateString("en-US") +
                 ".pdf",
               path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
+            },
+            {
+              filename:
+                "Response_Hacienda_" +
+                new Date().toLocaleDateString("en-US") +
+                ".xml",
+              path: __dirname + "/Response.xml",
             }
           ],
         };
@@ -707,6 +709,7 @@ const enviarMailEnvio = async (userId) => {
 
 const fs = require("fs");
 const crearPDF = require("./generatePDF");
+const generarResponseXML = require("./responseXML");
 
 function Base64ToXML(xmlBase64) {
   const xmlStringify = Buffer.from(xmlBase64, "base64").toString("utf-8");
