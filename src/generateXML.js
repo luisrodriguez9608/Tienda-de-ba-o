@@ -77,10 +77,8 @@ async function generateXML(clave, orden_compra) {
   postData.append("total_ventas", orden_compra.total);
   postData.append("total_descuentos", "100");
   postData.append("total_ventas_neta", orden_compra.total);
-  postData.append("total_impuestos", "26000");
-  postData.append("total_comprobante", orden_compra.productos.forEach(productos, () => {
-    productos.precio * productos.cantidad
-  }));
+  postData.append("total_impuestos", "2600");
+  postData.append("total_comprobante", "20000");
   postData.append("otros", "Muchas gracias");
   postData.append(
     "detalles",

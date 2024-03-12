@@ -6,6 +6,8 @@ const nodemailer = require("nodemailer");
 const app = express();
 const router = require("./app/router");
 const port = process.env.PORT || 8080;
+const PDFDocument = require('pdfkit');
+
 
 const db = require("./app/db");
 
@@ -561,7 +563,6 @@ app.post("/placeOrder", async (req, res) => {
 });
 
 
-var XML_FILE;
 
 
 
@@ -572,8 +573,8 @@ async function enviarMail(userId) {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "fabimv23@gmail.com",
-        pass: "yiuv rgor vhmi cain",
+        user: "gabrieljbc2@gmail.com",
+        pass: "ikvq ghnq etel wjcz",
       },
     };
     crearPDF(orden_compra)
@@ -753,7 +754,7 @@ app.post("/enviar-correo-y-redirigir", (req, res) => {
 
 
 // Función para enviar el correo y redirigir al usuario
-async function enviarMailFisico(userId) {
+async function enviarMailEnvio(userId) {
   try {
     const config = {
       host: "smtp.gmail.com",
@@ -867,6 +868,8 @@ app.post("/authenticate", (req, res) => {
         );
         res.redirect("/");
       } else {
+        
+       
         req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
         req.session.rol = null; // También establece el rol en null
         res.redirect('/login');
@@ -874,6 +877,8 @@ app.post("/authenticate", (req, res) => {
     }
   );
 });
+
+
 
 // Ruta para verificar sesión activa
 app.get("/checkSession", (req, res) => {

@@ -103,12 +103,12 @@ function eliminarProductoDelCarrito(productoId) {
       return response.json();
     })
     .then((data) => {
-      $.notify(data,message);
+      $.notify(data.message);
       location.reload(); // Recargar la página para reflejar los cambios en el carrito
     })
     .catch((error) => {
       console.error("Error al eliminar el producto del carrito:", error);
-      alert(
+      $.notify(
         error.message ||
           "Error al eliminar el producto del carrito. Por favor, inténtalo de nuevo."
       );
@@ -329,7 +329,7 @@ function eliminarProductoDelCarrito(productoId) {
     })
     .catch((error) => {
       console.error("Error al eliminar el producto del carrito:", error);
-      alert(
+      $.notify(
         error.message ||
           "Error al eliminar el producto del carrito. Por favor, inténtalo de nuevo."
       );

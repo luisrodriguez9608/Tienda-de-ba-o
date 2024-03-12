@@ -327,6 +327,8 @@
             await llamarFacturacion();
             // Llamar a la función para enviar el correo
             await llamarEnviarMail();
+
+     
         }
     
         // Función para llamar a facturacion en el servidor
@@ -435,6 +437,7 @@
                                     if (response.ok) {
                                         console.log('Correo enviado y usuario redirigido correctamente');
                                         window.location.href = '/'; // Redirige al usuario a la página principal
+                                        
                                     } else {
                                         console.error('Error al enviar el correo y redirigir al usuario');
                                     }

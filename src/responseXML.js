@@ -18,8 +18,8 @@ function generarResponseXML(clave, orden_compra) {
       result.MensajeReceptor.FechaEmisionDoc = [`${obtenerFechaHoraActual()}`];
       result.MensajeReceptor.Mensaje = ["2"];
       result.MensajeReceptor.DetalleMensaje = [`Ok`];
-      result.MensajeReceptor.MontoTotalImpuesto = [`200000`];
-      result.MensajeReceptor.TotalFactura = [`200000`];
+      result.MensajeReceptor.MontoTotalImpuesto = [`2600`];
+      result.MensajeReceptor.TotalFactura = [`20000`];
       result.MensajeReceptor.NumeroCedulaReceptor = [`${orden_compra.cedula}`];
       result.MensajeReceptor.NumeroConsecutivoReceptor = [
         `${clave.consecutivo}`,
