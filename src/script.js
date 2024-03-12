@@ -9,35 +9,54 @@ function registrarUsuario() {
 
   // Verificar si la contraseña coincide con la confirmación de la contraseña
   if (contraseña !== confirmarContraseña) {
-
     $.notify("Las contraseñas no coinciden");
-
-      return false; // Evitar que el formulario se envíe si las contraseñas no coinciden
+    return false; // Evitar que el formulario se envíe si las contraseñas no coinciden
   }
 
-  // Enviar los datos al servidor
+  // Validar que el nombre y el apellido solo contengan caracteres alfabéticos
+  const nombreRegex = /^[A-Za-z]+$/;
+  if (!nombreRegex.test(nombre)) {
+    $.notify("El nombre solo debe contener caracteres alfabéticos.");
+    return false; // Evitar que el formulario se envíe si el nombre no es válido
+  }
+
+  if (!nombreRegex.test(apellido)) {
+    $.notify("El apellido solo debe contener caracteres alfabéticos.");
+    return false; // Evitar que el formulario se envíe si el apellido no es válido
+  }
+
+  // Validar la contraseña
+  const contraseñaRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  if (!contraseñaRegex.test(contraseña)) {
+    $.notify("La contraseña debe contener al menos un dígito, una mayúscula, una minúscula y tener al menos 8 caracteres.");
+    return false; // Evitar que el formulario se envíe si la contraseña no cumple con los requisitos
+  }
+
+  // Enviar los datos al servidor (sin cifrar la contraseña)
   const data = { nombre, apellido, correo, contraseña };
   fetch("/registro", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   })
-      .then((response) => response.text())
-      .then((message) => {
-          // Manejar la respuesta del servidor
-          $.notify(message);
-          // Redireccionar al usuario a la página de inicio si el registro fue exitoso
-          if (message === "Usuario registrado correctamente") {
-              window.location.href = "/"; // Redirigir al usuario al index.html
-          }
-      })
-      .catch((error) => console.error("Error al registrar usuario:", error));
+    .then((response) => response.text())
+    .then((message) => {
+      // Manejar la respuesta del servidor
+      $.notify(message);
+      // Redireccionar al usuario a la página de inicio si el registro fue exitoso
+      if (message === "Usuario registrado correctamente") {
+        window.location.href = "/"; // Redirigir al usuario al index.html
+      }
+    })
+    .catch((error) => console.error("Error al registrar usuario:", error));
 
   // Evitar que el formulario se envíe de forma convencional
   return false;
 }
+
+
 
 
 // Función para agregar un producto al carrito
@@ -171,8 +190,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Actualizar los totales
-      subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
-      totalElement.textContent = `$${subtotal.toFixed(2)}`;
+      subtotalElement.textContent = `₡${subtotal.toFixed(2)}`;
+      totalElement.textContent = `₡${subtotal.toFixed(2)}`;
     })
     .catch((error) =>
       console.error("Error al obtener productos del carrito: ", error)
@@ -204,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="product__item__text">
                                     <h6><a href="#">${producto.nombre}</a></h6>
-                                    <div class="product__price">$ ${producto.precio}</div>
+                                    <div class="product__price">₡ ${producto.precio}</div>
                                 </div>
                             </div>
                         </div> 
@@ -614,7 +633,7 @@ fetch("/productos-por-categoria?categoria=masculino") // Endpoint para obtener p
                             </div>
                             <div class="product__item__text">
                                 <h6><a href="#">${producto.nombre}</a></h6>
-                                <div class="product__price">$ ${producto.precio}</div>
+                                <div class="product__price">₡ ${producto.precio}</div>
                             </div>
                         </div>
                     </div> 

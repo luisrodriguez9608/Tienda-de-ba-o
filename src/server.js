@@ -560,7 +560,7 @@ var XML_FILE;
 
 
 
-const enviarMail = async (userId) => {
+async function enviarMail(userId) {
   try {
     const config = {
       host: "smtp.gmail.com",
@@ -570,86 +570,157 @@ const enviarMail = async (userId) => {
         pass: "ikvq ghnq etel wjcz",
       },
     };
-   // crearPDF(orden_compra)
-    // Obtener los productos del carrito del usuario
+
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
-    db.query(
-      getProductosCarritoQuery,
-      [userId],
-      async (err, productosCarrito) => {
-        if (err) {
-          console.error("Error al obtener los productos del carrito:", err);
-          return;
-        }
-
-        // Construir la lista de productos en el carrito para el correo electrónico
-        const listaProductos = productosCarrito.map((producto) => {
-          return `
-          <li>Producto: ${producto.nombre}</li>
-          <li>Precio: ₡${producto.precio}</li>
-          <li>Cantidad: ${producto.cantidad}</li>
-          <li>Subtotal: ₡${producto.subtotal}</li>
-        `;
-        });
-
-        // Calcular el total de la compra
-        const totalCompra = productosCarrito.reduce((total, producto) => {
-          return total + producto.subtotal; // Sumar el subtotal de cada producto al total
-        }, 0); // Inicializar el total en 0
-
-        // Formatear el total de la compra con dos decimales
-        const totalFormateado = totalCompra.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-
-        // Mensaje de correo electrónico con los detalles de la compra
-        const mensaje = {
-          from: "pineapplesea@gmail.com",
-          to: "gabrieljbc2@gmail.com",
-          subject: "Confirmación de Compra en PineApple Sea",
-          html: `
-          <p>Estimado/a Cliente,</p>
-          <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
-          <p>A continuación, te proporcionamos los detalles de tu compra:</p>
-          <ul>
-            ${listaProductos.join("")}
-          </ul>
-          <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
-          <p>¡Esperamos que disfrutes de tu producto!</p>
-          <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
-        `,
-          attachments: [
-            {
-              filename:
-                "Compra_PineAppleSea_" +
-                new Date().toLocaleDateString("en-US") +
-                ".xml",
-              path: __dirname + "/Compra_PineAppleSea_.xml",
-              contentType: "text/xml"
-            },
-            /*{
-              filename:
-                "Compra_PineAppleSea_" +
-                new Date().toLocaleDateString("en-US") +
-                ".pdf",
-              path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
-            }*/
-          ],
-        };
-
-        // Enviar el correo electrónico
-        const transport = nodemailer.createTransport(config);
-        const info = await transport.sendMail(mensaje);
-        console.log("Correo enviado:", info);
+    db.query(getProductosCarritoQuery, [userId], async (err, productosCarrito) => {
+      if (err) {
+        console.error("Error al obtener los productos del carrito:", err);
+        return;
       }
-    );
+
+      const listaProductos = productosCarrito.map((producto) => {
+        return `
+        <li>Producto: ${producto.nombre}</li>
+        <li>Precio: ₡${parseFloat(producto.precio).toFixed(2)}</li>
+        <li>Cantidad: ${producto.cantidad}</li>
+        <li>Subtotal: ₡${parseFloat(producto.subtotal).toFixed(2)}</li>
+      `;
+      });
+      
+
+    // Calcular el total de la compra
+const totalCompra = productosCarrito.reduce((total, producto) => {
+  return total + parseFloat(producto.subtotal); // Sumar el subtotal de cada producto al total, convirtiéndolo a número decimal
+}, 0); // Inicializar el total en 0
+
+// Formatear el total de la compra con dos decimales
+const totalFormateado = totalCompra.toLocaleString("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+
+      const mensaje = {
+        from: "pineapplesea@gmail.com",
+        to: "gabrieljbc2@gmail.com",
+        subject: "Confirmación de Compra en PineApple Sea",
+        html: `
+        <p>Estimado/a Cliente,</p>
+        <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
+        <p>A continuación, te proporcionamos los detalles de tu compra:</p>
+        <ul>
+          ${listaProductos.join("")}
+        </ul>
+        <p>Total de la compra: ₡${totalFormateado} (13% del IVA Incluidos)</p>
+        <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
+        <p>¡Esperamos que disfrutes de tu producto!</p>
+        <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
+      `,
+        attachments: [
+          {
+            filename: "Compra_PineAppleSea_" + new Date().toLocaleDateString("en-US") + ".xml",
+            path: __dirname + "/Compra_PineAppleSea_.xml",
+            contentType: "text/xml"
+          },
+        ],
+      };
+
+      const transport = nodemailer.createTransport(config);
+      const info = await transport.sendMail(mensaje);
+      console.log("Correo enviado:", info);
+    });
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     throw error;
   }
-};
+}
+
+
+
+// Función para enviar el correo y redirigir al usuario
+async function enviarMailFisico(userId) {
+  try {
+      const config = {
+          host: "smtp.gmail.com",
+          port: 587,
+          auth: {
+              user: "gabrieljbc2@gmail.com",
+              pass: "ikvq ghnq etel wjcz",
+          },
+      };
+
+      const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
+
+      db.query(getProductosCarritoQuery, [userId], async (err, productosCarrito) => {
+          if (err) {
+              console.error("Error al obtener los productos del carrito:", err);
+              return;
+          }
+
+          const listaProductos = productosCarrito.map((producto) => {
+              return `
+              <li>Producto: ${producto.nombre}</li>
+              <li>Precio: ₡${parseFloat(producto.precio).toFixed(2)}</li>
+              <li>Cantidad: ${producto.cantidad}</li>
+              <li>Subtotal: ₡${parseFloat(producto.subtotal).toFixed(2)}</li>
+          `;
+          });
+
+          // Calcular el total de la compra
+          const totalCompra = productosCarrito.reduce((total, producto) => {
+              return total + parseFloat(producto.subtotal); // Sumar el subtotal de cada producto al total, convirtiéndolo a número decimal
+          }, 0); // Inicializar el total en 0
+
+          // Formatear el total de la compra con dos decimales
+          const totalFormateado = totalCompra.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          });
+
+          const mensaje = {
+              from: "pineapplesea@gmail.com",
+              to: "gabrieljbc2@gmail.com",
+              subject: "Confirmación de Compra en PineApple Sea",
+              html: `
+              <p>Estimado/a Cliente,</p>
+              <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
+              <p>A continuación, te proporcionamos los detalles de tu compra:</p>
+              <ul>
+              ${listaProductos.join("")}
+              </ul>
+              <p>Total de la compra: ₡${totalFormateado} (13% del IVA Incluidos)</p>
+              <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
+              <p>Utiliza el siguiente código para cancelar en efectivo en nuestro local: ${Math.floor(Math.random() * 10000)}</p>
+              <p>¡Esperamos que disfrutes de tu producto!</p>
+              <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
+              `,
+            
+          };
+
+          const transport = nodemailer.createTransport(config);
+          const info = await transport.sendMail(mensaje);
+          console.log("Correo enviado:", info);
+      });
+  } catch (error) {
+      console.error("Error al enviar el correo:", error);
+      throw error;
+  }
+}
+
+// Modificar la ruta para enviar el correo
+app.post("/enviar-correo-y-redirigir", (req, res) => {
+  enviarMailFisico(req.session.userId)
+    .then(() => res.send("Correo enviado"))
+    .catch((error) => {
+      console.error("Error al enviar el correo:", error);
+      res.status(500).send("Error al enviar el correo");
+    });
+});
+
+
+
+
 
 
 
@@ -742,9 +813,11 @@ app.get("/modificarProducto.html", (req, res) => {
 // Ruta para la autenticación
 app.post("/authenticate", (req, res) => {
   const { correo, contraseña } = req.body;
+  const hashedPassword = crypto.createHash('sha256').update(contraseña).digest('hex'); // Obtener el hash de la contraseña proporcionada por el usuario
+
   db.query(
     "SELECT * FROM usuarios WHERE correo = ? AND contraseña = ?",
-    [correo, contraseña],
+    [correo, hashedPassword], // Utilizar el hash de la contraseña
     (err, results) => {
       if (err) {
         console.error("Error al realizar la consulta: ", err);
@@ -766,9 +839,7 @@ app.post("/authenticate", (req, res) => {
       } else {
         req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
         req.session.rol = null; // También establece el rol en null
-        
-       res.redirect('/login');
-     
+        res.redirect('/login');
       }
     }
   );
@@ -806,10 +877,15 @@ app.get("/checkSession", (req, res) => {
     rol: req.session.rol || null,
   });
 });
+const crypto = require('crypto');
 
 // Ruta para el registro de usuarios
 app.post("/registro", (req, res) => {
   const { nombre, apellido, correo, contraseña } = req.body;
+
+  // Crear un hash SHA-256 de la contraseña
+  const hashContraseña = crypto.createHash('sha256').update(contraseña).digest('hex');
+
   db.query(
     `SELECT * FROM usuarios WHERE correo = ?`,
     [correo],
@@ -825,7 +901,7 @@ app.post("/registro", (req, res) => {
       } else {
         db.query(
           `INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, 1)`,
-          [nombre, apellido, correo, contraseña],
+          [nombre, apellido, correo, hashContraseña], // Almacenar el hash de la contraseña
           (err, result) => {
             if (err) {
               console.error("Error al insertar el nuevo usuario: ", err);
@@ -840,6 +916,7 @@ app.post("/registro", (req, res) => {
     }
   );
 });
+
 
 // Ruta para mostrar productos en admin.html
 app.get("/get-productos", (req, res) => {

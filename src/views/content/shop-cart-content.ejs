@@ -40,7 +40,7 @@
             </div>
             <div class="col-lg-4 offset-lg-2">
                 <div class="cart__total__procced">
-                    <h6>Total del carrito</h6>
+                    <h6>Total del carrito (13% del IVA Incluidos)</h6>
                     <ul>
                         <li>Subtotal <span id="subtotal"></span></li>
                         <li>Total <span id="total"></span></li>
@@ -50,7 +50,8 @@
                     <form id="checkoutForm">
                         <input type="hidden" name="userID" value="{{ userID }}">
                         <input type="hidden" name="carritoID" value="{{ carritoID }}">
-                        <button type="button" id="checkoutButton">Realizar Compra</button>
+                        <button type="button" class="site-btn"id="checkoutButton">Realizar Compra</button>
+                       
                     </form>
                 </div>
             </div>
