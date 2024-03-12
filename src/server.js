@@ -417,8 +417,13 @@ app.put('/marcar-pedido-realizado/:facturaID', (req, res) => {
           console.error('Error al actualizar el estado del pedido:', err);
           res.status(500).json({ error: 'Error interno del servidor' });
       } else {
+        enviarMailEntregado(req.body.userId);
+        
           console.log('Pedido marcado como entregado con éxito');
+       
+
           res.sendStatus(200); // Envía un código de estado 200 (OK) para indicar que la operación se completó con éxito
+          
       }
   });
 });
@@ -751,6 +756,40 @@ app.post("/enviar-correo-y-redirigir", (req, res) => {
 
 
 
+// Función para enviar el correo y redirigir al usuario
+async function enviarMailEntregado(userId) {
+  try {
+    const config = {
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: "gabrieljbc2@gmail.com",
+        pass: "ikvq ghnq etel wjcz",
+      },
+    };
+
+    // Mensaje de correo electrónico informando que el repartidor está en camino
+    const mensaje = {
+      from: "pineapplesea@gmail.com",
+      to: "gabrieljbc2@gmail.com", // Cambiar el destinatario al correo del usuario
+      subject: "¡Tu pedido está en camino!",
+      html: `
+        <p>Estimado/a Cliente,</p>
+        <p>¡Tu pedido de PineApple Sea fue entregado!</p>
+        <p>¡Gracias por tu compra!</p>
+        <p>Atentamente,<br>Equipo de PineApple Sea</p>
+      `,
+    };
+
+    // Enviar el correo electrónico
+    const transport = nodemailer.createTransport(config);
+    const info = await transport.sendMail(mensaje);
+    console.log("Correo enviado:", info);
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    throw error;
+  }
+};
 
 
 // Función para enviar el correo y redirigir al usuario
