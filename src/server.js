@@ -6,7 +6,6 @@ const nodemailer = require("nodemailer");
 const app = express();
 const router = require("./app/router");
 const port = process.env.PORT || 8080;
-const PDFDocument = require('pdfkit');
 
 
 const db = require("./app/db");
@@ -109,7 +108,7 @@ app.delete('/eliminar-facturacion/:facturaID', (req, res) => {
 
 // Endpoint para obtener la lista de datos de facturación
 app.get('/obtener-facturacion', (req, res) => {
-  db.query('SELECT * FROM facturacion', (err, results) => {
+  db.query(`SELECT * FROM facturacion WHERE userID = ${req.session.userId}`, (err, results) => {
       if (err) {
           console.error('Error al obtener los datos de facturación:', err);
           res.status(500).json({ error: 'Error interno del servidor' });
