@@ -1,3 +1,5 @@
+
+
 <!-- Breadcrumb Begin -->
 <div class="breadcrumb-option">
     <div class="container">
@@ -25,7 +27,83 @@
                 <div class="row">
                     <!-- admin.html -->
                     
-                    <div class="row" id="productos-container-admin"></div>
+                   
+                    <div class="col-lg-4 col-md-4">
+                        <div class="section-title">
+                            <h4>Productos</h4>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <ul class="filter__controls">
+                            <li class="active" data-filter="todos">Todos</li>
+                            <li data-filter="masculino">Hombres</li>
+                            <li data-filter="femenino">Mujeres</li>
+                            <li data-filter="infantil">Niños</li>
+                            <li data-filter="accesorio">Accesorios</li>
+                            <li data-filter="cosmetico">Cosméticos</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row property__gallery" id="productos-container-admin">
+                <script>document.addEventListener('DOMContentLoaded', function () {
+                    const productosContainer = document.getElementById('productos-container-admin');
+                    const filterControls = document.querySelectorAll('.filter__controls li');
+                
+                    filterControls.forEach(control => {
+                        control.addEventListener('click', function () {
+                            const categoria = this.getAttribute('data-filter');
+                            obtenerProductosPorCategoria(categoria);
+                        });
+                    });
+                
+                    function obtenerProductosPorCategoria(categoria) {
+                        fetch(`/productos-por-categoria/${categoria}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Respuesta del servidor no válida');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                mostrarProductos(data);
+                            })
+                            .catch(error => {
+                                console.error('Error al obtener productos:', error);
+                            });
+                    }
+                
+                    function mostrarProductos(productos) {
+                        productosContainer.innerHTML = ''; // Limpiar contenido anterior
+                        if (productos.length === 0) {
+                            productosContainer.innerHTML = '<p>No se encontraron productos.</p>';
+                            return;
+                        }
+                        productos.forEach(producto => {
+                            const productoHTML = `
+                            <div class="col-lg-4 col-md-6">
+                            <div class="product__item">
+                                <div class="product__item__pic">
+                                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                                 
+                                    <ul class="product__hover">
+                                        <li><a href="/details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
+                                        <li><a href="#" onclick="confirmarEliminacion(${producto.productoID})"><span class="icon_bag_alt"></span></a></li>
+                                        <li><a href="/edit-product?producto=${producto.productoID}"><span class="icon_pencil"></span></a></li>
+                                    </ul>
+                                </div>
+                                <div class="product__item__text">
+                                    <h6><a href="#">${producto.nombre}</a></h6>
+                                    <div class="product__price">₡ ${producto.precio}</div>
+                                </div>
+                            </div>
+                        </div>
+                            `;
+                            productosContainer.innerHTML += productoHTML;
+                        });
+                    }
+                });
+                
+                </script>
 
                     <div class="col-lg-12 text-center">
                         <div class="pagination__option">

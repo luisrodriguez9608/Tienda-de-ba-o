@@ -22,6 +22,7 @@
                     <div class="contact__form">
                         <h5>Ingrese sus credenciales</h5>
                         <form id="registroForm" onsubmit="return registrarUsuario()">
+                            <input type="text" id="cedula" placeholder="Cédula" required pattern="[0-9]+" title="Por favor, ingresa solo números">
                             <input type="text" id="nombre" placeholder="Nombre" required>
                             <input type="text" id="apellido" placeholder="Apellido" required>
                             <input type="email" id="correo" placeholder="Correo electrónico" required>

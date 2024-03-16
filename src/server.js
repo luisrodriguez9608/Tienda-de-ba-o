@@ -38,6 +38,14 @@ app.use(session({
   saveUninitialized: true
 }));
 
+
+
+
+
+
+
+
+
 // Endpoint para actualizar el estado de una factura específica por su ID
 app.post('/actualizar-estado-factura/:facturaID', function(req, res) {
   const facturaID = req.params.facturaID;
@@ -135,28 +143,57 @@ app.get('/pedidoRealizado', (req, res) => {
 
 
 
-
+// Endpoint para obtener la lista de datos de facturación
+app.get('/obtener-facturacion-repartidor', (req, res) => {
+  db.query('SELECT * FROM facturacion', (err, results) => {
+      if (err) {
+          console.error('Error al obtener los datos de facturación:', err);
+          res.status(500).json({ error: 'Error interno del servidor' });
+          return;
+      }
+      res.json(results);
+  });
+});
 
 
 
 
 // Endpoint para agregar un nuevo usuario
+// Endpoint para agregar un nuevo usuario
 app.post("/agregarUsuario", function (req, res, next) {
-  const { nombre, apellido, correo, contraseña, rol } = req.body; // Agregar "rol" a los datos recibidos
+  const { cedula, nombre, apellido, correo, contraseña, rol } = req.body; // Agregar "rol" a los datos recibidos
 
-  // Verificar si el correo electrónico ya está registrado
-  db.query(`SELECT * FROM usuarios WHERE correo = ?`, [correo], (err, results) => {
+  // Crear un hash SHA-256 de la contraseña
+  const hashContraseña = crypto.createHash('sha256').update(contraseña).digest('hex');
+
+  // Verificar si la cédula ya está registrada
+  db.query(`SELECT * FROM usuarios WHERE cedula = ?`, [cedula], (err, results) => {
     if (err) {
-      console.error('Error al realizar la consulta: ', err);
+      console.error('Error al realizar la consulta de cédula: ', err);
       res.status(500).send('Error interno del servidor');
       return;
     }
 
     if (results.length > 0) {
-      res.send('El correo electrónico ya está registrado');
-    } else {
+      res.status(400).send('La cédula ya está registrada');
+      return;
+    }
+
+    // Verificar si el correo electrónico ya está registrado
+    db.query(`SELECT * FROM usuarios WHERE correo = ?`, [correo], (err, correoResults) => {
+      if (err) {
+        console.error('Error al realizar la consulta de correo: ', err);
+        res.status(500).send('Error interno del servidor');
+        return;
+      }
+
+      if (correoResults.length > 0) {
+        res.status(400).send('El correo electrónico ya está registrado');
+        return;
+      }
+
       // Insertar el nuevo usuario en la base de datos, incluyendo el valor del rol
-      db.query(`INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, ?)`, [nombre, apellido, correo, contraseña, rol], (err, result) => {
+      db.query(`INSERT INTO usuarios (cedula, nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)`, [cedula, nombre, apellido, correo, hashContraseña, rol], (err, result) => {
         if (err) {
           console.error('Error al insertar el nuevo usuario: ', err);
           res.status(500).send('Error interno del servidor');
@@ -165,9 +202,10 @@ app.post("/agregarUsuario", function (req, res, next) {
         console.log('Usuario agregado correctamente');
         res.send('Usuario agregado correctamente');
       });
-    }
+    });
   });
 });
+
 
 
 
@@ -177,9 +215,9 @@ app.post("/agregarUsuario", function (req, res, next) {
 // Endpoint para actualizar datos del usuario
 app.post("/actualizarUsuario", function (req, res) {
   // Recibir datos actualizados del usuario desde el cliente
-  const { userID, nombre, apellido, correo, contraseña, rol } = req.body;
+  const { userID,cedula, nombre, apellido, correo, contraseña, rol } = req.body;
   // Lógica para actualizar el registro del usuario en la base de datos
-  db.query(`UPDATE usuarios SET nombre = ?, apellido = ?, correo = ?, contraseña = ?, rol = ? WHERE userID = ?`, [nombre, apellido, correo, contraseña, rol, userID], (err, result) => {
+  db.query(`UPDATE usuarios SET cedula = ?, nombre = ?, apellido = ?, correo = ?, contraseña = ?, rol = ? WHERE userID = ?`, [cedula, nombre, apellido, correo, contraseña, rol, userID], (err, result) => {
       if (err) {
           console.error('Error al actualizar el usuario: ', err);
           res.status(500).send('Error interno del servidor');
@@ -405,6 +443,25 @@ app.get("/totalProductos", (req, res) => {
     }
   );
 });
+
+// Endpoint para obtener el total del impuesto
+app.get("/totalImpuesto", (req, res) => {
+  // Calcular el total del impuesto como el 13% del total de productos
+  db.query(
+    "SELECT COUNT(*) AS totalProductos FROM productos",
+    (err, results) => {
+      if (err) {
+        console.error("Error al obtener el total de productos:", err);
+        res.status(500).json({ error: "Error interno del servidor" });
+        return;
+      }
+      const totalProductos = results[0].totalProductos;
+      const impuesto = totalProductos * 0.13; // Calcula el impuesto como el 13% del total de productos
+      res.json({ impuesto });
+    }
+  );
+});
+
 // Ruta para marcar un pedido como entregado
 app.put('/marcar-pedido-realizado/:facturaID', (req, res) => {
   // Obtén el ID de la factura de los parámetros de la solicitud
@@ -581,9 +638,9 @@ async function enviarMail(userId) {
         pass: "ikvq ghnq etel wjcz",
       },
     };
-    crearPDF(orden_compra)
-    // Obtener los productos del carrito del usuario
+    crearPDF(orden_compra);
 
+    // Obtener los productos del carrito del usuario
     const getProductosCarritoQuery = `SELECT p.nombre, p.precio, c.cantidad, (p.precio * c.cantidad) AS subtotal FROM productos p JOIN carrito c ON p.productoID = c.productoID WHERE c.userID = ?`;
 
     db.query(getProductosCarritoQuery, [userId], async (err, productosCarrito) => {
@@ -594,70 +651,67 @@ async function enviarMail(userId) {
 
       const listaProductos = productosCarrito.map((producto) => {
         return `
-        <li>Producto: ${producto.nombre}</li>
-        <li>Precio: ₡${parseFloat(producto.precio).toFixed(2)}</li>
-        <li>Cantidad: ${producto.cantidad}</li>
-        <li>Subtotal: ₡${parseFloat(producto.subtotal).toFixed(2)}</li>
-      `;
+          <li>Producto: ${producto.nombre}</li>
+          <li>Precio: ₡${parseFloat(producto.precio).toFixed(2)}</li>
+          <li>Cantidad: ${producto.cantidad}</li>
+          <li>Subtotal: ₡${parseFloat(producto.subtotal).toFixed(2)}</li>
+        `;
       });
-      
 
-    // Calcular el total de la compra
-const totalCompra = productosCarrito.reduce((total, producto) => {
-  return total + parseFloat(producto.subtotal); // Sumar el subtotal de cada producto al total, convirtiéndolo a número decimal
-}, 0); // Inicializar el total en 0
+      // Calcular el total de la compra
+      const totalCompra = productosCarrito.reduce((total, producto) => {
+        return total + parseFloat(producto.subtotal); // Sumar el subtotal de cada producto al total, convirtiéndolo a número decimal
+      }, 0); // Inicializar el total en 0
 
-// Formatear el total de la compra con dos decimales
-const totalFormateado = totalCompra.toLocaleString("en-US", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+      // Calcular el impuesto (13% del total)
+      const impuesto = totalCompra * 0.13;
 
+      // Formatear el total de la compra con dos decimales
+      const totalFormateado = totalCompra.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      // Formatear el impuesto con dos decimales
+      const impuestoFormateado = impuesto.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
 
       const mensaje = {
         from: "pineapplesea@gmail.com",
         to: "gabrieljbc2@gmail.com",
         subject: "Confirmación de Compra en PineApple Sea",
         html: `
-        <p>Estimado/a Cliente,</p>
-        <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
-        <p>A continuación, te proporcionamos los detalles de tu compra:</p>
-        <ul>
-          ${listaProductos.join("")}
-        </ul>
-        <p>Total de la compra: ₡${totalFormateado} (13% del IVA Incluidos)</p>
-        <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
-        <p>¡Esperamos que disfrutes de tu producto!</p>
-        <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
-      `,
-       
-
-attachments: [
-  {
-    filename:
-      "Compra_PineAppleSea_" +
-      new Date().toLocaleDateString("en-US") +
-      ".xml",
-    path: __dirname + "/Compra_PineAppleSea_.xml",
-    contentType: "text/xml"
-  },
-  {
-    filename:
-      "Compra_PineAppleSea_" +
-      new Date().toLocaleDateString("en-US") +
-      ".pdf",
-    path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
-  },
-  {
-    filename:
-      "Response_Hacienda_" +
-      new Date().toLocaleDateString("en-US") +
-      ".xml",
-    path: __dirname + "/Response.xml",
-  }
-],
-};
-
+          <p>Estimado/a Cliente,</p>
+          <p>¡Gracias por realizar tu compra en nuestra tienda!</p>
+          <p>A continuación, te proporcionamos los detalles de tu compra:</p>
+          <ul>
+            ${listaProductos.join("")}
+          </ul>
+          <p>13% del IVA incluido en el total de: ₡${impuestoFormateado}</p>
+          <p>Total de la compra: ₡${totalFormateado}</p>
+          
+          <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
+          <p>¡Esperamos que disfrutes de tu producto!</p>
+          <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
+        `,
+        attachments: [
+          {
+            filename: "Compra_PineAppleSea_" + new Date().toLocaleDateString("en-US") + ".xml",
+            path: __dirname + "/Compra_PineAppleSea_.xml",
+            contentType: "text/xml",
+          },
+          {
+            filename: "Compra_PineAppleSea_" + new Date().toLocaleDateString("en-US") + ".pdf",
+            path: __dirname + "/Compra_PineAppleSea_Respuesta.pdf",
+          },
+          {
+            filename: "Response_Hacienda_" + new Date().toLocaleDateString("en-US") + ".xml",
+            path: __dirname + "/Response.xml",
+          },
+        ],
+      };
 
       const transport = nodemailer.createTransport(config);
       const info = await transport.sendMail(mensaje);
@@ -668,6 +722,8 @@ attachments: [
     throw error;
   }
 }
+
+
 
 
 
@@ -711,6 +767,12 @@ async function enviarMailFisico(userId) {
               maximumFractionDigits: 2,
           });
 
+          const impuesto = totalCompra * 0.13; // Calcula el 13% del total
+          const impuestoFormateado = impuesto.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+          });
+          
           const mensaje = {
               from: "pineapplesea@gmail.com",
               to: "gabrieljbc2@gmail.com",
@@ -722,14 +784,15 @@ async function enviarMailFisico(userId) {
               <ul>
               ${listaProductos.join("")}
               </ul>
-              <p>Total de la compra: ₡${totalFormateado} (13% del IVA Incluidos)</p>
+              <p> 13% del IVA Incluido en el total de: ₡${impuestoFormateado})</p>
+              <p>Total de la compra: ₡${totalFormateado}</p>
               <p>Recuerda que puedes contactarnos si tienes alguna pregunta o inquietud sobre tu compra.</p>
               <p>Utiliza el siguiente código para cancelar en efectivo en nuestro local: ${Math.floor(Math.random() * 10000)}</p>
               <p>¡Esperamos que disfrutes de tu producto!</p>
               <p>Atentamente,<br>Equipo de la Tienda PineApple Sea</p>
               `,
-            
           };
+          
 
           const transport = nodemailer.createTransport(config);
           const info = await transport.sendMail(mensaje);
@@ -954,41 +1017,95 @@ const crypto = require('crypto');
 
 // Ruta para el registro de usuarios
 app.post("/registro", (req, res) => {
-  const { nombre, apellido, correo, contraseña } = req.body;
+  const { cedula, nombre, apellido, correo, contraseña } = req.body;
 
   // Crear un hash SHA-256 de la contraseña
   const hashContraseña = crypto.createHash('sha256').update(contraseña).digest('hex');
 
+  // Verificar si el correo electrónico ya está registrado
   db.query(
     `SELECT * FROM usuarios WHERE correo = ?`,
     [correo],
-    (err, results) => {
+    (err, correoResults) => {
       if (err) {
-        console.error("Error al realizar la consulta: ", err);
+        console.error("Error al realizar la consulta de correo: ", err);
         res.status(500).send("Error interno del servidor");
         return;
       }
 
-      if (results.length > 0) {
-        res.send("El correo electrónico ya está registrado");
-      } else {
-        db.query(
-          `INSERT INTO usuarios (nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, 1)`,
-          [nombre, apellido, correo, hashContraseña], // Almacenar el hash de la contraseña
-          (err, result) => {
-            if (err) {
-              console.error("Error al insertar el nuevo usuario: ", err);
-              res.status(500).send("Error interno del servidor");
-              return;
-            }
-            console.log("Usuario registrado correctamente");
-            res.send("Usuario registrado correctamente");
-          }
-        );
+      if (correoResults.length > 0) {
+        res.status(400).send("El correo electrónico ya está registrado");
+        return;
       }
+
+      // Verificar si la cédula ya está registrada
+      db.query(
+        `SELECT * FROM usuarios WHERE cedula = ?`,
+        [cedula],
+        (err, cedulaResults) => {
+          if (err) {
+            console.error("Error al realizar la consulta de cédula: ", err);
+            res.status(500).send("Error interno del servidor");
+            return;
+          }
+
+          if (cedulaResults.length > 0) {
+            res.status(400).send("La cédula ya está registrada");
+            return;
+          }
+
+          // Si no hay conflicto, insertar el nuevo usuario
+          db.query(
+            `INSERT INTO usuarios (cedula, nombre, apellido, correo, contraseña, rol) VALUES (?, ?, ?, ?, ?, 1)`,
+            [cedula, nombre, apellido, correo, hashContraseña], // Almacenar el hash de la contraseña
+            (err, result) => {
+              if (err) {
+                console.error("Error al insertar el nuevo usuario: ", err);
+                res.status(500).send("Error interno del servidor");
+                return;
+              }
+              console.log("Usuario registrado correctamente");
+              res.send("Usuario registrado correctamente");
+            }
+          );
+        }
+      );
     }
   );
 });
+
+
+// Ruta para obtener productos por categoría
+app.get("/productos-por-categoria/:categoria", (req, res) => {
+  const categoria = req.params.categoria;
+  if (categoria === 'todos') {
+    db.query(
+      "SELECT productoID, nombre, imagen, precio FROM productos",
+      (err, results) => {
+        if (err) {
+          console.error("Error al obtener productos: ", err);
+          res.status(500).send("Error interno del servidor");
+          return;
+        }
+        res.json(results);
+      }
+    );
+  } else {
+    db.query(
+      "SELECT productoID, nombre, imagen, precio FROM productos WHERE categoria = ?",
+      [categoria],
+      (err, results) => {
+        if (err) {
+          console.error("Error al obtener productos por categoría: ", err);
+          res.status(500).send("Error interno del servidor");
+          return;
+        }
+        res.json(results);
+      }
+    );
+  }
+});
+
 
 
 // Ruta para mostrar productos en admin.html
@@ -1213,7 +1330,7 @@ app.delete("/eliminarDelCarrito/:id", (req, res) => {
 });
 
 // Ruta para admin.html
-app.get("/admin", (req, res) => {
+app.get("/admin",  (req, res) => {
   // Verificar si el usuario tiene sesión activa y si el rol es igual a 2
   if (req.session.loggedin && req.session.rol === 2) {
     // Si cumple con los requisitos, renderiza admin.html
@@ -1263,6 +1380,11 @@ app.get("/product/:id", (req, res) => {
     }
   );
 });
+
+
+
+
+
 
 // Inicia el servidor
 app.listen(port, () => {

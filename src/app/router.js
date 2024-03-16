@@ -1,80 +1,29 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", function (req, res, next) {
-  res.render("index");
-});
+// Rutas públicas
+router.get("/", (req, res) => res.render("index"));
+router.get("/shop", (req, res) => res.render("shop"));
+router.get("/shop-cart", (req, res) => res.render("shop-cart"));
+router.get("/blog", (req, res) => res.render("blog"));
+router.get("/blog-details", (req, res) => res.render("blog-details"));
+router.get("/login", (req, res) => res.render("login"));
+router.get("/signup", (req, res) => res.render("signup"));
+router.get("/contact", (req, res) => res.render("contact"));
+router.get("/checkout", (req, res) => res.render("checkout"));
 
-router.get("/shop", function (req, res, next) {
-  res.render("shop");
-});
+// Rutas protegidas
+router.get("/admin", (req, res) => res.render("admin"));
+router.get("/add-products", (req, res) => res.render("add-product"));
+router.get("/edit-product", (req, res) => res.render("edit-product"));
+router.get("/users", (req, res) => res.render("users"));
+router.get("/agregarUsuario", (req, res) => res.render("agregarUsuario"));
+router.get("/modificarUsuario", (req, res) => res.render("modificarUsuario"));
+router.get("/repartidor", (req, res) => res.render("repartidor"));
+router.get("/envio", (req, res) => res.render("envio"));
+router.get("/pedido", (req, res) => res.render("pedido"));
+router.get("/pedidos", (req, res) => res.render("pedidos"));
+router.get("/pedidoRealizado", (req, res) => res.render("pedidoRealizado"));
+router.get("/detallePedido", (req, res) => res.render("detallePedido"));
 
-router.get("/shop-cart", function (req, res, next) {
-  res.render("shop-cart");
-});
-
-router.get("/blog", function (req, res, next) {
-  res.render("blog");
-});
-
-router.get("/blog-details", function (req, res, next) {
-  res.render("blog-details");
-});
-
-router.get("/login", function (req, res, next) {
-  res.render("login");
-});
-
-router.get("/signup", function (req, res, next) {
-  res.render("signup");
-});
-
-router.get("/admin", function (req, res, next) {
-  res.render("admin");
-});
-
-router.get("/add-products", function (req, res, next) {
-  res.render("add-product");
-});
-
-router.get("/edit-product", function (req, res, next) {
-  res.render("edit-product");
-});
-
-router.get("/details-products", function (req, res, next) {
-    res.render("details-product")
-});
-router.get("/contact", function (req, res, next) {
-  res.render("contact");
-});
-router.get("/checkout", function (req, res, next) {
-  res.render("checkout");
-});
-router.get("/users", function (req, res, next) {
-  res.render("users");
-});
-router.get("/agregarUsuario", function (req, res, next) {
-  res.render("agregarUsuario");
-});
-router.get("/modificarUsuario", function (req, res, next) {
-  res.render("modificarUsuario");
-});
-router.get("/repartidor", function (req, res, next) {
-  res.render("repartidor");
-});
-router.get("/envio", function (req, res, next) {
-  res.render("envio");
-});
-router.get("/pedido", function (req, res, next) {
-  res.render("pedido");
-});
-router.get("/pedidos", function (req, res, next) {
-  res.render("pedidos");
-});
-router.get("/pedidoRealizado", function (req, res, next) {
-  res.render("pedidoRealizado");
-});
-router.get("/detallePedido", function (req, res, next) {
-  res.render("detallePedido");
-});
 module.exports = router;

@@ -22,6 +22,7 @@
                     <div class="contact__form">
                         <h5>Agregar Usuario</h5>
                         <form id="agregarUsuarioForm" onsubmit="return agregarUsuario()">
+                            <input type="text" id="cedula" placeholder="Cedula" required>
                             <input type="text" id="nombre" placeholder="Nombre" required>
                             <input type="text" id="apellido" placeholder="Apellido" required>
                             <input type="email" id="correo" placeholder="Correo electrónico" required>
@@ -36,14 +37,16 @@
                     </div>
 <script>// Función para agregar un nuevo usuario
     function agregarUsuario() {
-        var nombre = document.getElementById('nombre').value;
-        var apellido = document.getElementById('apellido').value;
-        var correo = document.getElementById('correo').value;
-        var contraseña = document.getElementById('contraseña').value;
-        var rolSelect = document.getElementById('rolSelect');
-        var rol = rolSelect.options[rolSelect.selectedIndex].value; // Obtener el valor seleccionado del rol
+        const cedula = document.getElementById('cedula').value;
+        const nombre = document.getElementById('nombre').value;
+        const apellido = document.getElementById('apellido').value;
+        const correo = document.getElementById('correo').value;
+        const contraseña = document.getElementById('contraseña').value;
+        const rolSelect = document.getElementById('rolSelect');
+        const rol = rolSelect.options[rolSelect.selectedIndex].value; // Obtener el valor seleccionado del rol
     
-        var data = {
+        const data = {
+            cedula: cedula,
             nombre: nombre,
             apellido: apellido,
             correo: correo,
@@ -51,6 +54,24 @@
             rol: rol // Pasar el valor seleccionado del rol al objeto de datos
         };
     
+  // Validar que el nombre y el apellido solo contengan caracteres alfabéticos
+  const nombreRegex = /^[A-Za-z]+$/;
+  if (!nombreRegex.test(nombre)) {
+    $.notify("El nombre solo debe contener caracteres alfabéticos.");
+    return false; // Evitar que el formulario se envíe si el nombre no es válido
+  }
+
+  if (!nombreRegex.test(apellido)) {
+    $.notify("El apellido solo debe contener caracteres alfabéticos.");
+    return false; // Evitar que el formulario se envíe si el apellido no es válido
+  }
+
+  // Validar la contraseña
+  const contraseñaRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+  if (!contraseñaRegex.test(contraseña)) {
+    $.notify("La contraseña debe contener al menos un dígito, una mayúscula, una minúscula y tener al menos 8 caracteres.");
+    return false; // Evitar que el formulario se envíe si la contraseña no cumple con los requisitos
+  }
         // Realizar una solicitud POST al servidor para agregar un nuevo usuario
         fetch('/agregarUsuario', {
             method: 'POST',
@@ -62,7 +83,8 @@
         .then(response => {
             if (response.ok) {
                 console.log('Usuario agregado correctamente');
-                return response.text();
+             redirectUsuarios(); 
+                return response.text();   
             }
             throw new Error('Error al agregar el usuario');
         })
@@ -76,6 +98,10 @@
     
         return false; // Evitar que el formulario se envíe normalmente
     }
+    function redirectUsuarios() {
+        window.location.href = '/users';
+    }
+
     </script>                  
                 </div>
             </div>

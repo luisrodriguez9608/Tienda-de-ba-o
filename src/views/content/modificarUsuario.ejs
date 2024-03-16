@@ -31,6 +31,7 @@
                             <h5>Modificar usuario</h5>
                             <form id="modificarUsuarioForm">
                                 <input type="hidden" id="userID" name="userID">
+                                <input type="text" id="cedula" name="cedula" placeholder="Cédula" required>
                                 <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
                                 <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
                                 <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
@@ -82,6 +83,7 @@ function cargarDatosUsuario(userID) {
         .then(data => {
             console.log("Datos del usuario cargados:", data);
             document.getElementById('userID').value = data.userID;
+            document.getElementById('cedula').value = data.cedula;
             document.getElementById('nombre').value = data.nombre;
             document.getElementById('apellido').value = data.apellido;
             document.getElementById('correo').value = data.correo;
@@ -94,13 +96,14 @@ function modificarUsuario() {
     console.log("Intentando modificar usuario...");
 
     const userID = document.getElementById('userID').value;
+    const cedula = document.getElementById('cedula').value;
     const nombre = document.getElementById('nombre').value;
     const apellido = document.getElementById('apellido').value;
     const correo = document.getElementById('correo').value;
     let contraseña = document.getElementById('contraseña').value;
     const rol = document.getElementById('rol').value;
 
-    console.log("Datos del formulario a enviar:", { userID, nombre, apellido, correo, contraseña, rol });
+    console.log("Datos del formulario a enviar:", { userID,cedula, nombre, apellido, correo, contraseña, rol });
 
     // Validar nombre y apellido (solo letras)
     const nombreValido = /^[A-Za-z]+$/.test(nombre);
@@ -132,6 +135,7 @@ function modificarUsuario() {
 
     const datosUsuario = {
         userID: userID,
+        cedula:cedula,
         nombre: nombre,
         apellido: apellido,
         correo: correo,

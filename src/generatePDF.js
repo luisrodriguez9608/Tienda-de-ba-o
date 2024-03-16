@@ -60,6 +60,11 @@ function crearPDF(orden_compra) {
   doc
     .font(__dirname + "/fonts/Roboto-Regular.ttf")
     .fontSize(10)
+    .text(`IVA del 13% incluido en el precio total:                            ${(subtotal/100)*13}`);
+  doc.moveDown();
+  doc
+    .font(__dirname + "/fonts/Roboto-Regular.ttf")
+    .fontSize(10)
     .text(`Total:                            ${subtotal}`);
   doc.moveDown();
 

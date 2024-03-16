@@ -1,6 +1,7 @@
 // Función para registrar un nuevo usuario
 function registrarUsuario() {
   // Obtener los datos del formulario
+  const cedula = document.getElementById("cedula").value;
   const nombre = document.getElementById("nombre").value;
   const apellido = document.getElementById("apellido").value;
   const correo = document.getElementById("correo").value;
@@ -33,7 +34,7 @@ function registrarUsuario() {
   }
 
   // Enviar los datos al servidor (sin cifrar la contraseña)
-  const data = { nombre, apellido, correo, contraseña };
+  const data = { cedula, nombre, apellido, correo, contraseña };
   fetch("/registro", {
     method: "POST",
     headers: {
@@ -487,36 +488,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-$(document).ready(function () {
-  // Inicializar el control deslizante de rango
-  $("#price-range-slider").slider({
-    range: true,
-    min: 0,
-    max: 200,
-    values: [0, 200],
-    slide: function (event, ui) {
-      $("#minamount").val(ui.values[0]);
-      $("#maxamount").val(ui.values[1]);
-    },
-  });
 
-  // Manejar el evento de clic en el botón de filtrado
-  $("#filterButton").click(function (event) {
-    event.preventDefault();
-
-    const minPrice = parseFloat($("#minamount").val());
-    const maxPrice = parseFloat($("#maxamount").val());
-
-    // Realizar la solicitud de filtrado con los valores de precio
-    fetch(`/productos/filtrar?minPrice=${minPrice}&maxPrice=${maxPrice}`)
-      .then((response) => response.json())
-      .then((productosFiltrados) => {
-        // Hacer algo con los productos filtrados
-        console.log(productosFiltrados);
-      })
-      .catch((error) => console.error("Error al filtrar productos: ", error));
-  });
-});
 
 // Función para agregar un producto al carrito
 function agregarProducto() {
@@ -605,59 +577,6 @@ filterControls.forEach((control) => {
   });
 });
 
-// Obtener los productos disponibles en la tienda y mostrarlos
-fetch("/productos-por-categoria?categoria=masculino") // Endpoint para obtener productos masculinos
-  .then((response) => response.json())
-  .then((productos) => {
-    const productosContainer = document.getElementById(
-      "productos-container-masculino"
-    );
-    const productIdSet = new Set(); // Conjunto para almacenar los IDs de productos únicos
-
-    productos.forEach((producto) => {
-      // Verificar si el ID del producto ya está en el conjunto
-      if (!productIdSet.has(producto.productoID)) {
-        productIdSet.add(producto.productoID); // Agregar el ID del producto al conjunto
-
-        const productoHTML = `
-                    <div class="col-lg-4 col-md-6">
-                        <div class="product__item">
-                            <div class="product__item__pic">
-                                <img src="${producto.imagen}" alt="${producto.nombre}">
-                         
-                                <ul class="product__hover">
-                                    <li><a href="product-details.html?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
-                                 
-                                    <li><a href="#" class="agregar-al-carrito" data-producto-id="${producto.productoID}"><span class="icon_bag_alt"></span></a></li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">${producto.nombre}</a></h6>
-                                <div class="product__price">₡ ${producto.precio}</div>
-                            </div>
-                        </div>
-                    </div> 
-                `;
-
-        productosContainer.innerHTML += productoHTML;
-      }
-    });
-
-    // Agregar evento de clic a los botones "Agregar al carrito"
-    const botonesAgregarAlCarrito = document.querySelectorAll(
-      ".agregar-al-carrito"
-    );
-    botonesAgregarAlCarrito.forEach((boton) => {
-      boton.addEventListener("click", function (event) {
-        event.preventDefault(); // Evitar la acción por defecto del enlace
-        const productoId = this.getAttribute("data-producto-id");
-        agregarAlCarrito(productoId);
-      });
-    });
-  })
-  .catch((error) =>
-    console.error("Error al obtener productos masculinos: ", error)
-  );
  
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -723,6 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const filaUsuario = `
                     <tr>
                         <th scope="row">${usuario.userID}</th>
+                        <td>${usuario.cedula}</td>
                         <td>${usuario.nombre}</td>
                         <td>${usuario.apellido}</td>
                         <td>${usuario.correo}</td>
@@ -732,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button class="btn btn-primary btn-sm btn-modificar" data-userid="${usuario.userID}">Modificar</button>
 
 
-                            <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${usuario.userID})">Eliminar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.userID})">Eliminar</button>
                         </td>
                     </tr>
                 `;
@@ -756,26 +676,7 @@ function redirectToModificarUsuario(userID) {
 
 
 
-// Función para confirmar la eliminación de un usuario
-function confirmarEliminar(userID) {
-  if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-      eliminarUsuario(userID);
-  }
-}
 
-// Función para eliminar un usuario
-function eliminarUsuario(userID) {
-  fetch(`/eliminar-usuario/${userID}`, { method: 'DELETE' })
-      .then(response => {
-          if (response.ok) {
-              // Eliminación exitosa, recargar la página para actualizar la tabla
-              location.reload();
-          } else {
-              console.error('Error al eliminar el usuario');
-          }
-      })
-      .catch(error => console.error('Error al eliminar el usuario:', error));
-}
 
 // Función para redirigir a la página de agregar usuario
 function agregarUsuarioVista() {
@@ -791,21 +692,46 @@ function modificarUsuario(userID) {
 // Función para eliminar un usuario
 function eliminarUsuario(userID) {
   // Mostrar un mensaje de confirmación
-  if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-      // Realizar una solicitud al servidor para eliminar el usuario con el userID especificado
-      fetch(`/eliminarUsuario?userID=${userID}`, { method: 'DELETE' })
-          .then(response => {
-              if (response.ok) {
-                  console.log('Usuario eliminado correctamente');
-                  // Recargar la página después de eliminar el usuario
-                  window.location.reload();
-              } else {
-                  console.error('Error al eliminar el usuario');
-              }
-          })
-          .catch(error => console.error('Error al eliminar el usuario:', error));
-  }
+  var modal = `
+    <div class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="redirectUsuarios()"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="redirectUsuarios()">Cancelar</button>
+            <button type="button" class="btn btn-danger" onclick="eliminarUsuarioConfirmado(${userID})">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.insertAdjacentHTML('beforeend', modal);
+
+  var myModal = new bootstrap.Modal(document.querySelector('.modal'));
+  myModal.show();
 }
+
+function eliminarUsuarioConfirmado(userID) {
+  // Realizar una solicitud al servidor para eliminar el usuario con el userID especificado
+  fetch(`/eliminarUsuario?userID=${userID}`, { method: 'DELETE' })
+    .then(response => {
+      if (response.ok) {
+        console.log('Usuario eliminado correctamente');
+        // Recargar la página después de eliminar el usuario
+        window.location.reload();
+      } else {
+        console.error('Error al eliminar el usuario');
+      }
+    })
+    .catch(error => console.error('Error al eliminar el usuario:', error));
+}
+
 function redirectUsuarios() {
   window.location.href = '/users'; // Cambia '/usuarios' por la ruta correcta de tu página de usuarios
 }
@@ -815,39 +741,6 @@ function redirectUsuarios() {
 
 
 
-function agregarUsuario() {
-  // Obtener los valores de los campos de entrada
-  const nombre = document.getElementById('nombre').value;
-  const apellido = document.getElementById('apellido').value;
-  const correo = document.getElementById('correo').value;
-  const contraseña = document.getElementById('contraseña').value;
-  const rol = document.getElementById('rol').value;
-
-  // Crear un objeto con los datos del usuario
-  const datosUsuario = {
-      nombre: nombre,
-      apellido: apellido,
-      correo: correo,
-      contraseña: contraseña,
-      rol: rol
-  };
-
-  // Enviar una solicitud POST al servidor para agregar el nuevo usuario
-  fetch("/agregarUsuario", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datosUsuario)
-  })
-  .then(response => response.text())
-  .then(result => {
-      console.log(result); // Imprimir mensaje de respuesta del servidor en la consola
-      // Aquí puedes agregar cualquier lógica adicional después de agregar el usuario, si es necesario
-  })
-  .catch(error => console.error('Error al agregar usuario:', error));
-}
-
 
 
 
@@ -855,7 +748,7 @@ function agregarUsuario() {
 
 
 // Realizar una solicitud al servidor para obtener los datos de facturación
-fetch('/obtener-facturacion')
+fetch('/obtener-facturacion-repartidor')
     .then(response => response.json())
     .then(facturaciones => {
         const tablaRepartidor = document.getElementById('tabla-repartidor');
@@ -1055,4 +948,8 @@ function realizarEnvio(facturaID) {
       })
       .catch(error => console.error('Error al obtener los datos de la factura:', error));
 }
+
+
+
+
 
