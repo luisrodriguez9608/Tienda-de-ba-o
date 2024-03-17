@@ -17,8 +17,6 @@ app.use(express.static(path.join(__dirname,"src")));
 app.set("views", path.join(__dirname, "../src/views/pages/"));
 app.set("view engine", "ejs");
 
-app.use("/", router);
-
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,6 +36,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use("/", router);
 
 
 
