@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/loader') %>
+    <%- include('../partials/offcanvas') %>
+
+    <%- include('../partials/header') %>
+
+    <main>
+        <h1><%= message %></h1>
+        <button onclick="goBack()">Volver</button>
+        <script>
+            function goBack() {
+              window.history.back();
+            }
+          </script>
+    </main>
+
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+</body>
+</html>

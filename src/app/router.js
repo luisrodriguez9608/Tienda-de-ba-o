@@ -1,4 +1,5 @@
 const express = require("express");
+const checkRole = require("../middleware/auth");
 const router = express.Router();
 
 // Rutas públicas
@@ -11,19 +12,23 @@ router.get("/login", (req, res) => res.render("login"));
 router.get("/signup", (req, res) => res.render("signup"));
 router.get("/contact", (req, res) => res.render("contact"));
 router.get("/checkout", (req, res) => res.render("checkout"));
-router.get("/details-products", (req, res) => res.render("details-product"));
-// Rutas protegidas
-router.get("/admin", (req, res) => res.render("admin"));
-router.get("/add-products", (req, res) => res.render("add-product"));
-router.get("/edit-product", (req, res) => res.render("edit-product"));
-router.get("/users", (req, res) => res.render("users"));
-router.get("/agregarUsuario", (req, res) => res.render("agregarUsuario"));
-router.get("/modificarUsuario", (req, res) => res.render("modificarUsuario"));
-router.get("/repartidor", (req, res) => res.render("repartidor"));
-router.get("/envio", (req, res) => res.render("envio"));
-router.get("/pedido", (req, res) => res.render("pedido"));
-router.get("/pedidos", (req, res) => res.render("pedidos"));
-router.get("/pedidoRealizado", (req, res) => res.render("pedidoRealizado"));
-router.get("/detallePedido", (req, res) => res.render("detallePedido"));
+
+// Rutas Usuario
+router.get("/pedidoRealizado", checkRole(1), (req, res) => res.render("pedidoRealizado"));
+
+// Rutas Administrador
+router.get("/admin", checkRole(2), (req, res) => res.render("admin"));
+router.get("/add-products", checkRole(2), (req, res) => res.render("add-product"));
+router.get("/edit-product", checkRole(2), (req, res) => res.render("edit-product"));
+router.get("/users", checkRole(2), (req, res) => res.render("users"));
+router.get("/agregarUsuario", checkRole(2), (req, res) => res.render("agregarUsuario"));
+router.get("/modificarUsuario", checkRole(2), (req, res) => res.render("modificarUsuario"));
+
+// Rutas Repartidor
+router.get("/repartidor", checkRole(3), (req, res) => res.render("repartidor"));
+router.get("/envio", checkRole(3), (req, res) => res.render("envio"));
+router.get("/pedido", checkRole(3), (req, res) => res.render("pedido"));
+router.get("/pedidos", checkRole(3), (req, res) => res.render("pedidos"));
+router.get("/detallePedido", checkRole(3), (req, res) => res.render("detallePedido"));
 
 module.exports = router;
