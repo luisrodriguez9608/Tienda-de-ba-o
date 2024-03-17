@@ -1189,8 +1189,8 @@ app.post("/editarProducto/:id", (req, res) => {
 });
 
 // Ruta para eliminar un producto
-app.delete("/eliminarProducto/:id", (req, res) => {
-  const productoID = req.params.id;
+app.delete("/eliminarProducto", (req, res) => {
+  const productoID = req.query.productoID;
   db.query(
     "DELETE FROM productos WHERE productoID = ?",
     [productoID],

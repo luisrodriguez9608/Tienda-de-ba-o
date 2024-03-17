@@ -467,7 +467,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                  
                                     <ul class="product__hover">
                                         <li><a href="/details-products?producto=${producto.productoID}"><span class="arrow_expand"></span></a></li>
-                                        <li><a href="#" onclick="confirmarEliminacion(${producto.productoID})"><span class="icon_bag_alt"></span></a></li>
+                                        <li><a href="#" onclick="eliminarProducto(${producto.productoID})"><span class="icon_trash_alt"></span></a></li>
                                         <li><a href="/edit-product?producto=${producto.productoID}"><span class="icon_pencil"></span></a></li>
                                     </ul>
                                 </div>
@@ -717,6 +717,34 @@ function eliminarUsuario(userID) {
   myModal.show();
 }
 
+// Función para eliminar un usuario
+function eliminarProducto(productoID) {
+  // Mostrar un mensaje de confirmación
+  var modal = `
+    <div class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Eliminar producto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="redirectUsuarios()"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar este producto?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="redirectAdmin()">Cancelar</button>
+            <button type="button" class="btn btn-danger" onclick="eliminarProductoConfirmado(${productoID})">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.insertAdjacentHTML('beforeend', modal);
+
+  var myModal = new bootstrap.Modal(document.querySelector('.modal'));
+  myModal.show();
+}
+
 function eliminarUsuarioConfirmado(userID) {
   // Realizar una solicitud al servidor para eliminar el usuario con el userID especificado
   fetch(`/eliminarUsuario?userID=${userID}`, { method: 'DELETE' })
@@ -732,8 +760,27 @@ function eliminarUsuarioConfirmado(userID) {
     .catch(error => console.error('Error al eliminar el usuario:', error));
 }
 
+function eliminarProductoConfirmado(productoID) {
+  // Realizar una solicitud al servidor para eliminar el usuario con el userID especificado
+  fetch(`/eliminarProducto?productoID=${productoID}`, { method: 'DELETE' })
+    .then(response => {
+      if (response.ok) {
+        console.log('Producto eliminado correctamente');
+        // Recargar la página después de eliminar el usuario
+        window.location.reload();
+      } else {
+        console.error('Error al eliminar producto');
+      }
+    })
+    .catch(error => console.error('Error al eliminar el usuario:', error));
+}
+
 function redirectUsuarios() {
   window.location.href = '/users'; // Cambia '/usuarios' por la ruta correcta de tu página de usuarios
+}
+
+function redirectAdmin() {
+  window.location.href = '/admin'; // Cambia '/usuarios' por la ruta correcta de tu página de usuarios
 }
 
 
