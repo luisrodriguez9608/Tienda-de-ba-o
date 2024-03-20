@@ -21,7 +21,7 @@
                 <div class="contact__content">
                     <div class="contact__form">
                         <h5>Ingrese sus credenciales</h5>
-                        <form action="/authenticate" method="post"> <!-- Cambié la acción del formulario a "/login" -->
+                        <form id="authForm"> <!-- Cambié la acción del formulario a "/login" -->
                             <label for="correo">Correo electrónico:</label>
                             <input type="email" id="correo" name="correo" required>
 
@@ -45,3 +45,42 @@
     </div>
 </section>
 <!-- Contact Section End -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const authForm = document.getElementById('authForm');
+
+        authForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const correo = document.getElementById('correo').value;
+            const contraseña = document.getElementById('contraseña').value;
+
+            autenticar(correo, contraseña);
+        });
+
+        function autenticar(correo, contraseña) {
+            fetch('/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    correo: correo,
+                    contraseña: contraseña
+                })
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.status === 200) {
+                        $.notify(data.message)  
+                        window.location.href = '/'
+                    } else {
+                        $.notify(data.message)
+                    }
+                }).catch(error => {
+                    console.error('Error al authenticar usuario:', error)
+                    $.notify(error)
+                });
+        }
+    });
+</script>

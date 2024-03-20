@@ -952,27 +952,24 @@ app.post("/authenticate", (req, res) => {
     (err, results) => {
       if (err) {
         console.error("Error al realizar la consulta: ", err);
-        res.status(500).send("Error interno del servidor");
-        return;
-      }
-
-      if (results.length > 0) {
-        const usuario = results[0];
-        req.session.loggedin = true;
-        req.session.userId = usuario.userID; // Configurar el ID de usuario en la sesión
-        req.session.correo = correo;
-        req.session.rol = usuario.rol; // Establecer correctamente el rol en la sesión
-        console.log(
-          "Inicio de sesión exitoso. Rol del usuario:",
-          req.session.rol
-        );
-        res.redirect("/");
+        res.status(500).json({err : "Error interno del servidor"});
       } else {
-        
-       
-        req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
-        req.session.rol = null; // También establece el rol en null
-        res.redirect('/login');
+        if (results.length > 0) {
+          const usuario = results[0];
+          req.session.loggedin = true;
+          req.session.userId = usuario.userID; // Configurar el ID de usuario en la sesión
+          req.session.correo = correo;
+          req.session.rol = usuario.rol; // Establecer correctamente el rol en la sesión
+          console.log(
+            "Inicio de sesión exitoso. Rol del usuario:",
+            req.session.rol
+          );
+          res.status(200).json({message : "Sesión iniciada", status: 200});
+        } else {
+          req.session.loggedin = false; // Si el inicio de sesión falla, asegúrate de establecer loggedin en false
+          req.session.rol = null; // También establece el rol en null
+          res.status(403).json({message : "Credenciales incorrectas", status: 403});
+        } 
       }
     }
   );
