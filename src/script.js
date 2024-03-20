@@ -916,7 +916,8 @@ function marcarEntregado(facturaID) {
   .then(response => {
       if (response.ok) {
           console.log('Pedido marcado como entregado con éxito');
-          // Puedes agregar aquí cualquier acción adicional después de marcar el pedido como entregado
+          // Recargar la página actual después de marcar el pedido como entregado
+          window.location.reload();
       } else {
           console.error('Error al marcar el pedido como entregado');
           // Manejo de errores si es necesario
@@ -927,6 +928,7 @@ function marcarEntregado(facturaID) {
       // Manejo de errores si es necesario
   });
 }
+
 
 
 function realizarEnvio(facturaID) {

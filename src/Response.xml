@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <MensajeReceptor xmlns="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/mensajeReceptor" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://tribunet.hacienda.go.cr/docs/esquemas/2017/v4.2/mensajeReceptor MensajeReceptor_4.2.xsd">
-  <Clave>50616032400019999999900100001018744557383152755114</Clave>
+  <Clave>50617032400019999999900100001012514019612118068252</Clave>
   <NumeroCedulaEmisor>122223333</NumeroCedulaEmisor>
-  <FechaEmisionDoc>2024-03-16T14:39:00-06:00</FechaEmisionDoc>
+  <FechaEmisionDoc>2024-03-17T17:47:56-06:00</FechaEmisionDoc>
   <Mensaje>2</Mensaje>
   <DetalleMensaje>Ok</DetalleMensaje>
   <MontoTotalImpuesto>2600</MontoTotalImpuesto>
   <TotalFactura>20000</TotalFactura>
   <NumeroCedulaReceptor>11810662</NumeroCedulaReceptor>
-  <NumeroConsecutivoReceptor>00100001018744557383</NumeroConsecutivoReceptor>
+  <NumeroConsecutivoReceptor>00100001012514019612</NumeroConsecutivoReceptor>
 </MensajeReceptor>

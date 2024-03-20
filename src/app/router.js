@@ -12,6 +12,7 @@ router.get("/login", (req, res) => res.render("login"));
 router.get("/signup", (req, res) => res.render("signup"));
 router.get("/contact", (req, res) => res.render("contact"));
 router.get("/checkout", (req, res) => res.render("checkout"));
+router.get("/details-products", (req, res) => res.render("details-product"));
 
 // Rutas Usuario
 router.get("/pedidoRealizado", checkRole(1), (req, res) => res.render("pedidoRealizado"));
