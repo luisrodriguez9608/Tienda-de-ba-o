@@ -765,11 +765,11 @@ function eliminarProductoConfirmado(productoID) {
   fetch(`/eliminarProducto?productoID=${productoID}`, { method: 'DELETE' })
     .then(response => {
       if (response.ok) {
-        console.log('Producto eliminado correctamente');
+       // console.log('Producto eliminado correctamente');
         // Recargar la página después de eliminar el usuario
         window.location.reload();
       } else {
-        console.error('Error al eliminar producto');
+      //  console.error('Error al eliminar producto');
       }
     })
     .catch(error => console.error('Error al eliminar el usuario:', error));
