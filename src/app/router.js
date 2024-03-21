@@ -12,9 +12,10 @@ router.get("/login", (req, res) => res.render("login"));
 router.get("/signup", (req, res) => res.render("signup"));
 router.get("/contact", (req, res) => res.render("contact"));
 router.get("/checkout", (req, res) => res.render("checkout"));
+router.get("/details-products", (req, res) => res.render("details-product"));
 
 // Rutas Usuario
-router.get("/pedidoRealizado", checkRole(1), (req, res) => res.render("pedidoRealizado"));
+router.get("/pedidoRealizado", checkRole(1 || 3), (req, res) => res.render("pedidoRealizado"));
 
 // Rutas Administrador
 router.get("/admin", checkRole(2), (req, res) => res.render("admin"));
@@ -29,6 +30,6 @@ router.get("/repartidor", checkRole(3), (req, res) => res.render("repartidor"));
 router.get("/envio", checkRole(3), (req, res) => res.render("envio"));
 router.get("/pedido", checkRole(3), (req, res) => res.render("pedido"));
 router.get("/pedidos", checkRole(3), (req, res) => res.render("pedidos"));
-router.get("/detallePedido", checkRole(3), (req, res) => res.render("detallePedido"));
+router.get("/detallePedido", checkRole(3,1), (req, res) => res.render("detallePedido"));
 
 module.exports = router;
